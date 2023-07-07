@@ -1,0 +1,197 @@
+[
+  {
+    "id": "1901",
+    "name": "Pasco",
+    "department_id": "19",
+    "districts": [
+      {
+        "id": "190101",
+        "name": "Chaupimarca",
+        "province_id": "1901",
+        "department_id": "19"
+      },
+      {
+        "id": "190102",
+        "name": "Huachon",
+        "province_id": "1901",
+        "department_id": "19"
+      },
+      {
+        "id": "190103",
+        "name": "Huariaca",
+        "province_id": "1901",
+        "department_id": "19"
+      },
+      {
+        "id": "190104",
+        "name": "Huayllay",
+        "province_id": "1901",
+        "department_id": "19"
+      },
+      {
+        "id": "190105",
+        "name": "Ninacaca",
+        "province_id": "1901",
+        "department_id": "19"
+      },
+      {
+        "id": "190106",
+        "name": "Pallanchacra",
+        "province_id": "1901",
+        "department_id": "19"
+      },
+      {
+        "id": "190107",
+        "name": "Paucartambo",
+        "province_id": "1901",
+        "department_id": "19"
+      },
+      {
+        "id": "190108",
+        "name": "San Francisco de As\u00eds de Yarusyacan",
+        "province_id": "1901",
+        "department_id": "19"
+      },
+      {
+        "id": "190109",
+        "name": "Simon Bol\u00edvar",
+        "province_id": "1901",
+        "department_id": "19"
+      },
+      {
+        "id": "190110",
+        "name": "Ticlacayan",
+        "province_id": "1901",
+        "department_id": "19"
+      },
+      {
+        "id": "190111",
+        "name": "Tinyahuarco",
+        "province_id": "1901",
+        "department_id": "19"
+      },
+      {
+        "id": "190112",
+        "name": "Vicco",
+        "province_id": "1901",
+        "department_id": "19"
+      },
+      {
+        "id": "190113",
+        "name": "Yanacancha",
+        "province_id": "1901",
+        "department_id": "19"
+      }
+    ]
+  },
+  {
+    "id": "1902",
+    "name": "Daniel Alcides Carri\u00f3n",
+    "department_id": "19",
+    "districts": [
+      {
+        "id": "190201",
+        "name": "Yanahuanca",
+        "province_id": "1902",
+        "department_id": "19"
+      },
+      {
+        "id": "190202",
+        "name": "Chacayan",
+        "province_id": "1902",
+        "department_id": "19"
+      },
+      {
+        "id": "190203",
+        "name": "Goyllarisquizga",
+        "province_id": "1902",
+        "department_id": "19"
+      },
+      {
+        "id": "190204",
+        "name": "Paucar",
+        "province_id": "1902",
+        "department_id": "19"
+      },
+      {
+        "id": "190205",
+        "name": "San Pedro de Pillao",
+        "province_id": "1902",
+        "department_id": "19"
+      },
+      {
+        "id": "190206",
+        "name": "Santa Ana de Tusi",
+        "province_id": "1902",
+        "department_id": "19"
+      },
+      {
+        "id": "190207",
+        "name": "Tapuc",
+        "province_id": "1902",
+        "department_id": "19"
+      },
+      {
+        "id": "190208",
+        "name": "Vilcabamba",
+        "province_id": "1902",
+        "department_id": "19"
+      }
+    ]
+  },
+  {
+    "id": "1903",
+    "name": "Oxapampa",
+    "department_id": "19",
+    "districts": [
+      {
+        "id": "190301",
+        "name": "Oxapampa",
+        "province_id": "1903",
+        "department_id": "19"
+      },
+      {
+        "id": "190302",
+        "name": "Chontabamba",
+        "province_id": "1903",
+        "department_id": "19"
+      },
+      {
+        "id": "190303",
+        "name": "Huancabamba",
+        "province_id": "1903",
+        "department_id": "19"
+      },
+      {
+        "id": "190304",
+        "name": "Palcazu",
+        "province_id": "1903",
+        "department_id": "19"
+      },
+      {
+        "id": "190305",
+        "name": "Pozuzo",
+        "province_id": "1903",
+        "department_id": "19"
+      },
+      {
+        "id": "190306",
+        "name": "Puerto Berm\u00fadez",
+        "province_id": "1903",
+        "department_id": "19"
+      },
+      {
+        "id": "190307",
+        "name": "Villa Rica",
+        "province_id": "1903",
+        "department_id": "19"
+      },
+      {
+        "id": "190308",
+        "name": "Constituci\u00f3n",
+        "province_id": "1903",
+        "department_id": "19"
+      }
+    ]
+  }
+]
