@@ -121,8 +121,8 @@ const StepForm3JobForm = ({
   };
 
   return (
-    <ScrollView scrollEnabled={true}>
-      <View style={{ flex: 1, paddingBottom: 700 }}>
+    <ScrollView showsVerticalScrollIndicator={false} scrollEnabled={true}>
+      <View style={{ flex: 1, paddingBottom: 400 }}>
         <Text
           style={{
             fontFamily: FONT.bold,
@@ -250,8 +250,6 @@ const StepForm3JobForm = ({
             >
               {salary.error}
             </Text>
-            <Text>{typeof Number("xssx")}</Text>
-            <Text>{salary.value}</Text>
           </View>
 
           <SubtitlePublishAJob message={"Requisitos"} />
@@ -491,7 +489,9 @@ const StepForm3JobForm = ({
               paddingVertical: 10,
               borderRadius: 10,
               columnGap: 10,
-              backgroundColor: COLORS.gray700,
+              backgroundColor: COLORS.gray100,
+              borderWidth:1,
+              borderColor:COLORS.gray400,
               flex: 1,
               maxWidth: 200,
               justifyContent: "center",
@@ -502,9 +502,9 @@ const StepForm3JobForm = ({
             activeOpacity={0.9}
             onPress={() => setStepForm(stepForm - 1)}
           >
-            <Icon name="arrow-back" color={COLORS.white} type="ionsicon" />
+            <Icon name="arrow-back" color={COLORS.gray800} type="ionsicon" />
 
-            <Text style={{ color: COLORS.white }}>Atras</Text>
+            <Text style={{ color: COLORS.gray800,fontFamily:FONT.medium }}>Atras</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -513,7 +513,9 @@ const StepForm3JobForm = ({
               paddingVertical: 10,
               borderRadius: 10,
               columnGap: 10,
-              backgroundColor: COLORS.gray700,
+              backgroundColor: COLORS.gray100,
+              borderWidth:1,
+              borderColor:COLORS.gray400,
               flex: 1,
               maxWidth: 200,
               justifyContent: "center",
@@ -524,8 +526,8 @@ const StepForm3JobForm = ({
             activeOpacity={0.9}
             onPress={handleNextPage}
           >
-            <Text style={{ color: COLORS.white }}>Siguiente</Text>
-            <Icon name="arrow-forward" color={COLORS.white} type="ionsicon" />
+            <Text style={{ color: COLORS.gray800,fontFamily:FONT.medium }}>Siguiente</Text>
+            <Icon name="arrow-forward" color={COLORS.gray700} type="ionsicon" />
           </TouchableOpacity>
         </View>
 

@@ -148,8 +148,8 @@ const Step2Form = ({
         <Text style={{fontFamily:FONT.medium,fontSize:SIZES.medium,paddingLeft:15}}>Sexo:</Text>
         <View>
         <RadioButton.Group  onValueChange={value => setSex({value,error:""})} value={sex.value} >
-        <RadioButton.Item style={{width:"50%"}}   labelStyle={{fontFamily:FONT.medium}}   position="leading"  label="Hombre" value="Hombre" />
-        <RadioButton.Item style={{width:"50%"}}  labelStyle={{fontFamily:FONT.medium}}  position="leading" label="Mujer" value="Mujer" />
+        <RadioButton.Item style={{width:"50%"}} color={COLORS.indigo800}  labelStyle={{fontFamily:FONT.medium,color:COLORS.indigo800}}   position="leading"  label="Hombre" value="Hombre" />
+        <RadioButton.Item style={{width:"50%"}} color={COLORS.indigo800}   labelStyle={{fontFamily:FONT.medium,color:COLORS.indigo800}}  position="leading" label="Mujer" value="Mujer" />
         </RadioButton.Group>
         </View>     
     </View>

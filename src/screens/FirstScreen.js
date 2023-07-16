@@ -39,6 +39,8 @@ const FirstScreen = ({ navigation }) => {
             flex: 1,
             flexDirection: "column",
             justifyContent: "space-between",
+            marginTop:0,
+            
 
             rowGap: 20,
           }}
@@ -46,16 +48,17 @@ const FirstScreen = ({ navigation }) => {
           <View style={{ flexDirection: "column" }}>
             <Text
               style={{
-                marginTop: 100,
+                marginTop: 0,
                 textAlign: "center",
 
                 fontFamily: FONT.bold,
                 fontWeight: 900,
                 fontSize: 50,
                 marginHorizontal: 20,
+                color:COLORS.white
+              
               }}
-            >{isCompany ? "Company" : "No Company"}
-            {isUser ? "uSER" : "No User"}
+            >
               Pasco{" "}
               <Text style={{ color: COLORS.indigo100, fontWeight: 900 }}>
                 Jobs

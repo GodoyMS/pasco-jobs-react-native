@@ -6,11 +6,13 @@ import { COLORS } from '@constants/theme'
 export default function Button({ mode, style, ...props }) {
   return (
     <PaperButton
+    
       style={[
         styles.button,
         mode === 'outlined' && { backgroundColor:COLORS.indigo600 },
         style,
       ]}
+      
       labelStyle={styles.text}
       mode={mode}
       {...props}

@@ -1,28 +1,66 @@
-import { COLORS } from '@constants/theme';
-import React, {useState, useEffect} from 'react';
-import { StyleSheet,Text } from 'react-native';
-import AnimatedLoader from 'react-native-animated-loader';
+import React, { useEffect, useRef } from 'react';
+import { Animated, Easing, StyleSheet, View } from 'react-native';
 
-const FormLoader = ({isLoading,message}) => {
+const FormLoader = ({isLoading}) => {
+  const rotationValue = useRef(new Animated.Value(0)).current;
 
-  
-    return (
-      <AnimatedLoader
-        visible={isLoading}
-        animationType={"none"}
-        overlayColor="rgba(0,0,0,0.75)"
-        animationStyle={styles.lottie}
-        speed={1}>
-        <Text style={{color:COLORS.white}}>{message}</Text>
-      </AnimatedLoader>
+  useEffect(() => {
+    const rotateAnimation = Animated.loop(
+      Animated.timing(rotationValue, {
+        toValue: 1,
+        duration: 2000,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      })
     );
+
+    rotateAnimation.start();
+
+    return () => {
+      rotateAnimation.stop();
+    };
+  }, [rotationValue]);
+
+  const rotateInterpolation = rotationValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
+
+  return (
+    <>
+    {isLoading &&     <View style={styles.container}>
+      <Animated.View
+        style={[styles.icon, { transform: [{ rotate: rotateInterpolation }] }]}
+      >
+        <View style={styles.bar} />
+        <View style={styles.bar} />
+        <View style={styles.bar} />
+      </Animated.View>
+    </View>}
+    </>
+
+  );
 };
 
-export default FormLoader;
-
 const styles = StyleSheet.create({
-    lottie: {
-      width: 100,
-      height: 100,
-    },
-  });
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  icon: {
+    width: 40,
+    height: 40,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  bar: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: 'black',
+  },
+});
+
+export default FormLoader;

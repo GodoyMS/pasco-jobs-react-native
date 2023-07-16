@@ -19,6 +19,7 @@ module.exports = function (api) {
             "@services": "./src/services",
             "@features": "./src/features",
             "@data": "./src/data",
+            "@utils": "./src/utils"
 
 
             // Add your alias paths here

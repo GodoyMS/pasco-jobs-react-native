@@ -11,7 +11,7 @@ const Specifics = ({ title, points }) => {
         {points.map((item, index) => (
           <View style={styles.pointWrapper} key={item + index}>
             <View style={styles.pointDot} />
-            <Text style={styles.pointText}>{item.Item}</Text>
+            <Text style={styles.pointText}>{item.item}</Text>
           </View>
         ))}
       </View>

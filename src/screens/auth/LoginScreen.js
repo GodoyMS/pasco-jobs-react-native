@@ -7,6 +7,7 @@ import {
   ImageBackground,
   KeyboardAvoidingView,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import Button from "@components/login/Button";
 import { emailValidator } from "@helpers/emailValidator";
@@ -26,10 +27,9 @@ export const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState({ value: "", error: "" });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [dataUser, setDataUser] = useState(null);
+  const [error, setError] = useState(false);
   const [visibleModal, setVisibleModal] = useState(null);
-
+  const[currentUserId,setCurrentUserId]=useState("")
   const dispatch = useDispatch();
   // const favJobsIdRedux = useSelector((state) => state.user.favUserJobs);
 
@@ -42,6 +42,9 @@ export const LoginScreen = ({ navigation }) => {
       setPassword({ ...password, error: passwordError });
       return;
     }
+
+    setIsLoading(true)
+    setError(false)
     const currentJobsId = [];
 
     await axios
@@ -51,10 +54,9 @@ export const LoginScreen = ({ navigation }) => {
           email: email.value,
           password: password.value,
         },
-        { withCredentials: "include" }
       )
 
-      .then(({ data }) => {dispatch(setUser(data));dispatch(clearCompany())})
+      .then(({ data }) => {dispatch(setUser(data));dispatch(clearCompany());setCurrentUserId(data.user.id)})
       .then(() => setIsLoggedIn(true))
       .then(() => setIsLoading(false))
       .then(() => {
@@ -62,9 +64,7 @@ export const LoginScreen = ({ navigation }) => {
       })
       .then(() => {
         axios
-          .get(`${backendURL}api/favoriteJobs`, {
-            withCredentials: "include",
-          })
+          .get(`${backendURL}api/favoriteJobs?where[user][equals]=${currentUserId}`)
           .then(({ data }) => {
             console.log(data.docs);
             data.docs.map((e) => currentJobsId.push(e.job.id));
@@ -74,41 +74,14 @@ export const LoginScreen = ({ navigation }) => {
       })
       .then(() => navigation.navigate("User"))
       .catch((e) => {
-        setError(e);
-        console.log(e);
-        return null;
+        setError(true);
       })
       .finally(() => setIsLoading(false));
   };
   return (
     <View style={{ flex: 1, rowGap: 15 }}>
       <View style={{ height: 200, zIndex: 50, flexDirection: "column" }}>
-        {/* <ImageBackground
-          source={loginImage}
-          resizeMode="cover"
-          style={{
-            flex: 1,
-            flexDirection: "column",
-            justifyContent: "end",
-            alignItems: "center",
-          }}
-        >
-          <View style={styles.opacityLayer} />
 
-          <Text
-            style={{
-              textAlign: "left",
-              fontFamily: FONT.medium,
-              fontSize: SIZES.xLarge,
-              fontWeight: "bold",
-              color: COLORS.gray50,
-              zIndex: 70,
-              marginBottom: 10,
-            }}
-          >
-            Ingresa a tu cuenta
-          </Text>
-        </ImageBackground> */}
       </View>
       <View
         style={{
@@ -121,7 +94,7 @@ export const LoginScreen = ({ navigation }) => {
           justifyContent: "center",
         }}
       >
-        {/* <View>
+        <View>
           <Text
             style={{
               textAlign: "left",
@@ -133,7 +106,7 @@ export const LoginScreen = ({ navigation }) => {
           >
             Ingresa a tu cuenta
           </Text>
-        </View> */}
+        </View>
         <TextInput
           label="Email"
           returnKeyType="next"
@@ -157,18 +130,23 @@ export const LoginScreen = ({ navigation }) => {
         />
         <View style={styles.forgotPassword}>
           <TouchableOpacity
-            onPress={() => navigation.navigate("ResetPasswordScreen")}
+            onPress={() => navigation.navigate("ResetPasswordUserScreen")}
           >
             <Text style={styles.forgot}>¿Olvidaste tu contraseña?</Text>
           </TouchableOpacity>
         </View>
+        <View>
+          {isLoading && <ActivityIndicator/>}
+        </View>
         <Button
-          style={{ fontFamily: FONT.medium }}
+          disabled={isLoading}
+          style={{ fontFamily: FONT.medium,backgroundColor:isLoading ? COLORS.indigo300: COLORS.tertiary}}
           mode="contained"
           onPress={onLoginPressed}
         >
           Entrar
         </Button>
+        {error && <Text style={{fontFamily:FONT.medium,color:COLORS.red700,fontSize:SIZES.small,textAlign:"center"}}>Contraseña o correo incorrecto</Text>}
         <View style={styles.row}>
           <Text style={{ fontFamily: FONT.regular }}>
             ¿No tienes una cuenta aun?{" "}

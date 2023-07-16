@@ -1,4 +1,5 @@
 import {
+  Modal,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -20,6 +21,7 @@ import { setOnlyUserInfo } from "@features/user/userSlice";
 import FormLoader from "@components/loaders/FormLoader";
 import { Icon } from "@rneui/themed";
 import SaveButton from "@components/buttons/SaveButton";
+import Lottie from 'lottie-react-native';
 
 const EditProfileUserScreen = () => {
   const userInfo = useSelector((state) => state.user.infoUser);
@@ -48,8 +50,7 @@ const EditProfileUserScreen = () => {
       // Make the PATCH request
       const response = await axios.patch(
         `${backendURL}api/applicants/${userInfo.id}`,
-        { name, position, description, age },
-        { withCredentials: true } // Use true instead of "include"
+        { name, position, description, age }// Use true instead of "include"
       );
 
       // Update the user information in the Redux store
@@ -80,6 +81,7 @@ const EditProfileUserScreen = () => {
       }}
     >
       <ScrollView style={{ marginTop: 90 }}>
+
         {userInfo && (
           <View style={{ marginHorizontal: 30 }}>
             <View>
@@ -132,7 +134,8 @@ const EditProfileUserScreen = () => {
               value={age}
               onChangeText={(text) => setAge(text)}
             />
-            <FormLoader isLoading={isLoading} />
+      
+             <FormLoader isLoading={isLoading} />
 
              <SaveButton onPress={handleUpdateProfile} isSuccess={isSuccess} messageDefault={"Actualizar perfil"} messageSuccess={"Actualizado"}/>
 

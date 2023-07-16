@@ -10,6 +10,7 @@ const companySlice = createSlice({
     // infoCompany: null,
     // tokenCompany: null,
     exp: null,
+    finalists:[],
   },
   reducers: {
     setCompany: (state, action) => {
@@ -18,7 +19,7 @@ const companySlice = createSlice({
       state.exp = action.payload.exp;
     },
     setOnlyCompanyInfo:(state,action)=>{
-      state.infoUser = action.payload.user;
+      state.infoCompany = action.payload.user;
 
     },
     refreshCompanyInfo: (state, action) => {
@@ -29,6 +30,19 @@ const companySlice = createSlice({
       state.infoCompany = null;
       state.tokenCompany = null;
       state.exp = null;
+      state.finalists=[];
+    },
+    setPublishNewJob: (state, action) => {
+      return action.payload;
+    },
+    setFinalists:(state,action)=>{
+      state.finalists=action.payload;
+    },
+    deleteFinalist:(state,action)=>{
+      state.finalists=state.finalists.filter(obj=>obj!==action.payload)
+    },
+    addFinalist:(state,action)=>{
+      state.finalists.push(action.payload)
     }
     // setUserLocation:(state,action)=>{
     //   state.userLocation=action.payload
@@ -77,6 +91,7 @@ const companySlice = createSlice({
     //   state.exp = null;
     // },
   },
+
 });
 
 export const {
@@ -84,5 +99,8 @@ export const {
   setOnlyCompanyInfo,
   clearCompany, 
   refreshCompanyInfo,
+  setFinalist,
+  deleteFinalist,
+  addFinalist  
 } = companySlice.actions;
 export default companySlice.reducer;

@@ -112,8 +112,7 @@ const EditCvUserScreen = () => {
       .then(({ data }) =>
         axios.patch(
           `${backendURL}api/applicants/${userInfo.id}`,
-          { cv: data.url },
-          { withCredentials: "include" }
+          { cv: data.url }
         )
       )
       .then(({ data }) => dispatch(setOnlyUserInfo({ user: data.doc })))

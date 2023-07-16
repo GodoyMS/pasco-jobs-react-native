@@ -6,9 +6,14 @@ export default function TextInput({ errorText, description, ...props }) {
     return (
       <View style={styles.container}>
         <Input
-          
+          textColor={COLORS.gray800}
           style={styles.input}
-          selectionColor={COLORS.indigo400}
+          placeholderTextColor={COLORS.indigo700}
+          outlineColor={COLORS.indigo700}
+          selectionColor={COLORS.indigo700}
+          activeOutlineColor={COLORS.indigo800}
+          
+          
           underlineColor="transparent"
               returnKeyType=''
           mode="outlined"
@@ -30,6 +35,7 @@ export default function TextInput({ errorText, description, ...props }) {
     },
     input: {
       backgroundColor: COLORS.lightWhite,
+      borderColor:COLORS.indigo900
     },
     description: {
       fontSize: 13,

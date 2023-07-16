@@ -8,6 +8,7 @@ import {
 import SubtitlePublishAJob from "./SubtitlePublishAJob";
 import { KeyboardAvoidingView } from "react-native";
 import { SIZES, FONT, COLORS } from "@constants/theme";
+import { Platform } from "react-native";
 const handleHead2 = ({ tintColor }) => (
   <Text
     style={{ color: tintColor, fontSize: SIZES.large, fontFamily: FONT.medium }}

@@ -1,7 +1,5 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+
 import {
-  TransitionPresets,
   createStackNavigator,
 } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
@@ -9,28 +7,51 @@ import * as React from "react";
 import { useFonts } from "expo-font";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeUserScreen from "@screens/user/HomeUserScreen";
-import JobDetailsUserScreen from "@screens/user/JobDetailsScreen";
 import { Icon } from "@rneui/themed";
 import FavoritesUserScreen from "@screens/user/FavoritesUserScreen";
 import ApplicationsUserScreen from "@screens/user/ApplicationsUserScreeen";
 import { COLORS } from "@constants/theme";
 import ProfileUserScreen from "@screens/user/ProfileUserScreen";
-import { TransitionPreset } from "@react-navigation/stack";
-import FirstScreen from "@screens/FirstScreen";
-import RegisterScreen from "@screens/auth/RegisterScreen";
-import LoginScreen from "./src/screens/auth/LoginScreen";
 
-import LoginCompanyScreen from "@screens/auth/LoginCompanyScreen";
-import RegisterCompanyScreen from "@screens/auth/RegisterCompanyScreen";
+import 'react-native-gesture-handler';
+
+
 
 import UserProvider from "@store/userProvider";
 import RootNavigation from "@navigation/RootNavigation";
-const Tab = createBottomTabNavigator();
-const Stack = createStackNavigator();
+
+import { AppRegistry } from 'react-native';
+import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+
 import moment from "moment";
+import { backendURL } from "@config/config";
 
 moment.locale('es')
 
+const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
+
+// Initialize Apollo Client
+const client = new ApolloClient({
+  uri: `${backendURL}api/graphql` ,
+  cache: new InMemoryCache(
+    {
+      typePolicies: {
+        Query: {
+          fields: {
+            Applications: {
+              merge(existing, incoming) {
+                // Custom merge logic here
+                // Make sure to handle the merging of existing and incoming data appropriately
+                return incoming;
+              },
+            },
+          },
+        },
+      },
+    }
+  )
+});
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -55,13 +76,19 @@ export default function App() {
   };
 
   return (
+    <ApolloProvider client={client}>
+
     <UserProvider>
       <NavigationContainer>
         <RootNavigation />
       </NavigationContainer>
     </UserProvider>
+    </ApolloProvider>
+
   );
 }
+
+AppRegistry.registerComponent('MyApplication', () => App);
 
 function User() {
   return (

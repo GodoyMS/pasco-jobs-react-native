@@ -15,6 +15,8 @@
           "@services/*": ["./src/services/*"],
           "@features/*": ["./src/features/*"],
           "@data/*": ["./src/data/*"],
+          "@utils/*": ["./src/utils/*"],
+
 
 
 

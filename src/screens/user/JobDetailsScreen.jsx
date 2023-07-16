@@ -1,6 +1,6 @@
 import { Text, StyleSheet, View } from "react-native";
-import React, { Component,useState } from "react";
-import { SafeAreaView,ActivityIndicator } from "react-native";
+import React, { Component, useState } from "react";
+import { SafeAreaView, ActivityIndicator } from "react-native";
 import { FlatList } from "react-native";
 import { ScrollView } from "react-native";
 import { Image } from "react-native";
@@ -14,41 +14,39 @@ import Tabs from "@components/user/jobdetails/tabs/Tabs";
 import About from "@components/user/jobdetails/about/About";
 import Specifics from "@components/user/jobdetails/specifics/Specifics";
 import Footer from "@components/user/jobdetails/footer/Footer";
-import { COLORS,FONT,SIZES } from "@constants/theme";
+import { COLORS, FONT, SIZES } from "@constants/theme";
 import { useDispatch } from "react-redux";
 import { backendURL } from "@config/config";
 import icons from "@constants/icons";
+import { gql, useQuery } from "@apollo/client";
 export const JobDetailsUserScreen = (props) => {
   const tabs = ["Descripción", "Requisitos", "Responsabilidades"];
   const [activeTab, setActiveTab] = useState(tabs[0]);
   const favJobsRedux = useSelector((state) => state.user.favUserJobs);
   const [isAddedToFav, setIsAddedToFav] = useState(false);
-  const userId=useSelector((state)=>state.user.infoUser.id)
-  const [showMessage,setShowMessage]=useState(false);
+  const userId = useSelector((state) => state.user.infoUser.id);
+  const [showMessage, setShowMessage] = useState(false);
 
   const {
     navigation,
     route: { params },
   } = props;
-  const [data, setData] = useState();
-
-  const dispatch=useDispatch();
-
-
+  const [dataJob, setDataJob] = useState();
+  const [currentApplicants, setCurrentApplicants] = useState([]);
+  const dispatch = useDispatch();
   useEffect(() => {
     if (favJobsRedux.includes(params.itemId)) {
       setIsAddedToFav(true);
     } else {
       setIsAddedToFav(false);
     }
-  }, [favJobsRedux,params]);
+  }, [favJobsRedux, params]);
 
   const handleAddFavoriteJob = async () => {
     await axios
       .post(
         `${backendURL}api/favoriteJobs`,
-        { user: userId, job: params.itemId },
-        { withCredentials: "include" }
+        { user: userId, job: params.itemId }
       )
       .then(({ data }) => dispatch(addFavoriteJob(data.doc)))
 
@@ -60,17 +58,11 @@ export const JobDetailsUserScreen = (props) => {
       })
       .catch((e) => console.log(e));
   };
-
-
-
-  
-
-  
   const fetchData = () => {
     axios
       .get(`${backendURL}api/jobs/${params.itemId}`)
-      .then(({ data }) => setData(data))
-      .then((e) => console.log(e))
+      .then(({ data }) => setDataJob(data))
+
       .catch((error) => console.log(error));
   };
 
@@ -78,34 +70,101 @@ export const JobDetailsUserScreen = (props) => {
     fetchData();
   }, [params.itemId]);
 
+  const GET_APPLICANTS = gql`
+    query GET__USER($jobId: String!) {
+      Applications(where: { job: { equals: $jobId } }) {
+        docs {
+          applicant {
+            id
+          }
+        }
 
+        totalDocs
+        hasNextPage
+        hasPrevPage
+        page
+      }
+    }
+  `;
 
+  const { loading, error, data, refetch } = useQuery(GET_APPLICANTS, {
+    variables: { jobId: params.itemId },
+    onCompleted: (data) => {
+      setCurrentApplicants(data.Applications.docs);
+    },
+  });
+
+  const [tabsToRender, setTabsToRender] = useState(["Descripción"]);
+  useEffect(() => {
+    if (dataJob) {
+      if (dataJob.requirements && dataJob.requirements.length > 0) {
+        setTabsToRender((prevState) => {
+          // Create a copy of the previous state array
+          const updatedTabs = [...prevState];
+
+          // Conditionally add more elements based on your condition
+          updatedTabs.push("Requisitos");
+
+          return updatedTabs;
+        });
+      }
+      if (dataJob.responsabilites && dataJob.responsabilites.length > 0) {
+        setTabsToRender((prevState) => {
+          // Create a copy of the previous state array
+          const updatedTabs = [...prevState];
+
+          // Conditionally add more elements based on your condition
+          updatedTabs.push("Responsabilidades");
+
+          return updatedTabs;
+        });
+      }
+      if (dataJob.benefits && dataJob.benefits.length > 0) {
+        setTabsToRender((prevState) => {
+          // Create a copy of the previous state array
+          const updatedTabs = [...prevState];
+
+          // Conditionally add more elements based on your condition
+          updatedTabs.push("Beneficios");
+
+          return updatedTabs;
+        });
+      }
+    }
+  }, [dataJob]);
 
   const displayTabContent = () => {
     switch (activeTab) {
       case "Descripción":
-        if (data) {
-          return (
-            <About Title="Requisitos" info={data.description ?? ["N/A"]} />
-          );
+        if (dataJob) {
+          return <About info={dataJob?.description ?? ["N/A"]} />;
         }
 
       case "Requisitos":
-        if (data) {
+        if (dataJob) {
           return (
             <Specifics
               title="Requisitos"
-              points={data.requirements ?? ["N/A"]}
+              points={dataJob.requirements ?? ["N/A"]}
             />
           );
         }
 
       case "Responsabilidades":
-        if (data) {
+        if (dataJob) {
           return (
             <Specifics
               title="Responsabilidades"
-              points={data?.responsabilities ?? ["N/A"]}
+              points={dataJob?.responsabilities ?? ["N/A"]}
+            />
+          );
+        }
+      case "Beneficios":
+        if (dataJob) {
+          return (
+            <Specifics
+              title="Beneficios"
+              points={dataJob?.benefits ?? ["N/A"]}
             />
           );
         }
@@ -114,65 +173,249 @@ export const JobDetailsUserScreen = (props) => {
         return null;
     }
   };
-  
-    if (data) {
+
+  if (dataJob) {
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite }}>
-       
-
         <>
-          <ScrollView  showsVerticalScrollIndicator={true}>
-            {!data ? (
+          <ScrollView
+            style={{ marginTop: 40 }}
+            showsVerticalScrollIndicator={true}
+          >
+            {!dataJob ? (
               <ActivityIndicator size="large" color={COLORS.primary} />
             ) : (
               <>
-                <View style={{ padding: SIZES.medium, paddingBottom: 100 }}>
-                  <Company
-                    companyLogo={data.author.profile.url}
-                    jobTitle={data.title}
-                    companyName={data.author.name}
-                    location={data.provincia}
-                  />
+                <View style={{ padding: SIZES.medium, paddingBottom: 20,marginTop:30}}>
+                  <View style={{ marginHorizontal: 10 }}>
+                    <Text
+                      style={{
+                        fontFamily: FONT.bold,
+                        fontSize: SIZES.xxLarge,
+                        color: COLORS.gray900,
+                      }}
+                    >
+                      {dataJob.title}
+                    </Text>
+                    <Text
+                      style={{
+                        fontFamily: FONT.regular,
+                        fontSize: SIZES.medium,
+                        color: COLORS.gray800,
+                      }}
+                    >
+                      {dataJob.author.name}
+                    </Text>
+                    {data && data?.Applications && (
 
-                  <Tabs
-                    tabs={tabs}
-                    activeTab={activeTab}
-                    setActiveTab={setActiveTab}
-                  />
-                  {displayTabContent()}
-                  <View style={stylesSmallSpecifics.containerTwoCardJob}>
+                      <View>
+                        <Text
+                        style={{
+                          fontFamily: FONT.medium,
+                          fontSize: SIZES.small,
+                          color: COLORS.blue800,
+                        }}
+                      >
+                        {data?.Applications?.totalDocs} Postulante(s) {data?.Applications?.totalDocs === 0 && <Text style={{color:COLORS.gray600}}>- Sé el primero en postularte </Text>}
+                      </Text>
+                      </View>
+                      
+                    )}
+                  </View>
 
-                  <View style={{marginHorizontal:10,flex:1,flexDirection:"row",columnGap:15}}>
-                    <View style={{backgroundColor:COLORS.gray50,flexDirection:"column",rowGap:5,justifyContent:"center",width:120,paddingVertical:15,paddingHorizontal:5,borderRadius:15}}>
-                      <Image style={{width:20,height:20,marginHorizontal:"auto"}} source={icons.locationMap}/>
-                      <Text style={{textAlign:"center",fontFamily:FONT.regular,fontSize:10,color:COLORS.gray500}}>Ubicación</Text>
-                      <Text style={{textAlign:"center",fontFamily:FONT.bold,fontSize:13,color:COLORS.gray700}}> {data.provincia}</Text>              
-
+                  <View
+                    style={{
+                      marginHorizontal: 10,
+                      flex: 1,
+                      flexDirection: "row",
+                      columnGap: 15,
+                      marginTop: 50,
+                    }}
+                  >
+                    <View
+                      style={{
+                        backgroundColor: COLORS.gray50,
+                        flexDirection: "column",
+                        rowGap: 5,
+                        justifyContent: "center",
+                        width: 120,
+                        paddingVertical: 15,
+                        paddingHorizontal: 5,
+                        borderRadius: 5,
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: "100%",
+                          marginHorizontal: "auto",
+                          flexDirection: "row",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Image
+                          style={{
+                            width: 20,
+                            height: 20,
+                            marginHorizontal: "auto",
+                          }}
+                          source={icons.locationMap}
+                        />
+                      </View>
+                      <Text
+                        style={{
+                          textAlign: "center",
+                          fontFamily: FONT.regular,
+                          fontSize: 10,
+                          color: COLORS.gray500,
+                        }}
+                      >
+                        Ubicación
+                      </Text>
+                      <Text
+                        style={{
+                          textAlign: "center",
+                          fontFamily: FONT.bold,
+                          fontSize: 13,
+                          color: COLORS.gray700,
+                        }}
+                      >
+                        {dataJob.province}
+                      </Text>
+                      <Text
+                        style={{
+                          textAlign: "center",
+                          fontFamily: FONT.medium,
+                          fontSize: 11,
+                          color: COLORS.gray600,
+                        }}
+                      >
+                        {dataJob.district}
+                      </Text>
                     </View>
-                    <View style={{flex:1,flexDirection:"column",rowGap:10}}>
-                      <View style={{flexDirection:"column",backgroundColor:COLORS.gray50,paddingHorizontal:10,paddingVertical:15,borderRadius:15}}>    
-                        <Text style={{textAlign:"left",fontFamily:FONT.regular,fontSize:10,color:COLORS.gray500}}>Experiencia</Text>
-                        <Text style={{textAlign:"left",fontFamily:FONT.bold,fontSize:13,color:COLORS.gray700}}> {data.workExperience.name}</Text>   
-                      </View> 
-
-                      <View style={{flex:1,flexDirection:"row",width:"100%",columnGap:15}}>
-                        <View style={{flexDirection:"column",flex:1,backgroundColor:COLORS.gray50,paddingHorizontal:10,paddingVertical:15,borderRadius:15}}>
-                          
-                          <Text style={{textAlign:"left",fontFamily:FONT.regular,fontSize:10,color:COLORS.gray500}}>Horario</Text>
-                          <Text style={{textAlign:"left",fontFamily:FONT.bold,fontSize:13,color:COLORS.gray700}}> {data.workShift.name}</Text> 
-
-                        </View>
-                        <View style={{flexDirection:"column",flex:1,backgroundColor:COLORS.gray50,paddingHorizontal:10,paddingVertical:15,borderRadius:15}}>
-                          <Text style={{textAlign:"left",fontFamily:FONT.regular,fontSize:10,color:COLORS.gray500}}>Salario</Text>
-                          <Text style={{textAlign:"left",fontFamily:FONT.bold,fontSize:13,color:COLORS.gray700}}> { data.salary ? `S/. ${data.salary}` :"Sin especificar"}</Text> 
-
-                        </View>
+                    <View
+                      style={{ flex: 1, flexDirection: "column", rowGap: 10 }}
+                    >
+                      <View
+                        style={{
+                          flexDirection: "column",
+                          backgroundColor: COLORS.gray50,
+                          paddingHorizontal: 10,
+                          paddingVertical: 15,
+                          borderRadius: 5,
+                        }}
+                      >
+                        <Text
+                          style={{
+                            textAlign: "left",
+                            fontFamily: FONT.regular,
+                            fontSize: 10,
+                            color: COLORS.gray500,
+                          }}
+                        >
+                          Experiencia
+                        </Text>
+                        <Text
+                          style={{
+                            textAlign: "left",
+                            fontFamily: FONT.bold,
+                            fontSize: 13,
+                            color: COLORS.gray700,
+                          }}
+                        >
+                          {" "}
+                          {dataJob.workExperience.name}
+                        </Text>
                       </View>
 
+                      <View
+                        style={{
+                          flex: 1,
+                          flexDirection: "row",
+                          width: "100%",
+                          columnGap: 15,
+                        }}
+                      >
+                        <View
+                          style={{
+                            flexDirection: "column",
+                            flex: 1,
+                            backgroundColor: COLORS.gray50,
+                            paddingHorizontal: 10,
+                            paddingVertical: 15,
+                            borderRadius: 5,
+                          }}
+                        >
+                          <Text
+                            style={{
+                              textAlign: "left",
+                              fontFamily: FONT.regular,
+                              fontSize: 10,
+                              color: COLORS.gray500,
+                            }}
+                          >
+                            Horario
+                          </Text>
+                          <Text
+                            style={{
+                              textAlign: "left",
+                              fontFamily: FONT.bold,
+                              fontSize: 13,
+                              color: COLORS.gray700,
+                            }}
+                          >
+                            {" "}
+                            {dataJob.workShift.name}
+                          </Text>
+                        </View>
+                        <View
+                          style={{
+                            flexDirection: "column",
+                            flex: 1,
+                            backgroundColor: COLORS.gray50,
+                            paddingHorizontal: 10,
+                            paddingVertical: 15,
+                            borderRadius: 5,
+                          }}
+                        >
+                          <Text
+                            style={{
+                              textAlign: "left",
+                              fontFamily: FONT.regular,
+                              fontSize: 10,
+                              color: COLORS.gray500,
+                            }}
+                          >
+                            Salario
+                          </Text>
+                          <Text
+                            style={{
+                              textAlign: "left",
+                              fontFamily: FONT.bold,
+                              fontSize: 13,
+                              color: COLORS.gray700,
+                            }}
+                          >
+                            {" "}
+                            {dataJob.salary
+                              ? `S/. ${dataJob.salary}`
+                              : "Sin especificar"}
+                          </Text>
+                        </View>
+                      </View>
                     </View>
-
                   </View>
-                  {/* <FlatList
+
+                  <View style={{ marginTop: 40 }}>
+                    <Tabs
+                      tabs={tabsToRender}
+                      activeTab={activeTab}
+                      setActiveTab={setActiveTab}
+                    />
+                  </View>
+
+                  {displayTabContent()}
+                  <View style={stylesSmallSpecifics.containerTwoCardJob}>
+                    {/* <FlatList
                     data={[
                       { id: 0, name: data.contract.name, icon: 21 },
                       { id: 1, name: data.workExperience.name, icon: 21 },
@@ -189,15 +432,34 @@ export const JobDetailsUserScreen = (props) => {
                     )}
                     contentContainerStyle={{ columnGap: SIZES.small / 2 }}
                   /> */}
+                  </View>
+                  <View style={{ marginBottom: 50 }}>
+                    <Company
+                      description={dataJob.author?.description}
+                      companyLogo={dataJob.author?.profile}
+                      jobTitle={dataJob.title}
+                      companyName={dataJob.author.name}
+                      province={dataJob.author?.province}
+                      district={dataJob.author?.district}
+                    />
+                  </View>
                 </View>
-                </View>
-
-               
               </>
             )}
           </ScrollView>
 
-          <Footer handleAddFavorite={handleAddFavoriteJob} isAddedToFav={isAddedToFav} showMessage={showMessage} />
+          {
+            <Footer
+              jobAuthor={dataJob.author.id}
+              idJob={params.itemId}
+              idApplicant={userId}
+              dataApplicants={currentApplicants}
+              setCurrentApplicants={setCurrentApplicants}
+              handleAddFavorite={handleAddFavoriteJob}
+              isAddedToFav={isAddedToFav}
+              showMessage={showMessage}
+            />
+          }
         </>
       </SafeAreaView>
     );

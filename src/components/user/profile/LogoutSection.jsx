@@ -9,24 +9,31 @@ import { clearUser } from "@features/user/userSlice";
 import { Icon } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
 const LogoutSection = () => {
+  const dispatch=useDispatch()
 
   const navigation=useNavigation()
-  const dispatch=useDispatch()
+  
+
+
   const handleLogout = async () => {
-    await axios
-      .post(`${backendURL}api/applicants/logout`,{},{withCredentials:"include"})
-      .then(({ data }) => console.log(data))
-      .then(()=>dispatch(clearUser()))
-      .then(()=> navigation.navigate("LoginScreen"))
-      .catch((e)=>console.log(e))
+    try {
+      await axios.post(`${backendURL}api/applicants/logout`,{});
+      dispatch(clearUser());
+      navigation.navigate("LoginScreen");
+    } catch (error) {
+      console.log(error);
+      dispatch(clearUser());
+      navigation.navigate("LoginScreen");
+
+    }
   };
 
-  const handleLogin = async () => {
-    await axios
-      .post(`${backendURL}api/applicants/login`,{email:"applicant1@gmail.com",password:"applicant1"},{withCredentials:"include"})
-      .then(({ data }) => console.log(data))
-      .catch((e)=>console.log(e))
-  };
+  // const handleLogin = async () => {
+  //   await axios
+  //     .post(`${backendURL}api/applicants/login`,{email:"applicant1@gmail.com",password:"applicant1"},{withCredentials:"include"})
+  //     .then(({ data }) => console.log(data))
+  //     .catch((e)=>console.log(e))
+  // };
 
   return (
     <View style={{gap:20,marginTop:30}}>
@@ -34,11 +41,11 @@ const LogoutSection = () => {
         <Text style={styles.text}>Cerrar sesión</Text>
         <Icon name="logout" type="material" color={COLORS.white}/>
       </TouchableOpacity>
-
+{/* 
       <Button style={styles.button}   mode="elevated" onPress={handleLogin}>
         <Text style={styles.text}>Login</Text>
         <Icon name="logout" type="material" color={COLORS.white}/>
-      </Button>
+      </Button> */}
     </View>
   );
 };

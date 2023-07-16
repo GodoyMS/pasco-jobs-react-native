@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
+     import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
 import React, { Component, useEffect,useState } from "react";
 import { TouchableOpacity } from "react-native";
 import stylesFavJobs from "@components/user/favJobs/stylesFavJobs";
@@ -20,7 +20,7 @@ export const FavoritesUserScreen = () => {
   const fetchData = async () => {
     try {
       
-      const response = await axios.get(`${backendURL}api/favoriteJobs`, {withCredentials:"include"});
+      const response = await axios.get(`${backendURL}api/favoriteJobs?where[user][equals]=${user.id}`);
       setDataFavJobs(response.data.docs);
       console.log(response)
       setIsLoading(false);
@@ -52,12 +52,7 @@ export const FavoritesUserScreen = () => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
       <View style={stylesFavJobs.container}>
-        <View style={stylesFavJobs.header}>
-          <Text style={stylesFavJobs.headerTitle}>Nearby jobs sdasd</Text>
-          <TouchableOpacity>
-            <Text style={stylesFavJobs.headerBtn}>Show all</Text>
-          </TouchableOpacity>
-        </View>
+       
 
         <View style={stylesFavJobs.cardsContainer}>
           <Text

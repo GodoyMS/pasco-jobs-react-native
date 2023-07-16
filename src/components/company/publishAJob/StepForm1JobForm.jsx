@@ -90,7 +90,6 @@ const StepForm1JobForm = ({
         autoCompleteType="job"
         placeholder="Escribe un  título breve y conciso"
       />
-      <Text>{title.value}</Text>
 
       {/**CATEGORY */}
 

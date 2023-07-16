@@ -1,3 +1,5 @@
 
-export const backendURL="http://192.168.1.33:4000/"
+ //export const backendURL="http://localhost:4000/"
+export const backendURL="https://pasco-jobs-backend-w4ck2.ondigitalocean.app/"
+
 

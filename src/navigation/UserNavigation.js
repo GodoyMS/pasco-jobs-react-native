@@ -34,8 +34,7 @@ const UserNavigation = () => {
         await axios
           .post(
             `${backendURL}api/applicants/refresh-token`,
-            {},
-            { withCredentials: "include" }
+            {}
           )
           .then(({ data }) => dispatch(refreshUserOrCompanyToken(data)))
           .catch((e) => console.log(e));

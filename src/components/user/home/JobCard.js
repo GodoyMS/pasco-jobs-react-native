@@ -15,10 +15,12 @@ import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import icons from "@constants/icons";
 import "moment/locale/es"; // Import the Spanish locale
+import companyDefaultProfile from "@assets/images/company/defaultprofilecompany-min.png";
+import AgeDateFormat from "@components/dates/AgeDateFormat";
 
 export const JobCard = ({ dataJob, userId }) => {
   const favJobsRedux = useSelector((state) => state.user.favUserJobs);
-
+  console.log(favJobsRedux)
   const [isAddedToFav, setIsAddedToFav] = useState(false);
   const dispatch = useDispatch();
 
@@ -40,8 +42,7 @@ export const JobCard = ({ dataJob, userId }) => {
     await axios
       .post(
         `${backendURL}api/favoriteJobs`,
-        { user: userId, job: dataJob.id },
-        { withCredentials: "include" }
+        { user: userId, job: dataJob.id }
       )
       .then(({ data }) => dispatch(addFavoriteJob(data.doc)))
 
@@ -55,30 +56,21 @@ export const JobCard = ({ dataJob, userId }) => {
   };
 
   return (
-    <View activeOpacity={0.7} style={styles.cardJob} onPress={navigateToDetails}>
+    <TouchableOpacity
+      activeOpacity={0.7}
+      style={styles.cardJob}
+      onPress={navigateToDetails}
+    >
       <View style={stylesHome.cardJob}>
         <View style={stylesHome.containerOneCardJob}>
           {showMessage && (
             <Text style={styles.message}>Añadido a favoritos</Text>
           )}
 
-          <Image
-            source={{
-              uri: `${dataJob.author.profile.url}`,
-              method:"GET"
-            }}
-              
-            style={stylesHome.containerOneCardJobView1}
-          />
-
-          <View style={{flexDirection:"row",columnGap:10}}>
-            <TouchableOpacity >
-                <Icon
-                  name="flag"
-                  type="ionicons"
-                  color={COLORS.secondary}
-                />
-              </TouchableOpacity>
+          <View style={{ flexDirection: "row", columnGap: 10 }}>
+            <TouchableOpacity>
+              <Icon name="flag" type="ionicons" color={COLORS.secondary} />
+            </TouchableOpacity>
             {isAddedToFav ? (
               <View>
                 <Icon name="favorite" type="material" color={COLORS.red600} />
@@ -94,74 +86,155 @@ export const JobCard = ({ dataJob, userId }) => {
             )}
           </View>
         </View>
-        <View>
-          <Text style={{fontFamily:FONT.regular,color:COLORS.gray700,fontSize:SIZES.small}}>{dataJob.author.name}</Text>
+
+        {/* */}
+
+        <View
+          style={{
+            paddingHorizontal: 0,
+            paddingVertical: 0,
+            borderRadius: 5,
+            marginVertical: 1,
+            marginHorizontal: 0,
+            backgroundColor: COLORS.white,
+          }}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              columnGap: 10,
+            }}
+          >
+            <Image
+              source={
+                dataJob.author?.profile
+                  ? {
+                      uri: dataJob.author?.profile,
+                    }
+                  : companyDefaultProfile
+              }
+              style={{
+                width: 40,
+                height: "auto",
+                aspectRatio: "1/1",
+                borderRadius: 25,
+              }}
+            />
+            <View style={{ flexDirection: "column", rowGap: 0 }}>
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontFamily: FONT.medium,
+                  color: COLORS.gray900,
+                  flex: 1,
+                  flexDirection: "row",
+                }}
+              >
+                {dataJob.author?.name}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 10,
+                  fontFamily: FONT.regular,
+                  color: COLORS.gray700,
+                  flex: 1,
+                  flexDirection: "row",
+                }}
+              >
+                <AgeDateFormat createdAt={dataJob.createdAt} />
+              </Text>
+            </View>
+          </View>
         </View>
-        <View>
+
+        <View style={{ marginTop: 20 }}>
           <View style={stylesHome.containerOneCardJobView2}>
             <Text style={stylesHome.containerOneCardJobView2Text1}>
               {dataJob.title}
             </Text>
-
           </View>
         </View>
         <View style={stylesHome.containerTwoCardJob}>
-          <FlatList
-            data={[
-              { id: 0, name: dataJob.contract.name, icon: 21 },
-              { id: 1, name: dataJob.workExperience.name, icon: 21 },
-              { id: 2, name: dataJob.workShift.name, icon: 21 },
-              { id: 3, name: "S/ " + dataJob.salary, icon: 123 },
-            ]}
-            horizontal
-            keyExtractor={(item) => String(item.id)}
-            showsHorizontalScrollIndicator={false}
-            renderItem={({ item }) => (
-              <Text style={stylesHome.containerTwoCardJobText}>
-                {item.name}
-              </Text>
-            )}
-            contentContainerStyle={{ columnGap: SIZES.small / 2 }}
-          />
+          <View
+            style={{
+              flexDirection: "row",
+              flexWrap: "wrap",
+              columnGap: 4,
+              rowGap: 5,
+            }}
+          >
+            {[
+              {
+                id: 0,
+                name: dataJob.contract.name,
+                value: dataJob.contract.name,
+                icon: 21,
+              },
+              {
+                id: 1,
+                name: dataJob.workExperience.name,
+                value: dataJob.workExperience.name,
+                icon: 21,
+              },
+              {
+                id: 2,
+                name: dataJob.workShift.name,
+                value: dataJob.workShift.name,
+                icon: 21,
+              },
+              {
+                id: 3,
+                name: `S/. ${dataJob.salary}`,
+                value: dataJob.salary,
+                icon: 123,
+              },
+            ].map((item) => {
+              if (!item.value) return;
+              return (
+                <Text
+                  key={item.id}
+                  style={{
+                    backgroundColor: COLORS.lightWhite,
+                    textAlign: "center",
+                    paddingHorizontal: 5,
+                    paddingVertical: 4,
+                    borderRadius: 10,
+                    color: COLORS.black,
+                    fontSize: SIZES.small,
+                    alignItems: "center",
+                    fontFamily: FONT.regular,
+                  }}
+                >
+                  {item.name}
+                </Text>
+              );
+            })}
+          </View>
         </View>
-        <View style={{flexDirection:"row",columnGap:10,marginTop:30}}>
-          <Image source={icons.location} style={{width:15,height:15}}/>
-          <Text style={stylesHome.containerOneCardJobView2Text2}>
-              {dataJob.provincia}
-           </Text>
 
-        </View>
+        <View
+          style={{
+            width: "100%",
+            marginTop:20,
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <View style={{ flexDirection: "row" }}>
+            <Image source={icons.location} style={{ width: 15, height: 15 }} />
+            <Text
+              style={{
+                fontSize: SIZES.small,
+                fontFamily: FONT.regular,
+                color: COLORS.gray600,
+              }}
+            >
+              {dataJob.province}- {dataJob.district}
+            </Text>
+          </View>
 
-        <View style={stylesHome.containerThreeCardJob}>
-          <Text style={stylesHome.containerThreeCardDate}>
-            {Math.floor(new Date().getTime() / 1000) -
-              Math.floor(new Date(dataJob.createdAt).getTime() / 1000) <
-              3600 && moment(dataJob.createdAt).locale("es").startOf("minutes").fromNow()}
-            {Math.floor(new Date().getTime() / 1000) -
-              Math.floor(new Date(dataJob.createdAt).getTime() / 1000) <
-              7200 &&
-              3600 <=
-                Math.floor(new Date().getTime() / 1000) -
-                  Math.floor(new Date(dataJob.createdAt).getTime() / 1000) &&
-              moment(dataJob.createdAt).startOf("hour").locale("es").fromNow()}
-            {Math.floor(new Date().getTime() / 1000) -
-              Math.floor(new Date(dataJob.createdAt).getTime() / 1000) <
-              86400 &&
-              7200 <=
-                Math.floor(new Date().getTime() / 1000) -
-                  Math.floor(new Date(dataJob.createdAt).getTime() / 1000) &&
-              moment(dataJob.createdAt).startOf("hours").locale("es").fromNow()}
-            {Math.floor(new Date().getTime() / 1000) -
-              Math.floor(new Date(dataJob.createdAt).getTime() / 1000) <
-              172800 &&
-              86400 <=
-                Math.floor(new Date().getTime() / 1000) -
-                  Math.floor(new Date(dataJob.createdAt).getTime() / 1000) &&
-              moment(dataJob.createdAt).startOf("day").locale("es").fromNow()}
-            {Math.floor(new Date().getTime() / 1000) -
-              Math.floor(new Date(dataJob.createdAt).getTime() / 1000) >=
-              172800 && moment(dataJob.createdAt).locale("es").startOf("days").fromNow()}
-          </Text>
           <TouchableOpacity
             onPress={navigateToDetails}
             style={stylesHome.containerThreeButtonApply}
@@ -172,7 +245,7 @@ export const JobCard = ({ dataJob, userId }) => {
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 export default JobCard;
@@ -182,13 +255,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: COLORS.primary,
     height: "auto",
-    marginVertical: 5,
+    marginVertical:5,
   },
   message: {
     position: "absolute",
     top: 20,
     right: 20,
-    zIndex: 100,
+    zIndex: 500,
     backgroundColor: "#333333",
     color: "#FFFFFF",
     width: 100,

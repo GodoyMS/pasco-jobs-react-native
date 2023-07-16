@@ -456,7 +456,7 @@ export const HomeUserScreen = ({ navigation }) => {
                   onPress={() => {
                     setIsCityOpen(false);
                     setPage(1);
-                    dispatch(setUserLocation("Daniel A. Carrion"));
+                    dispatch(setUserLocation("Daniel Alcides Carrión"));
                   }}
                   style={{ paddingVertical: 15 }}
                 >
@@ -570,16 +570,21 @@ export const HomeUserScreen = ({ navigation }) => {
           </View>
         </Modal>
 
-        <Animated.View
+
+
+        <Animated.View style={{            height: containerHeight,
+}}>
+        <View style={{flexDirection:"row",justifyContent:"flex-end",paddingHorizontal:20,marginTop:15}}><Icon color={COLORS.secondary} name="arrow-long-right" type="entypo"/></View>
+
+        <View
           style={{
-            marginTop: SIZES.xLarge,
+            marginTop: 5,
             marginBottom: 5,
             zIndex: 600,
-            height: containerHeight,
           }}
         >
           <FlatList
-            style={{ marginHorizontal: 20, height: 50 }}
+            style={{ paddingLeft: 20, height: 50 }}
             data={categories}
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -601,15 +606,15 @@ export const HomeUserScreen = ({ navigation }) => {
               >
                 <View
                   style={{
-                    flex: 1,
                     flexDirection: "row",
                     columnGap: 5,
+                    
                     alignItems: "center",
                     justifyContent: "center",
                     borderColor: "black",
                     borderRadius: 20,
                     paddingHorizontal: 10,
-                    paddingVertical: 5,
+                    paddingVertical: 10,
                     marginRight: 10,
                     backgroundColor:
                       userFavCategory === item.value
@@ -649,9 +654,10 @@ export const HomeUserScreen = ({ navigation }) => {
               paddingHorizontal: 20,
               alignItems: "center",
               marginTop: 15,
+              zIndex:800
             }}
           >
-            <View>
+            <View style={{zIndex:700}}>
               <Text
                 style={{
                   paddingHorizontal: 0,
@@ -664,7 +670,49 @@ export const HomeUserScreen = ({ navigation }) => {
                 Trabajos recientes
               </Text>
             </View>
-            <View style={{ flexDirection: "row", columnGap: 5 }}>
+
+            {userFavCategory&&
+              (
+                <View>
+             
+                <TouchableOpacity onPress={()=>dispatch(setUserFavCategory(""))}>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          backgroundColor: COLORS.white,
+                          borderRadius: 20,
+                          paddingHorizontal: 5,
+                          paddingVertical: 2,
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontFamily: FONT.medium,
+                            fontSize: SIZES.xSmall,
+                            color: COLORS.indigo700,
+                          }}
+                        >
+                          {" "}
+                          {userFavCategory}
+                        </Text>
+                        <Icon
+                          size={20}
+                          name="close"
+                          type="material"
+                          color={COLORS.gray800}
+                        />
+                      </View>
+                    </TouchableOpacity>
+                </View>
+                
+              )}
+
+           
+
+
+            <View style={{ flexDirection: "row", columnGap: 5,zIndex:700 }}>
               {(valueContract ||
                 valueExperience ||
                 valueSalary ||
@@ -711,14 +759,19 @@ export const HomeUserScreen = ({ navigation }) => {
               </TouchableOpacity>
             </View>
           </View>
+        </View>
+        
         </Animated.View>
 
+
+       
+
         {!isLoading && dataApi && user ? (
-          <View style={{ display: "flex", flexDirection: "column" }}>
+          <View style={{ display: "flex", flexDirection: "column",marginTop:30 }}>
             <Animated.FlatList
               ref={flatListRef}
               data={dataApi.docs}
-              contentContainerStyle={{ paddingBottom: 900 }}
+              contentContainerStyle={{ paddingBottom: 500 }}
               horizontal={false}
               showsVerticalScrollIndicator={true}
               onEndReachedThreshold={0.1}
@@ -727,7 +780,8 @@ export const HomeUserScreen = ({ navigation }) => {
               onScroll={handleScroll}
               renderItem={({ item }) => (
                 <JobCard userId={user.id} dataJob={item} />
-              )}
+              )} 
+              
               ListFooterComponent={
                 dataApi.docs.length > 0 ? (
                   <View

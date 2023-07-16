@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import { Button } from "react-native-paper";
 import {
@@ -33,10 +34,12 @@ import { jobTitleValidaotr } from "@helpers/company/jobTitleValidator";
 import { jobSelectOptionValidator } from "@helpers/company/jobSelectOptionValidator";
 import { useSelector } from "react-redux";
 import FormLoader from "@components/loaders/FormLoader";
+import emptyjobsImage from "@assets/images/jobs/emptyjobs-min.png";
+
 const PublishAJobCompanyScreen = () => {
   const infoCompany = useSelector((state) => state.company.infoCompany);
 
-  const [stepForm, setStepForm] = useState(1);
+  const [stepForm, setStepForm] = useState(4);
 
   const [selected, setSelected] = React.useState("");
   const [title, setTitle] = useState({ value: "", error: "" });
@@ -67,7 +70,7 @@ const PublishAJobCompanyScreen = () => {
   const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSucces] = useState(false);
 
-  const resetAllValues=()=>{
+  const resetAllValues = () => {
     setTitle({ value: "", error: "" });
     setDescription({ value: "", error: "" });
     setSelectedCategory("");
@@ -83,12 +86,13 @@ const PublishAJobCompanyScreen = () => {
     setSalary({ value: "", error: "" });
     setIsSucces(false);
     setStepForm(1);
-    
-  }
+  };
 
-  console.log(responsabilities.map((e) => {
-    return { item: e.name };
-  }));
+  console.log(
+    responsabilities.map((e) => {
+      return { item: e.name };
+    })
+  );
 
   const { width } = useWindowDimensions();
 
@@ -161,8 +165,7 @@ const PublishAJobCompanyScreen = () => {
           }),
           province: province.toString(),
           district: district.toString(),
-        },
-        { withCredentials: "include" }
+        }
       )
       .then(({ data }) => console.log(data))
       .then(() => setIsSucces(true))
@@ -170,10 +173,8 @@ const PublishAJobCompanyScreen = () => {
       .finally(() => setIsLoading(false));
   };
 
-  
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
-      <FormLoader message={"Actualizando"} isLoading={isLoading} />
       <View style={{ marginTop: 30 }}>
         <View
           style={{
@@ -276,7 +277,7 @@ const PublishAJobCompanyScreen = () => {
             />
           )}
           {infoCompany && stepForm === 4 && (
-            <View style={{ marginTop: 50 }}>
+            <ScrollView scrollEnabled={true}  style={{ marginTop: 0,marginBottom:200 }}>
               {!isSuccess && (
                 <TouchableOpacity
                   style={{
@@ -284,38 +285,30 @@ const PublishAJobCompanyScreen = () => {
                     paddingVertical: 10,
                     borderRadius: 10,
                     columnGap: 10,
-                    backgroundColor: COLORS.gray700,
+                    backgroundColor: COLORS.gray100,
                     maxWidth: 200,
+                    marginTop:50,
                     justifyContent: "center",
                     flexDirection: "row",
                     alignItems: "center",
                   }}
-                  underlayColor={COLORS.gray800}
+                  underlayColor={COLORS.gray100}
                   activeOpacity={0.9}
                   onPress={() => setStepForm(stepForm - 1)}
                 >
                   <Icon
                     name="arrow-back"
-                    color={COLORS.white}
+                    color={COLORS.gray800}
                     type="ionsicon"
                   />
-                  <Text style={{ color: COLORS.white }}>Atras</Text>
+                  <Text style={{ color: COLORS.gray800,fontFamily:FONT.medium }}>Atras</Text>
                 </TouchableOpacity>
               )}
 
               {isSuccess && (
                 <>
-                  <Text
-                    style={{
-                      fontFamily: FONT.medium,
-                      paddingHorizontal: 20,
-                      color: COLORS.indigo600,
-                      fontSize: SIZES.small,
-                    }}
-                  >
-                    Ahora tu oferta de empleo es público y llegara a miles de
-                    aspirantes.
-                  </Text>
+                <View style={{flexDirection:"column",alignItems:"center"}}>
+               
                   <Text
                     style={{
                       fontSize: SIZES.medium,
@@ -328,41 +321,107 @@ const PublishAJobCompanyScreen = () => {
                   >
                     ¡Gracias por confiar en Pasco Jobs!
                   </Text>
+                  <Text
+                    style={{
+                      fontFamily: FONT.medium,
+                      paddingHorizontal: 20,
+                      color: COLORS.gray700,
+                      fontSize: SIZES.small,
+                      textAlign: "center",
+                      maxWidth:300,
+                    }}
+                  >
+                    Ahora tu oferta de empleo es público y llegara a miles de
+                    aspirantes.
+                  </Text>
+
+                </View>
+               
                 </>
               )}
+              {isSuccess && (
+                              <View
+                              style={{
+                                width: "100%",
+                                flexDirection: "column",
+                                justifyContent: "center",
+                                marginTop: 50,
+                                alignItems: "center",
+                              }}
+                            >
+                              <Image
+                                resizeMode="cover"
+                                style={{
+                                  width: 200,
+                                  height: 200,
+                                  aspectRatio: "1/1",
+                                  marginHorizontal: "auto",
+                                }}
+                                size="large"
+                                source={emptyjobsImage}
+                              />
+                            </View>
 
-              <Button
-                mode="contained"
+              )}
+
+        
+              <FormLoader message={"Actualizando"} isLoading={false} />
+
+              <TouchableOpacity
                 onPress={isSuccess ? () => void null : handleSubmitJob}
+                activeOpacity={isSuccess ? 1 :0.7}
                 style={{
-                  marginTop: isSuccess ? 20 : 60,
-                  
-                  paddingVertical:7,
+                  marginTop: isSuccess ? 20 : 20,
+
+                  paddingVertical: 15,
                   fontFamily: FONT.medium,
-                  
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  borderRadius: 15,
+                  columnGap: 15,
+                  alignItems:"center",
+
                   backgroundColor: isSuccess
-                    ? COLORS.green500
+                    ? COLORS.green100
                     : COLORS.tertiary,
                 }}
               >
-               <Text style={{fontSize:SIZES.medium}}>{isSuccess ? "Publicado exitosamente" : "Publicar"}</Text> 
-              </Button>
+                <Text
+                  style={{
+                    fontSize: SIZES.medium,
+                    color: isSuccess? COLORS.green600 : COLORS.white,
+                    fontFamily: FONT.bold,
+                  }}
+                >
+                  {isSuccess ? "Publicado exitosamente" : "Publicar"}
+                </Text>
+                {isSuccess && (
+                  <Icon
+                    name="checkcircle"
+                    color={COLORS.green800}
+                    type="antdesign"
+                  />
+                )}
+              </TouchableOpacity>
 
               {isSuccess && (
                 <Button
+
                   mode="contained"
                   onPress={resetAllValues}
-                  
                   style={{
-                    marginTop: 60,
+                    marginTop: 20,
                     fontFamily: FONT.medium,
-                    backgroundColor:COLORS.indigo700
+                    backgroundColor: COLORS.indigo100,
+                    
+                   
                   }}
                 >
-                 Publicar otra oferta de empleo
+                  <Text style={{textAlign:"center",color:COLORS.tertiary,fontFamily:FONT.medium}}>  Publicar otra oferta de empleo
+</Text>
                 </Button>
               )}
-            </View>
+            </ScrollView>
           )}
 
           {/**Buttons */}
@@ -383,10 +442,13 @@ const PublishAJobCompanyScreen = () => {
                     paddingHorizontal: 10,
                     paddingVertical: 10,
                     borderRadius: 10,
-                    columnGap: 10,
-                    backgroundColor: COLORS.gray700,
-                    flex: 1,
                     maxWidth: 200,
+                    columnGap: 10,
+                    backgroundColor: COLORS.gray100,
+                    borderWidth:1,
+                    borderColor:COLORS.gray400,
+                    flex:1,
+                   
                     justifyContent: "center",
                     flexDirection: "row",
                     alignItems: "center",
@@ -397,11 +459,10 @@ const PublishAJobCompanyScreen = () => {
                 >
                   <Icon
                     name="arrow-back"
-                    color={COLORS.white}
-                    type="ionsicon"
+                    color={COLORS.gray800}                    type="ionsicon"
                   />
 
-                  <Text style={{ color: COLORS.white }}>Atras</Text>
+                  <Text style={{ color: COLORS.gray800,fontFamily:FONT.medium }}>Atras</Text>
                 </TouchableOpacity>
               )}
 
@@ -413,8 +474,11 @@ const PublishAJobCompanyScreen = () => {
                     borderRadius: 10,
                     maxWidth: 200,
                     columnGap: 10,
-                    backgroundColor: COLORS.gray700,
-                    flex: 1,
+                    backgroundColor: COLORS.gray100,
+                    borderWidth:1,
+                    borderColor:COLORS.gray400,
+                    flex:1,
+                   
                     justifyContent: "center",
                     flexDirection: "row",
                     alignItems: "center",
@@ -423,10 +487,10 @@ const PublishAJobCompanyScreen = () => {
                   underlayColor={COLORS.gray800}
                   activeOpacity={0.9}
                 >
-                  <Text style={{ color: COLORS.white }}>Siguiente</Text>
+                  <Text style={{ color: COLORS.gray800,fontFamily:FONT.medium }}>Siguiente</Text>
                   <Icon
                     name="arrow-forward"
-                    color={COLORS.white}
+                    color={COLORS.gray800}
                     type="ionsicon"
                   />
                 </TouchableOpacity>

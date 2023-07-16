@@ -151,10 +151,14 @@ const FormRegistrationUserStep = ({ step, setStep, navigation }) => {
 
       {step === 1 && (
         <>
-          <Text>Tus datos introducidos te ayudara </Text>
+          {/* <Text style={{fontFamily:FONT.medium,color:COLORS.gray700}}>Tus datos introducidos te ayudara </Text> */}
           <TextInput
             label="Nombre"
             returnKeyType="next"
+            selectionColor={COLORS.gray800}
+            
+
+            
             value={name.value}
             onChangeText={(text) => setName({ value: text, error: "" })}
             error={!!name.error}

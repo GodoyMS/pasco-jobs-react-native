@@ -56,14 +56,15 @@ const stylesHome = StyleSheet.create({
   containerOneCardJob: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
     flex: 1,
-    paddingVertical:10,
+    paddingBottom:5,
     columnGap: 3,
+    zIndex:500
   },
   containerOneCardJobView1: {
-    width: 35,
-    height: 35,
+    width: 50,
+    height: 50,
     borderRadius: 5,
   },
   containerOneCardJobView2: {
@@ -108,7 +109,7 @@ const stylesHome = StyleSheet.create({
   },
 
   containerThreeCardJob: {
-    flex: 1,
+
     marginTop: 10,
     flexDirection: "row",
     alignItems: "center",

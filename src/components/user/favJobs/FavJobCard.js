@@ -6,12 +6,14 @@ import { Icon } from "@rneui/themed";
 import { FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StyleSheet } from "react-native";
-import { COLORS, SIZES } from "@constants/theme";
+import { COLORS, FONT, SIZES } from "@constants/theme";
 import axios from "axios";
 import { backendURL } from "@config/config";
 import stylesFavJobs from "./stylesFavJobs";
 import { useDispatch } from "react-redux";
 import { addFavoriteJob, deleteFavoriteJob } from "@features/user/userSlice";
+import companyDefaultProfile from "@assets/images/company/defaultprofilecompany-min.png";
+import AgeDateFormat from "@components/dates/AgeDateFormat";
 
 export const FavJobCard = ({ dataFavJob, userId }) => {
   const dispatch = useDispatch();
@@ -23,21 +25,18 @@ export const FavJobCard = ({ dataFavJob, userId }) => {
 
   const navigation = useNavigation();
 
-  const handleDeleteJob=async()=>{
-
-    await axios.delete( `${backendURL}api/favoriteJobs/${dataFavJob.id}`, { withCredentials: "include" })
-    .then(({data}) =>dispatch(deleteFavoriteJob(data.job.id)))
-    .catch((e)=>console.log(e))
-
-
-  }
+  const handleDeleteJob = async () => {
+    await axios
+      .delete(`${backendURL}api/favoriteJobs/${dataFavJob.id}`)
+      .then(({ data }) => dispatch(deleteFavoriteJob(data.job.id)))
+      .catch((e) => console.log(e));
+  };
 
   const handleAddFavoriteJob = async () => {
     await axios
       .post(
         `${backendURL}api/favoriteJobs`,
-        { user: userId, job: dataFavJob.id },
-        { withCredentials: "include" }
+        { user: userId, job: dataFavJob.id }
       )
       .then(({ data }) => dispatch(addFavoriteJob(data)))
       .then(
@@ -48,27 +47,17 @@ export const FavJobCard = ({ dataFavJob, userId }) => {
   };
 
   return (
-    <TouchableWithoutFeedback
-      style={styles.cardJob}
-      onPress={navigateToDetails}
-    >
+    <TouchableOpacity activeOpacity={0.7} style={styles.cardJob}>
       <View style={stylesFavJobs.cardJob}>
         <View style={stylesFavJobs.containerOneCardJob}>
-          <Image
-            source={{
-              uri: `${dataFavJob.job.author.profile.url}`,
-            }}
-            style={stylesFavJobs.containerOneCardJobView1}
-          />
-
           <View style={stylesFavJobs.containerOneCardJobView2}>
             <Text style={stylesFavJobs.containerOneCardJobView2Text1}>
               {" "}
-              {dataFavJob.job.title}
+              {dataFavJob.job?.title}
             </Text>
             <Text style={stylesFavJobs.containerOneCardJobView2Text2}>
               {" "}
-              {dataFavJob.job.provincia}
+              {dataFavJob.job?.province}-{dataFavJob.job?.district}
             </Text>
           </View>
           <View>
@@ -82,28 +71,67 @@ export const FavJobCard = ({ dataFavJob, userId }) => {
           </View>
         </View>
         <View style={stylesFavJobs.containerTwoCardJob}>
-          <FlatList
-            data={[
-              { id: 0, name: dataFavJob.job.contract.name, icon: 21 },
-              { id: 1, name: dataFavJob.job.workExperience.name, icon: 21 },
-              { id: 2, name: dataFavJob.job.workShift.name, icon: 21 },
-              { id: 3, name: "S/. " + dataFavJob.job.salary, icon: 123 },
-            ]}
-            horizontal
-            keyExtractor={(item) => String(item.id)}
-            showsHorizontalScrollIndicator={true}
-            renderItem={({ item }) => (
-              <Text style={stylesFavJobs.containerTwoCardJobText}>
-                {item.name}
-              </Text>
-            )}
-            contentContainerStyle={{ columnGap: SIZES.small / 2 }}
-          />
+          <View
+            style={{
+              flexDirection: "row",
+              flexWrap: "wrap",
+              columnGap: 4,
+              rowGap: 5,
+            }}
+          >
+            {[
+              {
+                id: 0,
+                name: dataFavJob.job?.contract?.name,
+                value: dataFavJob.job?.contract?.name,
+                icon: 21,
+              },
+              {
+                id: 1,
+                name: dataFavJob.job?.workExperience?.name,
+                value: dataFavJob.job?.workExperience?.name,
+                icon: 21,
+              },
+              {
+                id: 2,
+                name: dataFavJob.job?.workShift?.name,
+                value: dataFavJob.job?.workShift?.name,
+                icon: 21,
+              },
+              {
+                id: 3,
+                name: `S/. ${dataFavJob?.job?.salary}`,
+                value: dataFavJob?.job?.salary,
+                icon: 123,
+              },
+             
+            ].map((item) => {
+              if (!item.value) return;
+              return (
+                <Text
+                  key={item.id}
+                  style={{
+                    backgroundColor: COLORS.lightWhite,
+                    textAlign: "center",
+                    paddingHorizontal: 5,
+                    paddingVertical: 4,
+                    borderRadius: 10,
+                    color: COLORS.black,
+                    fontSize: SIZES.small,
+                    alignItems: "center",
+                    fontFamily: FONT.regular,
+                  }}
+                >
+                  {item.name}
+                </Text>
+              );
+            })}
+          </View>
         </View>
 
         <View style={stylesFavJobs.containerThreeCardJob}>
           <Text style={stylesFavJobs.containerThreeCardDate}>
-            Hace un momoento
+            <AgeDateFormat createdAt={dataFavJob.job.createdAt} />
           </Text>
           <TouchableOpacity
             onPress={navigateToDetails}
@@ -115,15 +143,16 @@ export const FavJobCard = ({ dataFavJob, userId }) => {
           </TouchableOpacity>
         </View>
       </View>
-    </TouchableWithoutFeedback>
+    </TouchableOpacity>
   );
 };
 export default FavJobCard;
 const styles = StyleSheet.create({
   cardJob: {
     width: "100%",
-    paddingHorizontal: 20,
+    paddingHorizontal: 0,
     backgroundColor: COLORS.primary,
-    height: 300,
+    height: "auto",
+    marginVertical:5
   },
 });

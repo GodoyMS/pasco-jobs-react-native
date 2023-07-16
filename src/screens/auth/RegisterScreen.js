@@ -1,23 +1,14 @@
-import Background from "@components/login/Background";
-import axios from "axios";
-import { backendURL } from "@config/config";
+
 import {
-  SafeAreaView,
-  Text,
+
   View,
-  ImageBackground,
-  KeyboardAvoidingView,
-  TouchableOpacity,
-  TouchableHighlight,
+
   ScrollView,
 } from "react-native";
-import Button from "@components/login/Button";
 
 import { createStackNavigator } from "@react-navigation/stack";
-import TextInput from "@components/login/TextInput";
 import { StyleSheet } from "react-native";
 import { COLORS, FONT, SIZES } from "@constants/theme";
-import { Icon } from "@rneui/themed";
 import { useState } from "react";
 
 import {
@@ -32,7 +23,7 @@ const Stack = createStackNavigator();
 
 export const RegisterScreen = ({ navigation }) => {
 
-  const[stepForm,setStepForm]=useState(3)
+  const[stepForm,setStepForm]=useState(1)
 
   return (
     <>
@@ -40,19 +31,7 @@ export const RegisterScreen = ({ navigation }) => {
         <ScrollView 
           style={{ flex: 1, width: "100%", backgroundColor: COLORS.lightWhite }}
         >
-          {/* <View style={{ width: "100%" }}>
-            <Text
-              style={{
-                textAlign: "left",
-                fontFamily: FONT.medium,
-                fontSize: SIZES.xLarge,
-                fontWeight: "bold",
-                color: COLORS.gray800,
-              }}
-            >
-              Regístrate
-            </Text>
-          </View> */}
+
           <View
             style={{
               flexDirection: "row",

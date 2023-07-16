@@ -12,7 +12,8 @@ import {
   ScrollView,
   
 } from "react-native";
-
+import woman from "@assets/images/manwoman/womanFlatIllustration.jpg";
+import man from "@assets/images/manwoman/manFlatIllustration.jpg";
 import { useSelector } from "react-redux";
 import userImage from "@assets/images/user.png";
 import { COLORS, FONT, SIZES } from "@constants/theme";
@@ -21,8 +22,6 @@ import { StatusBar } from "expo-status-bar";
 import axios from "axios";
 import { setOnlyUserInfo, setUser } from "@features/user/userSlice";
 import { backendURL } from "@config/config";
-import { launchImageLibrary } from "react-native-image-picker";
-import { Platform } from "react-native";
 import { Icon } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
@@ -43,6 +42,7 @@ export const ProfileUserScreen = ({ navigation }) => {
       iconName: "user",
       iconType: "feather",
       onClick: "",
+      route:"AccountManagerUser"
     },
     {
       id: 1,
@@ -50,6 +50,8 @@ export const ProfileUserScreen = ({ navigation }) => {
       iconName: "info",
       iconType: "feather",
       onClick: "",
+      route:"InformationUserScreeen"
+
     },
     {
       id: 2,
@@ -57,6 +59,8 @@ export const ProfileUserScreen = ({ navigation }) => {
       iconName: "flag",
       iconType: "feather",
       onClick: "",
+      route:"ReportAProblem"
+
     },
     {
       id: 3,
@@ -64,6 +68,7 @@ export const ProfileUserScreen = ({ navigation }) => {
       iconName: "building-o",
       iconType: "font-awesome",
       onClick: "",
+      route:"ContactPascoJobsScreen"
     },
     {
       id: 4,
@@ -71,6 +76,8 @@ export const ProfileUserScreen = ({ navigation }) => {
       iconName: "code",
       iconType: "entypo",
       onClick: "",
+      route:"ContactDeveloperScreen"
+
     },
   ];
 
@@ -129,8 +136,7 @@ export const ProfileUserScreen = ({ navigation }) => {
       .then(({ data }) =>
         axios.patch(
           `${backendURL}api/applicants/${userInfo.id}`,
-          { profile: data.url },
-          { withCredentials: "include" }
+          { profile: data.url }
         )
       )
       .then(({ data }) => dispatch(setOnlyUserInfo({ user: data.doc })))
@@ -179,10 +185,10 @@ export const ProfileUserScreen = ({ navigation }) => {
                 />
                 <View style={{ marginTop: 20 }}>
                   <ButtonModal
-                    style={styles.buttonModalConfirmation}
+                    
                     onPress={handleImageUpload}
                   >
-                    <Text style={styles.textButton}>
+                    <Text style={{color:COLORS.indigo800}}>
                       Guardar foto de perfil
                     </Text>
                   </ButtonModal>
@@ -238,8 +244,10 @@ export const ProfileUserScreen = ({ navigation }) => {
                 {!userInfo.profile && (
                   <Image
                     resizeMode="cover"
-                    style={{ width: "100%", height: 250, borderRadius: 10 }}
-                    source={userImage}
+                    style={{ width: "100%", height: "100%", borderRadius: 10 }}
+                    source={ userInfo?.sex === "Hombre"
+                ? man
+                : woman}
                   />
                 )}
               </View>
@@ -415,6 +423,7 @@ export const ProfileUserScreen = ({ navigation }) => {
 
               {generalRoutes.map((e) => (
                 <TouchableOpacity
+                  onPress={()=>navigateToDetails(e.route)}
                   key={e.id}
                   activeOpacity={0.6}
                   style={{

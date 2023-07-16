@@ -2,7 +2,7 @@ import axios from "axios";
 import { setUser,clearUser } from "./userSlice";
 
 const refreshToken=async()=>{
-    await axios.post(`${backendURL}api/applicants/refresh-token`, {},{withCredentials:"include"})
+    await axios.post(`${backendURL}api/applicants/refresh-token`, {})
     .then(({data})=>{return data.token})
     .catch((e)=>console.log(e))
 }

@@ -23,7 +23,7 @@ const stylesFavJobs = StyleSheet.create({
     color: COLORS.gray,
   },
   cardsContainer: {
-    marginTop: SIZES.medium,
+    marginTop: 40,
     gap: SIZES.small,
   },
 
@@ -77,7 +77,7 @@ const stylesFavJobs = StyleSheet.create({
   containerOneCardJobView2Text2: {
     fontSize: SIZES.small,
     fontFamily: FONT.regular,
-    color: COLORS.gray,
+    color: COLORS.gray700,
     flex: 1,
     flexDirection: "row",
   },

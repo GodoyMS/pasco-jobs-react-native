@@ -46,8 +46,7 @@ export const LoginCompanyScreen = ({ navigation }) => {
         {
           email: email.value,
           password: password.value,
-        },
-        { withCredentials: "include" }
+        }
       )
 
       .then(({ data }) => {dispatch(setCompany(data));dispatch(clearUser())})
@@ -138,7 +137,7 @@ export const LoginCompanyScreen = ({ navigation }) => {
         />
         <View style={styles.forgotPassword}>
           <TouchableOpacity
-            onPress={() => navigation.navigate("ResetPasswordScreen")}
+            onPress={() => navigation.navigate("ResetPasswordCompanyScreen")}
           >
             <Text style={styles.forgot}>¿Olvidaste tu contraseña?</Text>
           </TouchableOpacity>

@@ -5,7 +5,7 @@ const styles = StyleSheet.create({
   container: {
     marginTop: SIZES.large,
     backgroundColor: "#FFF",
-    borderRadius: SIZES.medium,
+    borderRadius: 7,
     padding: SIZES.medium,
     
     
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 6,
-    backgroundColor: COLORS.gray2,
+    backgroundColor: COLORS.gray600,
     marginTop: 6,
   },
   pointText: {

@@ -50,7 +50,7 @@ const CompanyNavigation = () => {
         }}
       />
 
-      <Tab.Screen
+      {/* <Tab.Screen
         name="ApplicantsViewCompany"
         component={ApplicantsViewCompanyScreen}
         options={{
@@ -67,7 +67,7 @@ const CompanyNavigation = () => {
             />
           ),
         }}
-      />
+      /> */}
 
       <Tab.Screen
         name="ProfileCompany"

@@ -1,15 +1,17 @@
 {
   "expo": {
-    "name": "frontend2",
+    "name": "Pasco Jobs",
     "slug": "frontend2",
-    "version": "1.0.0",
+    "icon": "./assets/main/icon.png",
+
+    "primaryColor": "#FFFFFF",
+    "version": "2.2.0",     
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
     "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "image": "./assets/main/splash.png",
+      "resizeMode": "cover" ,
+      "backgroundColor": "#262159"      
     },
     "assetBundlePatterns": [
       "**/*"
@@ -19,18 +21,23 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+        "foregroundImage": "./assets/main/adaptive.png",
+        "backgroundColor": "#262159" 
+        
+      },
+      "icon": "./assets/main/icon.png",
+      
+      "package": "com.godoyliam.pascojobs"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/icon.png"
     },
     "extra": {
       "eas": {
         "projectId": "e8935407-5fb2-489e-bed7-e709bd3549d0"
       }
     },
+    
     "plugins": [
       [
         "expo-image-picker",
