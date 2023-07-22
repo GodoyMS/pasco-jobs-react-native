@@ -1,9 +1,10 @@
 import React from 'react'
-import { ImageBackground, StyleSheet, KeyboardAvoidingView } from 'react-native'
+import { ImageBackground, StyleSheet, KeyboardAvoidingView, SafeAreaView } from 'react-native'
 import { COLORS } from '@constants/theme'
 // require('../assets/background_dot.png')
 export default function Background({ children,backgroundImage }) {
     return (
+
       <ImageBackground
         source={backgroundImage}
   
@@ -13,6 +14,7 @@ export default function Background({ children,backgroundImage }) {
           {children}
         </KeyboardAvoidingView>
       </ImageBackground>
+
     )
   }
   

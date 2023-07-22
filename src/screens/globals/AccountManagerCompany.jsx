@@ -1,16 +1,13 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React,{useState} from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { COLORS, FONT, SIZES } from "@constants/theme";
 import { Icon } from "@rneui/themed";
-import { Modal, Portal,  PaperProvider } from 'react-native-paper';
-import UpdatePasswordUser from "@components/globals/UpdatePasswordUser";
+import {   PaperProvider } from 'react-native-paper';
 import { useSelector } from "react-redux";
-import UpdateEmailUser from "@components/globals/UpdateEmailUser";
-import DeleteAccountUser from "@components/globals/DeleteAccountUser";
 import UpdatePasswordCompany from "@components/globals/UpdatePasswordCompany";
 import UpdateEmailCompany from "@components/globals/UpdateEmailCompany";
 import DeleteAccountCompany from "@components/globals/DeleteAccountCompany";
+import { SafeAreaView } from "react-native";
 
 const AccountManagerCompany = ({navigation}) => {
   const[visiblePassword,setVisiblePassword]=useState(false)
@@ -24,7 +21,7 @@ const AccountManagerCompany = ({navigation}) => {
 
     <PaperProvider>
 
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
+    <SafeAreaView style={{ flex: 1}}>
 
      
 
@@ -32,6 +29,8 @@ const AccountManagerCompany = ({navigation}) => {
       <UpdatePasswordCompany idApplicant={company?.id ? company?.id : ""} visiblePassword ={visiblePassword}  dismiss={()=>setVisiblePassword(false)} />
       <UpdateEmailCompany  idApplicant={company?.id ? company?.id : ""} visiblePassword ={visibleEmail}  dismiss={()=>setVisibleEmail(false)}  />
       <DeleteAccountCompany navigation={navigation} idApplicant={company?.id ? company?.id : ""} visiblePassword ={visibleAccountDelete}  dismiss={()=>setVisibleAccountDelete(false)} />
+     
+     
       <View style={{ marginHorizontal: 10, flex: 1 }}>
         <Text
           style={{

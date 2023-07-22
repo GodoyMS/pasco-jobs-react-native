@@ -8,11 +8,10 @@ export default function TextInput({ errorText, description, ...props }) {
         <Input
           textColor={COLORS.gray800}
           style={styles.input}
-          placeholderTextColor={COLORS.indigo700}
+          placeholderTextColor={COLORS.gray600}
           outlineColor={COLORS.indigo700}
           selectionColor={COLORS.indigo700}
           activeOutlineColor={COLORS.indigo800}
-          
           
           underlineColor="transparent"
               returnKeyType=''

@@ -9,7 +9,7 @@ import axios from "axios";
 import { backendURL } from "@config/config";
 import { emailValidator } from "@helpers/emailValidator";
 import { useDispatch } from "react-redux";
-import { clearUser } from "@features/user/userSlice";
+import { clearCompany } from "@features/user/companySlice";
 
 const DeleteAccountCompany = ({ visiblePassword, dismiss,idApplicant,navigation }) => {
 
@@ -22,7 +22,7 @@ const DeleteAccountCompany = ({ visiblePassword, dismiss,idApplicant,navigation 
     setIsError(false)
     axios.delete(`${backendURL}api/employers/${idApplicant}`)
     .then(()=>setIsLoading(false))
-    .then(()=>dispatch(()=>clearUser()))
+    .then(()=>dispatch(clearCompany()))
     .then(()=>navigation.navigate("FirstScreen"))
     .catch((e)=>{setIsError(true)})
     .finally(()=>{setIsLoading(false);setTimeout(()=>setIsSuccess(false),2000)})

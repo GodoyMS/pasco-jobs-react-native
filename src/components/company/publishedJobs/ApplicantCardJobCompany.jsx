@@ -42,7 +42,7 @@ const ApplicantCardJobCompany = ({ dataApplication, openPDF, finalistApplication
 
 
   const navigateToDetails = () => {
-    navigation.navigate("JobDetailsCompany", { itemId: dataJob.id });
+    navigation.navigate("ApplicantProfileCompanyScreen", { itemId: dataApplication?.applicant?.id });
   };
 
   const markAsFinalist = async () => {

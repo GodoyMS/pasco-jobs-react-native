@@ -26,10 +26,12 @@ import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import moment from "moment";
 import { backendURL } from "@config/config";
 
+
 moment.locale('es')
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+
 
 // Initialize Apollo Client
 const client = new ApolloClient({

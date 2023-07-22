@@ -39,7 +39,7 @@ import emptyjobsImage from "@assets/images/jobs/emptyjobs-min.png";
 const PublishAJobCompanyScreen = () => {
   const infoCompany = useSelector((state) => state.company.infoCompany);
 
-  const [stepForm, setStepForm] = useState(4);
+  const [stepForm, setStepForm] = useState(1);
 
   const [selected, setSelected] = React.useState("");
   const [title, setTitle] = useState({ value: "", error: "" });
@@ -179,7 +179,7 @@ const PublishAJobCompanyScreen = () => {
         <View
           style={{
             marginTop: 20,
-            marginHorizontal: 20,
+            marginHorizontal: 0,
           }}
         >
           <View>
@@ -189,6 +189,7 @@ const PublishAJobCompanyScreen = () => {
                 color: COLORS.gray800,
                 fontSize: SIZES.xLarge,
                 marginBottom: 10,
+                marginHorizontal:20
               }}
             >
               Publicar una oferta laboral
@@ -202,6 +203,7 @@ const PublishAJobCompanyScreen = () => {
               justifyContent: "center",
               padding: 5,
               alignSelf: "center",
+
               alignItems: "center",
               alignContent: "center",
               width: "100%",
@@ -283,6 +285,8 @@ const PublishAJobCompanyScreen = () => {
                   style={{
                     paddingHorizontal: 10,
                     paddingVertical: 10,
+                    marginHorizontal:20,
+
                     borderRadius: 10,
                     columnGap: 10,
                     backgroundColor: COLORS.gray100,
@@ -372,6 +376,7 @@ const PublishAJobCompanyScreen = () => {
                 activeOpacity={isSuccess ? 1 :0.7}
                 style={{
                   marginTop: isSuccess ? 20 : 20,
+                  marginHorizontal:20,
 
                   paddingVertical: 15,
                   fontFamily: FONT.medium,
@@ -431,6 +436,8 @@ const PublishAJobCompanyScreen = () => {
               style={{
                 flexDirection: "row",
                 marginTop: 50,
+                paddingHorizontal:20,
+
                 justifyContent: "space-between",
                 width: "100%",
                 columnGap: 10,
@@ -443,6 +450,7 @@ const PublishAJobCompanyScreen = () => {
                     paddingVertical: 10,
                     borderRadius: 10,
                     maxWidth: 200,
+
                     columnGap: 10,
                     backgroundColor: COLORS.gray100,
                     borderWidth:1,

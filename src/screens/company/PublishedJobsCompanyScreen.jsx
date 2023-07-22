@@ -66,6 +66,8 @@ const PublishedJobsCompanyScreen = () => {
   // }, []);
 
   return (
+    <PaperProvider>
+
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
       <View style={{ marginTop: 50, marginHorizontal: 20 }}>
         <Text
@@ -78,17 +80,17 @@ const PublishedJobsCompanyScreen = () => {
         >
           Ofertas de trabajo publicadas
         </Text>
-        <View></View>
         {company && jobs && jobs.length > 0 && !loading && (
           <View style={{ display: "flex", flexDirection: "column" }}>
             <FlatList
+            
               data={jobs}
-              contentContainerStyle={{ paddingBottom: 900 }}
+              contentContainerStyle={{ paddingBottom: 200 }}
               horizontal={false}
-              showsVerticalScrollIndicator={true}
+              showsVerticalScrollIndicator={false}
               onEndReachedThreshold={0.1}
               keyExtractor={(item) => String(item.id)}
-              showsHorizontalScrollIndicator={true}
+              showsHorizontalScrollIndicator={false}
               renderItem={({ item }) => (
                 <JobCardCompany dataJob={item} jobs={jobs} setJobs={setJobs} />
               )}
@@ -171,6 +173,8 @@ const PublishedJobsCompanyScreen = () => {
         )}
       </View>
     </SafeAreaView>
+    </PaperProvider>
+
   );
 };
 

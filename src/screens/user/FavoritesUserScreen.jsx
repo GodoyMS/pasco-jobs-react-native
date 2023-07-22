@@ -10,41 +10,89 @@ import { backendURL } from "@config/config";
 import { SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
 import { StatusBar } from "expo-status-bar";
+import { gql, useQuery } from "@apollo/client";
+import { useLayoutEffect } from "react";
+import { useCallback } from "react";
 export const FavoritesUserScreen = () => {
   const [dataFavJobs, setDataFavJobs] = useState(null);
   const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
   const user=useSelector((state)=>state.user.infoUser)
   const favJobsIds=useSelector((state)=>state.user.favUserJobs)
 
-  const fetchData = async () => {
-    try {
+  // const fetchData = async () => {
+  //   try {
       
-      const response = await axios.get(`${backendURL}api/favoriteJobs?where[user][equals]=${user.id}`);
-      setDataFavJobs(response.data.docs);
-      console.log(response)
-      setIsLoading(false);
-    } catch (error) {
-      setError(error.message);
-      setIsLoading(false);
+  //     const response = await axios.get(`${backendURL}api/favoriteJobs?where[user][equals]=${user.id}`);
+  //     setDataFavJobs(response.data.docs);
+  //     console.log(response)
+  //     setIsLoading(false);
+  //   } catch (error) {
+  //     setError(error.message);
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  const GET_COMPANY = gql`
+  query GET_FAVJOBS_BY_USER($userId: String!) {
+    FavoriteJobs(where:{user:{equals:$userId}}) {
+      totalDocs
+      docs{
+        job{
+          title
+          id
+          createdAt
+          contract{
+            name
+            id
+          }
+          workShift{
+            name
+            id
+          }
+          workExperience{
+            name
+            id
+          }
+          salary
+          province
+          district
+          id           
+        }
+        id    
+      }
     }
-  };
+  }
+`;
+const { error:errorGQL,loading, refetch,data } = useQuery(GET_COMPANY, {
+  variables: { userId: user?.id ? user?.id : ""},
 
-  useEffect(() => {
-    fetchData();
-  }, [favJobsIds]);
+  fetchPolicy: "network-only",
+});
 
-  if (isLoading) {
+useLayoutEffect(
+  useCallback(() => {
+    refetch();
+  }, [])
+);
+
+
+
+
+  // useEffect(() => {
+  //   fetchData();
+  // }, [favJobsIds]);
+
+  if (loading) {
     return (
       <View style={styles.container}>
         <ActivityIndicator size="large" color={COLORS.indigo600} />
       </View>
     );
   }
-  if (error) {
+  if (errorGQL) {
     return (
       <View style={styles.container}>
-        <Text>Error: {error}</Text>
+        <Text>Ocurrio un error</Text>
       </View>
     );
   }
@@ -68,12 +116,12 @@ export const FavoritesUserScreen = () => {
           </Text>
         </View>
       </View>
-      {dataFavJobs && user && (
+      {data && user && (
         <View style={{ flex: 1 }}>
           <FlatList
           contentContainerStyle={{paddingBottom:100}}
             style={{ flex: 1 }}
-            data={dataFavJobs}
+            data={data?.FavoriteJobs?.docs ?data?.FavoriteJobs?.docs :[] }
             showsVerticalScrollIndicator={true}
             onEndReachedThreshold={0.6}
             keyExtractor={(item) => String(item.id)}

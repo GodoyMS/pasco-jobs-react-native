@@ -120,7 +120,7 @@ const JobCardCompany = ({ dataJob, jobs, setJobs }) => {
                 style={{ color: COLORS.gray600,fontFamily:FONT.medium }}
                 element={Text}
                 locale="es"
-                format="  DD MMMM, YYYY - HH:mm a "
+                format="  DD MMMM, YYYY"
               >
                 {dataJob.createdAt}
               </Moment>

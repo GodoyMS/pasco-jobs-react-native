@@ -1,4 +1,11 @@
-import { View, Text, TouchableOpacity, Image, Linking } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  Linking,
+  ActivityIndicator,
+} from "react-native";
 import styles from "./footer.style";
 import icons from "@constants/icons";
 import { TouchableWithoutFeedback } from "react-native";
@@ -13,6 +20,7 @@ import { ScrollView } from "react-native";
 
 const Footer = ({
   handleAddFavorite,
+  isSavingLoading,
   isAddedToFav,
   showMessage,
   idApplicant,
@@ -23,7 +31,7 @@ const Footer = ({
 }) => {
   const [isApplied, setIsApplied] = useState(false);
   const [isApplyButtonMounted, setIsApplyButtonMounted] = useState(true);
-
+  const [isApplyingLoading, setIsApplyingLoading] = useState(false);
   const GET_APPLICANTS = gql`
     query GET__USER($jobId: String!, $applicantId: String!) {
       Applications(
@@ -60,9 +68,10 @@ const Footer = ({
     },
     fetchPolicy: "cache-and-network",
   });
-  const [isAboutToApply,setIsAboutToApply]=useState(false);
+  const [isAboutToApply, setIsAboutToApply] = useState(false);
 
   const applyJob = async () => {
+    setIsApplyingLoading(true);
     await axios
       .post(`${backendURL}api/applications`, {
         applicant: idApplicant,
@@ -70,94 +79,128 @@ const Footer = ({
         job: idJob,
       })
       .then(() => setIsApplied(true))
-      .then(()=>setIsAboutToApply(false))
+      .then(() => setIsApplyingLoading(false))
+      .then(() => setIsAboutToApply(false))
       .catch((e) => console.log(e))
-      .then(()=>setIsAboutToApply(false))
+      .then(() => setIsAboutToApply(false))
+      .catch(() => setIsApplyingLoading(false));
   };
 
   return (
     <>
-    {isAboutToApply && (
-        <View
-        style={{
-          position: "absolute",
-
-          padding: SIZES.small,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "rgba(0, 0, 0, 0.3)",
-          flexDirection: "column",
-          zIndex: 500,
-          width: "100%",
-          left: 0,
-          right: 0,
-          height: "100%",
-        }}
-      >
+      {isAboutToApply && (
         <View
           style={{
+            position: "absolute",
+
+            padding: SIZES.small,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(0, 0, 0, 0.3)",
+            flexDirection: "column",
+            zIndex: 500,
             width: "100%",
-            paddingVertical: 20,
-            paddingHorizontal: 20,
-            borderRadius: 10,
-            backgroundColor: "#FFF",
+            left: 0,
+            right: 0,
+            height: "100%",
           }}
         >
-          <Text style={{ fontFamily: FONT.bold, color: COLORS.gray800 }}>
-            Al postular a un trabajo aceptas lo siguiente:
-          </Text>
+          <View
+            style={{
+              width: "100%",
+              paddingVertical: 20,
+              paddingHorizontal: 20,
+              borderRadius: 10,
+              backgroundColor: "#FFF",
+            }}
+          >
+            <Text style={{ fontFamily: FONT.bold, color: COLORS.gray800 }}>
+              Al postular a un trabajo aceptas lo siguiente:
+            </Text>
 
-          <View>
-            {applicationsTerms.map((e) => (
-              <View
-                key={e.id}
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "flex-start",
-                  alignItems: "center",
-                  marginTop: 10,
-                  columnGap: 10,
-                  paddingRight:5
-                }}
-              >
+            <View>
+              {applicationsTerms.map((e) => (
                 <View
+                  key={e.id}
                   style={{
-                    backgroundColor: COLORS.gray700,
-                    width: 5,
-                    height: 5,
-                    borderRadius: 5,
-                  }}
-                ></View>
-                <Text
-                  style={{
-                    fontFamily: FONT.regular,
-                    color: COLORS.gray800,
-                    fontSize: SIZES.small,
-                    textAlign:"justify"
+                    flexDirection: "row",
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                    marginTop: 10,
+                    columnGap: 10,
+                    paddingRight: 5,
                   }}
                 >
-                  {e.text}
+                  <View
+                    style={{
+                      backgroundColor: COLORS.gray700,
+                      width: 5,
+                      height: 5,
+                      borderRadius: 5,
+                    }}
+                  ></View>
+                  <Text
+                    style={{
+                      fontFamily: FONT.regular,
+                      color: COLORS.gray800,
+                      fontSize: SIZES.small,
+                      textAlign: "justify",
+                    }}
+                  >
+                    {e.text}
+                  </Text>
+                </View>
+              ))}
+            </View>
+
+            <View style={{ marginTop: 20 }}>
+              <TouchableOpacity
+                onPress={() => setIsAboutToApply(false)}
+                activeOpacity={0.7}
+                style={{
+                  backgroundColor: COLORS.gray200,
+                  paddingVertical: 10,
+                  borderRadius: 10,
+                }}
+              >
+                <Text
+                  style={{
+                    textAlign: "center",
+                    color: COLORS.gray800,
+                    fontFamily: FONT.bold,
+                  }}
+                >
+                  Cancelar
                 </Text>
-              </View>
-            ))}
-          </View>
-
-          <View style={{marginTop:20}}>
-          <TouchableOpacity onPress={()=>setIsAboutToApply(false)} activeOpacity={0.7} style={{backgroundColor:COLORS.gray200,paddingVertical:10,borderRadius:10}}>
-              <Text style={{textAlign:"center",color:COLORS.gray800,fontFamily:FONT.bold}}>Cancelar</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={applyJob} activeOpacity={0.7} style={{backgroundColor:COLORS.tertiary,paddingVertical:10,borderRadius:10,marginTop:10}}>
-              <Text style={{textAlign:"center",color:COLORS.white,fontFamily:FONT.bold}}>¡De acuerdo!</Text>
-            </TouchableOpacity>
-
-
-
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={applyJob}
+                activeOpacity={0.7}
+                style={{
+                  backgroundColor: COLORS.tertiary,
+                  paddingVertical: 10,
+                  borderRadius: 10,
+                  marginTop: 10,
+                }}
+              >
+                {isApplyingLoading ? (
+                  <ActivityIndicator color={"white"} />
+                ) : (
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      color: COLORS.white,
+                      fontFamily: FONT.bold,
+                    }}
+                  >
+                    ¡De acuerdo!
+                  </Text>
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
-
-    )}
-    
+      )}
 
       <View style={styles.container}>
         {isAddedToFav ? (
@@ -166,26 +209,51 @@ const Footer = ({
               width: 55,
               height: 55,
               borderWidth: 1,
-              borderColor: COLORS.tertiary,
-              borderRadius: SIZES.medium,
+              borderColor: COLORS.red100,
+              borderRadius: 50,
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: COLORS.tertiary,
+              backgroundColor: COLORS.red50,
             }}
           >
-            <Image
+            <Icon
+              name="heart"
+              type="antdesign"
+              size={25}
+              color={COLORS.red500}
+            />
+            {/* <Image
               source={icons.heart}
               resizeMode="contain"
               style={{ width: "50%", height: "50%", tintColor: COLORS.white }}
-            />
+            /> */}
           </View>
         ) : (
-          <TouchableOpacity onPress={handleAddFavorite} style={styles.likeBtn}>
-            <Image
+          <TouchableOpacity
+            onPress={handleAddFavorite}
+            style={{
+              width: 55,
+              height: 55,
+
+              borderRadius: 50,
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: COLORS.indigo100,
+            }}
+          >
+            {isSavingLoading ? <ActivityIndicator color={COLORS.tertiary}/> : <Icon
+              name="hearto"
+              type="antdesign"
+              color={COLORS.tertiary}
+              size={25}
+            /> }
+           
+
+            {/* <Image
               source={icons.heartOutline}
               resizeMode="contain"
               style={styles.likeBtnImage}
-            />
+            /> */}
           </TouchableOpacity>
         )}
 
@@ -221,7 +289,7 @@ const Footer = ({
               <TouchableOpacity
                 activeOpacity={0.9}
                 style={styles.applyBtn}
-                onPress={()=>setIsAboutToApply(true)}
+                onPress={() => setIsAboutToApply(true)}
               >
                 <Text style={styles.applyBtnText}>Postular</Text>
               </TouchableOpacity>

@@ -15,7 +15,10 @@ import axios from "axios";
 import { backendURL } from "@config/config";
 import { useNavigation } from "@react-navigation/native";
 import getUserinfo from "@hooks/user/getUserInfo";
-import { View  } from "react-native";
+import { View } from "react-native";
+import { Text } from "react-native";
+import AllCompaniesUserScreen from "@screens/user/AllCompaniesUserScreen";
+import AdsUserScreen from "@screens/user/AdsUserScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -32,10 +35,7 @@ const UserNavigation = () => {
       const fiveSecInMiliseconds = 1000 * 10;
       if (remainingTimeExpToken <= fiveSecInMiliseconds) {
         await axios
-          .post(
-            `${backendURL}api/applicants/refresh-token`,
-            {}
-          )
+          .post(`${backendURL}api/applicants/refresh-token`, {})
           .then(({ data }) => dispatch(refreshUserOrCompanyToken(data)))
           .catch((e) => console.log(e));
       }
@@ -45,130 +45,103 @@ const UserNavigation = () => {
     return () => clearInterval(interval); //
   }, [navigation, dispatch, tokenExpTime]);
 
+  const navigationMeny = [
+     {
+       id: 1,
+       route: "AdsUserScreen",
+       screen: AdsUserScreen,
+      nameIcon: "campaign",
+       typeIcon: "material",
+       name: "Anuncios",
+     }
+    ,
+    {
+      id: 2,
+      route: "ApplicationsUser",
+      screen: ApplicationsUserScreen,
+      nameIcon: "ios-layers",
+      typeIcon: "ionicon",
+      name: "Postulaciones",
+    },
 
+    {
+      id: 3,
+      route: "HomeUser",
+      screen: HomeUserScreen,
+      nameIcon: "search",
+      typeIcon: "font-awesome",
+      name: "Empleos",
+    },
+    {
+      id: 4,
+      route: "AllCompaniesUserScreen",
+      screen: AllCompaniesUserScreen,
+      nameIcon: "building",
+      typeIcon: "font-awesome",
+      name: "Empresas",
+    },
+    {
+      id: 5,
+      route: "ProfileUser",
+      screen: ProfileUserScreen,
+      nameIcon: "user-circle-o",
+      typeIcon: "font-awesome",
+      name: "Perfil",
+    },
+  ];
 
   return (
     <Tab.Navigator
+      initialRouteName="HomeUser"
       screenOptions={{
-        tabBarShowLabel: false,
-        tabBarStyle: {
-          borderRadius: 900,
-          position: "absolute",
-          bottom: 20,
-          left: 25,
-          right: 25,
-          elevation: 1,
-          backgroundColor:COLORS.black,
-          height: 60,
+        tabBarStyle: {         
+          elevation: 2,
+          backgroundColor: COLORS.white,
+          shadowColor: COLORS.black,
+          shadowOpacity: 0.6,
+          shadowOffset: {
+            width: 2,
+            height: 4,
+          }
+        
         },
+
         tabBarBadgeStyle: {
           backgroundColor: COLORS.indigo300,
         },
       }}
     >
-      <Tab.Screen
-        name="HomeUser"
-        component={HomeUserScreen}
-        options={{
-          headerShown: false,
-          headerBackVisible: true,
-          headerTransparent: true,
-          headerTitle: "",
-
-          title: "Inicio",
-          tabBarIcon: ({ color = COLORS.primary, focused }) => (
-            <View
-              style={{
-                backgroundColor: focused ? COLORS.indigo800 : "transparent",
-                borderRadius: 50,
-                paddingHorizontal: 30,
-                paddingVertical:16
-              }}
-            >
-             
-              <Icon name="search" type="font-awesome" size={20} color={COLORS.white} />
-            </View>
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="FavoritesUser"
-        component={FavoritesUserScreen}
-        options={{
-          headerBackVisible: true,
-          headerTransparent: true,
-          headerTitle: "",
-          title: "Favoritos",
-
-          tabBarIcon: ({ color = COLORS.primary, focused }) => (
-            <View
-              style={{
-                backgroundColor: focused ? COLORS.indigo800 : "transparent",
-                borderRadius: 50,
-                paddingHorizontal: 30,
-                paddingVertical:16
-              }}
-            >
+      {navigationMeny.map((e) => (
+        <Tab.Screen
+          key={e.id}
+          name={e.route}
+          component={e.screen}
+          options={{
+            tabBarLabelStyle:{color:COLORS.gray800},
+            headerShown: false,
+            headerBackVisible: true,
+            headerTransparent: true,
             
-              <Icon name="favorite" type="material" size={20} color={COLORS.white} />
-            </View>
-          ),
-        }}
-      />
-
-      <Tab.Screen
-        name="ApplicationsUser"
-        component={ApplicationsUserScreen}
-        options={{
-          headerBackVisible: true,
-          headerTransparent: true,
-          headerTitle: "",
-          title: "Postulaciones",
-
-          tabBarIcon: ({ color = COLORS.primary, focused }) => (
-            <View
-              style={{
-                backgroundColor: focused ? COLORS.indigo800 : "transparent",
-                borderRadius: 50,
-                paddingHorizontal: 30,
-                paddingVertical:16
-              }}
-            >
-              <Icon name="ios-layers" type="ionicon" size={20} color={COLORS.white} />
-            </View>
-          ),
-        }}
-      />
-
-      <Tab.Screen
-        name="ProfileUser"
-        component={ProfileUserScreen}
-        options={{
-          headerShown: false,
-          headerBackVisible: true,
-          headerTransparent: true,
-          headerTitle: "",
-          title: "Perfil",
-
-          tabBarIcon: ({ color = COLORS.primary, focused }) => (
-            <View
-              style={{
-                backgroundColor: focused ? COLORS.indigo800 : "transparent",
-                borderRadius: 50,
-                paddingHorizontal: 30,
-                paddingVertical:16
-              }}
-            >
-              <Icon
-                name="user-circle-o"
-                type="font-awesome"
-                size={20}
-                color={COLORS.white}
-              />
-            </View>
-          ),
-        }}
-      />
+            headerTitle: e.name,
+            title: e.name,
+            tabBarIcon: ({ color = COLORS.tertiary, focused }) => (
+              <View
+                style={{
+                  borderRadius: 50,
+                  paddingHorizontal: 30,
+                }}
+              >
+                <Icon
+                  name={e.nameIcon}
+                  type={e.typeIcon}
+                  size={20}
+                  color={focused ? COLORS.tertiary : COLORS.gray500}
+                />
+              </View>
+            ),
+          }}
+        />
+      ))}
     </Tab.Navigator>
   );
 };

@@ -14,7 +14,7 @@ const useFetchJobs = ({searchWord,query,category,page}) => {
 
   const fetchData =  () => {
     setIsLoading(true);
-    axios.get(`${backendURL}api/jobs?${userLocation? `where[province][equals]=${userLocation}&`:"&"}${userFavCategory? `where[category.name][equals]=${userFavCategory}&`:"&"}limit=10&page=${page}&${query}`)
+    axios.get(`${backendURL}api/jobs?${userLocation? `where[province][equals]=${userLocation}&`:"&"}${userFavCategory? `where[category.name][equals]=${userFavCategory}&`:"&"}limit=15&page=${page}&${query}`)
     .then(({data})=>{setDataApi(data)})
     .then(()=>setIsLoading(false))
     .catch((error)=>{setError(error);console.log(error)})

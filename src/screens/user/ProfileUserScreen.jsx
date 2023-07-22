@@ -64,21 +64,21 @@ export const ProfileUserScreen = ({ navigation }) => {
     },
     {
       id: 3,
-      name: "Contactar Pasco Jobs",
+      name: "Pasco Jobs",
       iconName: "building-o",
       iconType: "font-awesome",
       onClick: "",
       route:"ContactPascoJobsScreen"
     },
-    {
-      id: 4,
-      name: "Contactar desarrollador",
-      iconName: "code",
-      iconType: "entypo",
-      onClick: "",
-      route:"ContactDeveloperScreen"
+    // {
+    //   id: 4,
+    //   name: "Contactar desarrollador",
+    //   iconName: "code",
+    //   iconType: "entypo",
+    //   onClick: "",
+    //   route:"ContactDeveloperScreen"
 
-    },
+    // },
   ];
 
   const dispatch = useDispatch();
@@ -154,7 +154,7 @@ export const ProfileUserScreen = ({ navigation }) => {
         style={{
           backgroundColor: COLORS.primary,
           flex: 1,
-          paddingBottom: 90,
+          paddingBottom: 0,
           justifyContent: "space-between",
         }}
       >
@@ -390,6 +390,55 @@ export const ProfileUserScreen = ({ navigation }) => {
                     >
                       Actualizar CV
                     </Text>
+                  </View>
+                  <View>
+                    <Icon
+                      name="chevron-with-circle-right"
+                      type="entypo"
+                      size={20}
+                    />
+                  </View>
+                </View>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => navigateToDetails("FavoritesUserScreen")}
+                activeOpacity={0.6}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  flexDirection: "row",
+                  marginTop: 10,
+                  paddingHorizontal: 20,
+                  paddingVertical: 15,
+                  columnGap: 20,
+                  alignItems: "center",
+                  backgroundColor: COLORS.indigo100,
+
+                  marginHorizontal: 20,
+                  borderRadius: 10,
+                }}
+              >
+                <Icon name="hearto" type="antdesign" size={20} />
+
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <View>
+                    <Text
+                      style={{
+                        color: COLORS.gray800,
+                        fontFamily: FONT.bold,
+                        fontSize: SIZES.medium,
+                      }}
+                    >
+                      Trabajos guardados
+                    </Text>
+                   
                   </View>
                   <View>
                     <Icon

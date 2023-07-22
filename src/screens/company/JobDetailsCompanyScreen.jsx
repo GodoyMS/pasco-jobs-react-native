@@ -5,7 +5,7 @@ import axios from "axios";
 import { backendURL } from "@config/config";
 import { COLORS, SIZES, FONT } from "@constants/theme";
 import stylesSmallSpecifics from "@components/user/jobdetails/smallSpecifics/smallSpecifics.style";
-import Company from "@components/user/jobdetails/company/Company";
+import Company from "@components/company/publishedJobs/Company";
 import Tabs from "@components/user/jobdetails/tabs/Tabs";
 import About from "@components/user/jobdetails/about/About";
 import Specifics from "@components/user/jobdetails/specifics/Specifics";
@@ -27,7 +27,6 @@ const JobDetailsCompanyScreen = (props) => {
     axios
       .get(`${backendURL}api/jobs/${params.itemId}`)
       .then(({ data }) => setData(data))
-      .then((e) => console.log(e))
       .catch((error) => console.log(error));
   };
 

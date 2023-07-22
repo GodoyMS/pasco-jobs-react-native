@@ -3,11 +3,11 @@
     "name": "Pasco Jobs",
     "slug": "frontend2",
     "icon": "./assets/main/icon.png",
-
+    
     "primaryColor": "#FFFFFF",
     "version": "2.2.0",     
     "orientation": "portrait",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/main/splash.png",
       "resizeMode": "cover" ,
@@ -20,6 +20,7 @@
       "supportsTablet": true
     },
     "android": {
+    
       "adaptiveIcon": {
         "foregroundImage": "./assets/main/adaptive.png",
         "backgroundColor": "#262159" 

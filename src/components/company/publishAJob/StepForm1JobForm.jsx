@@ -66,8 +66,9 @@ const StepForm1JobForm = ({
   }, []);
 
   return (
-    <>
-      <View>
+    <View style={{              marginHorizontal:20,
+    }}>
+      <View >
         <Text
           style={{
             fontFamily: FONT.bold,
@@ -171,7 +172,7 @@ const StepForm1JobForm = ({
           )}
         </View>
       )}
-    </>
+    </View>
   );
 };
 

@@ -1,4 +1,4 @@
-import { Text, TouchableWithoutFeedback, View } from "react-native";
+import { ActivityIndicator, Text, TouchableWithoutFeedback, View } from "react-native";
 import React, { Component, useState } from "react";
 import { Image } from "react-native";
 import { TouchableOpacity } from "react-native";
@@ -13,6 +13,7 @@ import { useDispatch } from "react-redux";
 import { addFavoriteJob, deleteFavoriteJob } from "@features/user/userSlice";
 import companyDefaultProfile from "@assets/images/company/defaultprofilecompany-min.png";
 import AgeDateFormat from "@components/dates/AgeDateFormat";
+import { Modal, PaperProvider, Portal } from "react-native-paper";
 const ApplicationJobCard = ({
   dataJob,
   userId,
@@ -20,12 +21,15 @@ const ApplicationJobCard = ({
   setDataApplicationsLocal,
 }) => {
   const navigation = useNavigation();
+  const[isModalActive,setIsModalActive]=useState(false);
+  const[isDeleteLoading,setIsDeleteLoading]=useState(false);
 
   const navigateToDetails = () => {
     navigation.navigate("JobDetails", { itemId: dataJob?.job.id });
   };
 
   const handleDeleteJob = async () => {
+    setIsDeleteLoading(true)
     await axios
       .delete(`${backendURL}api/applications/${dataJob.id}`)
       .then(() =>
@@ -33,11 +37,92 @@ const ApplicationJobCard = ({
           dataApplicationsLocal.filter((obj) => obj.id !== dataJob.id)
         )
       )
+      .then(()=>setIsDeleteLoading(false))
 
-      .catch((e) => console.log(e));
+      .catch((e) => console.log(e))
+      .finally(()=>setIsDeleteLoading(false))
   };
 
   return (
+    <>
+      <Portal>
+      <Modal onDismiss={()=>setIsModalActive(false)} visible={isModalActive}>
+      <View
+          style={{
+
+            padding: SIZES.small,
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
+          
+          }}
+        >
+          <View
+            style={{
+              width: "100%",
+              paddingVertical: 20,
+              paddingHorizontal: 20,
+              borderRadius: 10,
+              backgroundColor: "#FFF",
+            }}
+          >
+            <Text style={{ fontFamily: FONT.bold, color: COLORS.gray800 }}>
+              ¿Seguro de eliminar tu postulación a este trabajo?
+            </Text>
+            <View style={{ marginTop: 20 }}>
+              <TouchableOpacity
+                onPress={() => setIsModalActive(false)}
+                activeOpacity={0.7}
+                style={{
+                  backgroundColor: COLORS.gray200,
+                  paddingVertical: 10,
+                  borderRadius: 10,
+                }}
+              >
+                <Text
+                  style={{
+                    textAlign: "center",
+                    color: COLORS.gray800,
+                    fontFamily: FONT.bold,
+                  }}
+                >
+                  Cancelar
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleDeleteJob}
+                disabled={isDeleteLoading}
+                activeOpacity={0.7}
+                style={{
+                  backgroundColor: COLORS.red600,
+                  paddingVertical: 10,
+                  borderRadius: 10,
+                  marginTop: 10,
+                }}
+              >
+                {isDeleteLoading ? (
+                  <ActivityIndicator color={"white"} />
+                ) : (
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      color: COLORS.white,
+                      fontFamily: FONT.bold,
+                    }}
+                  >
+                    Eliminar
+                  </Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      
+      </Modal>
+
+      </Portal>
+   
+   
     <TouchableOpacity
       style={{
         width: "100%",
@@ -231,7 +316,7 @@ const ApplicationJobCard = ({
 
           {dataJob.job.expired === "no" ? (
             dataJob.finalist === "no" ? (
-                <View style={{backgroundColor:COLORS.blue50,paddingHorizontal:10,paddingVertical:5,borderRadius:5}}>
+                <View style={{backgroundColor:COLORS.blue100,paddingHorizontal:10,paddingVertical:5,borderRadius:10}}>
                   <Text style={{fontFamily:FONT.medium,fontSize:SIZES.small,color:COLORS.blue800}} >En curso</Text>
 
                 </View>
@@ -256,7 +341,7 @@ const ApplicationJobCard = ({
           <Text></Text>
 
           <TouchableOpacity
-            onPress={handleDeleteJob}
+            onPress={()=>setIsModalActive(true)}
             style={{
               paddingHorizontal: 15,
               paddingVertical: 8,
@@ -281,6 +366,8 @@ const ApplicationJobCard = ({
         </View>
       </View>
     </TouchableOpacity>
+    </>
+
   );
 };
 

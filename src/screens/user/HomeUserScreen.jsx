@@ -107,7 +107,6 @@ export const HomeUserScreen = ({ navigation }) => {
   const [page, setPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchQueryBackUp, setSearchQueryBackup] = useState("");
-  console.log(searchQuery);
 
   const { isLoading, error, dataApi } = useFetchJobs({
     searchWord: searchWord,
@@ -771,7 +770,7 @@ export const HomeUserScreen = ({ navigation }) => {
             <Animated.FlatList
               ref={flatListRef}
               data={dataApi.docs}
-              contentContainerStyle={{ paddingBottom: 500 }}
+              contentContainerStyle={{ paddingBottom: 300 }}
               horizontal={false}
               showsVerticalScrollIndicator={true}
               onEndReachedThreshold={0.1}

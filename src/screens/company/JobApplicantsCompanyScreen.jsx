@@ -202,7 +202,7 @@ const JobApplicantsCompanyScreen = (props) => {
                       data={[...data.Applications.docs].sort(
                         (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
                       )}
-                      contentContainerStyle={{ paddingBottom: 900 }}
+                      contentContainerStyle={{ paddingBottom: 300 }}
                       horizontal={false}
                       showsVerticalScrollIndicator={false}
                       onEndReachedThreshold={0.1}
@@ -275,7 +275,7 @@ const JobApplicantsCompanyScreen = (props) => {
                       data={data.Applications.docs.filter((obj) =>
                         finalistApplications.includes(obj.id)
                       )}
-                      contentContainerStyle={{ paddingBottom: 900 }}
+                      contentContainerStyle={{ paddingBottom: 300 }}
                       horizontal={false}
                       showsVerticalScrollIndicator={false}
                       onEndReachedThreshold={0.1}

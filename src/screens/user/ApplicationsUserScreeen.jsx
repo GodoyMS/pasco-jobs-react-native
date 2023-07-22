@@ -10,6 +10,7 @@ import ApplicationJobCard from "@components/user/applicationJobs/ApplicationJobC
 import { useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
+import { PaperProvider } from "react-native-paper";
 
 export const ApplicationsUserScreen = ({ navigation }) => {
   const infoUser = useSelector((state) => state.user.infoUser);
@@ -77,8 +78,9 @@ export const ApplicationsUserScreen = ({ navigation }) => {
       refetch();
     }, [])
   );
-    console.log("data:    "+data)
   return (
+    <PaperProvider>
+
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
       <View style={{ marginTop: 50 }}>
 
@@ -118,6 +120,8 @@ export const ApplicationsUserScreen = ({ navigation }) => {
         </View>
       )}
     </SafeAreaView>
+    </PaperProvider>
+
   );
 };
 

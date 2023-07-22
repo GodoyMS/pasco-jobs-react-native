@@ -1,9 +1,8 @@
-import { Text, TouchableWithoutFeedback, View } from "react-native";
-import React, { Component, useEffect, useState } from "react";
+import { ActivityIndicator, Text, View } from "react-native";
+import React, { useEffect, useState } from "react";
 import { Image } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { Icon } from "@rneui/themed";
-import { FlatList } from "react-native";
 import stylesHome from "./stylesHome";
 import { useNavigation } from "@react-navigation/native";
 import { StyleSheet } from "react-native";
@@ -12,18 +11,17 @@ import axios from "axios";
 import { backendURL } from "@config/config";
 import { addFavoriteJob } from "@features/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
-import moment from "moment";
 import icons from "@constants/icons";
 import "moment/locale/es"; // Import the Spanish locale
 import companyDefaultProfile from "@assets/images/company/defaultprofilecompany-min.png";
 import AgeDateFormat from "@components/dates/AgeDateFormat";
 
-export const JobCard = ({ dataJob, userId }) => {
+const JobCard = React.memo ( ({ dataJob, userId }) => {
   const favJobsRedux = useSelector((state) => state.user.favUserJobs);
-  console.log(favJobsRedux)
+  console.log(favJobsRedux);
   const [isAddedToFav, setIsAddedToFav] = useState(false);
   const dispatch = useDispatch();
-
+  const [isSaveLoading, setIsSaveLoading] = useState(false);
   const navigation = useNavigation();
   const [showMessage, setShowMessage] = useState(false);
   useEffect(() => {
@@ -39,12 +37,11 @@ export const JobCard = ({ dataJob, userId }) => {
   };
 
   const handleAddFavoriteJob = async () => {
+    setIsSaveLoading(true);
     await axios
-      .post(
-        `${backendURL}api/favoriteJobs`,
-        { user: userId, job: dataJob.id }
-      )
+      .post(`${backendURL}api/favoriteJobs`, { user: userId, job: dataJob.id })
       .then(({ data }) => dispatch(addFavoriteJob(data.doc)))
+      .then(() => setIsSaveLoading(false))
 
       .then(() => {
         setShowMessage(true);
@@ -52,7 +49,8 @@ export const JobCard = ({ dataJob, userId }) => {
           setShowMessage(false);
         }, 1000);
       })
-      .catch((e) => console.log(e));
+      .catch((e) => console.log(e))
+      .finally(() => setIsSaveLoading(false));
   };
 
   return (
@@ -68,20 +66,27 @@ export const JobCard = ({ dataJob, userId }) => {
           )}
 
           <View style={{ flexDirection: "row", columnGap: 10 }}>
-            <TouchableOpacity>
+            {/* <TouchableOpacity>
               <Icon name="flag" type="ionicons" color={COLORS.secondary} />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
             {isAddedToFav ? (
               <View>
                 <Icon name="favorite" type="material" color={COLORS.red600} />
               </View>
             ) : (
-              <TouchableOpacity onPress={handleAddFavoriteJob}>
-                <Icon
-                  name="favorite"
-                  type="material"
-                  color={COLORS.secondary}
-                />
+              <TouchableOpacity
+                disabled={isSaveLoading}
+                onPress={handleAddFavoriteJob}
+              >
+                {isSaveLoading ? (
+                  <ActivityIndicator />
+                ) : (
+                  <Icon
+                    name="favorite-border"
+                    type="material"
+                    color={COLORS.secondary}
+                  />
+                )}
               </TouchableOpacity>
             )}
           </View>
@@ -216,7 +221,7 @@ export const JobCard = ({ dataJob, userId }) => {
         <View
           style={{
             width: "100%",
-            marginTop:20,
+            marginTop: 20,
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
@@ -247,7 +252,8 @@ export const JobCard = ({ dataJob, userId }) => {
       </View>
     </TouchableOpacity>
   );
-};
+}
+);
 export default JobCard;
 const styles = StyleSheet.create({
   cardJob: {
@@ -255,7 +261,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: COLORS.primary,
     height: "auto",
-    marginVertical:5,
+    marginVertical: 5,
   },
   message: {
     position: "absolute",

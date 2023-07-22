@@ -26,6 +26,16 @@ import AccountManagerUser from "@screens/globals/AccountManagerUser";
 import AccountManagerCompany from "@screens/globals/AccountManagerCompany";
 import ResetPasswordCompanyScreen from "@screens/auth/ResetPasswordCompanyScreen";
 import ResetPasswordUserScreen from "@screens/auth/ResetPasswordUserScreen";
+import CompanyProfileUserScreen from "@screens/user/CompanyProfileUserScreen";
+import CompanyProfileCompanyScreen from "@screens/company/CompanyProfileCompanyScreen";
+import ApplicantProfileCompanyScreen from "@screens/company/ApplicantProfileCompanyScreen";
+import UserAdsNavigation from "./UserAdsNavigation";
+import RegisterUserAdsScreen from "@screens/auth/RegisterUserAdsScreen";
+import LoginUserAdsScreen from "@screens/auth/LoginUserAdsScreen";
+import ResetPasswordUserAdsScreen from "@screens/auth/ResetPasswordUserAdsScreen";
+import EditUserAdsAccountProfileScreen from "@screens/userAds/account/EditUserAdsAccountProfileScreen";
+import AccountManagerUserAds from "@screens/globals/AccountManagerUserAds";
+import FavoritesUserScreen from "@screens/user/FavoritesUserScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -47,6 +57,7 @@ const RootNavigation = ({ navigation }) => {
         }}
         component={FirstScreen}
       />
+
       <Stack.Screen
         name="LoginScreen"
         options={{
@@ -82,7 +93,7 @@ const RootNavigation = ({ navigation }) => {
         component={ResetPasswordCompanyScreen}
       />
 
-<Stack.Screen
+      <Stack.Screen
         name="ResetPasswordUserScreen"
         options={{
           headerStyle: { backgroundColor: "transparent" },
@@ -93,7 +104,6 @@ const RootNavigation = ({ navigation }) => {
         }}
         component={ResetPasswordUserScreen}
       />
-      
 
       {/**GLOBAL ACCOUNT */}
 
@@ -122,6 +132,17 @@ const RootNavigation = ({ navigation }) => {
         name="InformationUserScreeen"
         component={InformationUserScreeen}
       />
+            <Stack.Screen
+        options={{
+          headerStyle: { backgroundColor: "transparent" },
+          headerShadowVisible: false,
+          headerBackVisible: true,
+          headerTransparent: true,
+          headerTitle: "",
+        }}
+        name="FavoritesUserScreen"
+        component={FavoritesUserScreen}
+      />
 
       <Stack.Screen
         options={{
@@ -134,7 +155,7 @@ const RootNavigation = ({ navigation }) => {
         name="AccountManagerUser"
         component={AccountManagerUser}
       />
-            <Stack.Screen
+      <Stack.Screen
         options={{
           headerStyle: { backgroundColor: "transparent" },
           headerShadowVisible: false,
@@ -192,6 +213,18 @@ const RootNavigation = ({ navigation }) => {
         component={JobDetailsUserScreen}
       />
       <Stack.Screen
+        options={{
+          headerStyle: { backgroundColor: "transparent" },
+          headerShadowVisible: false,
+          headerBackVisible: true,
+          headerTransparent: true,
+          headerTitle: "",
+        }}
+        name="CompanyProfileUserScreen"
+        component={CompanyProfileUserScreen}
+      />
+
+      <Stack.Screen
         name="EditUserProfileScreen"
         options={{
           headerStyle: { backgroundColor: "transparent" },
@@ -220,6 +253,71 @@ const RootNavigation = ({ navigation }) => {
         options={{ headerShown: false }}
       />
 
+      {/**USERADS */}
+      <Stack.Screen
+        name="UserAds"
+        component={UserAdsNavigation}
+        options={{ headerShown: false }}
+      />
+
+      <Stack.Screen
+        name="RegisterUserAdsScreen"
+        options={{
+          headerStyle: { backgroundColor: "transparent" },
+          headerShadowVisible: false,
+          headerBackVisible: true,
+          headerTransparent: true,
+          headerTitle: "",
+        }}
+        component={RegisterUserAdsScreen}
+      />
+
+      <Stack.Screen
+        name="LoginUserAdsScreen"
+        options={{
+          headerStyle: { backgroundColor: "transparent" },
+          headerShadowVisible: false,
+          headerBackVisible: true,
+          headerTransparent: true,
+          headerTitle: "",
+        }}
+        component={LoginUserAdsScreen}
+      />
+
+      <Stack.Screen
+        name="ResetPasswordUserAdsScreen"
+        options={{
+          headerStyle: { backgroundColor: "transparent" },
+          headerShadowVisible: false,
+          headerBackVisible: true,
+          headerTransparent: true,
+          headerTitle: "",
+        }}
+        component={ResetPasswordUserAdsScreen}
+      />
+      <Stack.Screen
+        name="EditUserAdsAccountProfileScreen"
+        options={{
+          headerStyle: { backgroundColor: "transparent" },
+          headerShadowVisible: false,
+          headerBackVisible: true,
+          headerTransparent: true,
+          headerTitle: "",
+        }}
+        component={EditUserAdsAccountProfileScreen}
+      />
+
+<Stack.Screen
+        name="AccountManagerUserAds"
+        options={{
+          headerStyle: { backgroundColor: "transparent" },
+          headerShadowVisible: false,
+          headerBackVisible: true,
+          headerTransparent: true,
+          headerTitle: "",
+        }}
+        component={AccountManagerUserAds}
+      />
       {/**COMPANY */}
 
       <Stack.Screen
@@ -227,6 +325,7 @@ const RootNavigation = ({ navigation }) => {
         component={CompanyNavigation}
         options={{ headerShown: false }}
       />
+
       <Stack.Screen
         options={{
           headerStyle: { backgroundColor: "transparent" },
@@ -237,6 +336,30 @@ const RootNavigation = ({ navigation }) => {
         }}
         name="JobDetailsCompany"
         component={JobDetailsCompanyScreen}
+      />
+
+      <Stack.Screen
+        options={{
+          headerStyle: { backgroundColor: "transparent" },
+          headerShadowVisible: false,
+          headerBackVisible: true,
+          headerTransparent: true,
+          headerTitle: "",
+        }}
+        name="CompanyProfileCompanyScreen"
+        component={CompanyProfileCompanyScreen}
+      />
+
+      <Stack.Screen
+        options={{
+          headerStyle: { backgroundColor: "transparent" },
+          headerShadowVisible: false,
+          headerBackVisible: true,
+          headerTransparent: true,
+          headerTitle: "",
+        }}
+        name="ApplicantProfileCompanyScreen"
+        component={ApplicantProfileCompanyScreen}
       />
 
       <Stack.Screen

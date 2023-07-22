@@ -7,6 +7,7 @@ import {
   ImageBackground,
   KeyboardAvoidingView,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import Button from "@components/login/Button";
 import { emailValidator } from "@helpers/emailValidator";
@@ -25,7 +26,7 @@ export const LoginCompanyScreen = ({ navigation }) => {
   const [email, setEmail] = useState({ value: "", error: "" });
   const [password, setPassword] = useState({ value: "", error: "" });
   const[isLoading,setIsLoading]=useState(false)
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(false);
 
   const dispatch=useDispatch();
 
@@ -40,6 +41,8 @@ export const LoginCompanyScreen = ({ navigation }) => {
       return;
     }
 
+  setIsLoading(true)
+    setError(false)
     await axios
       .post(
         `${backendURL}api/employers/login`,
@@ -52,11 +55,10 @@ export const LoginCompanyScreen = ({ navigation }) => {
       .then(({ data }) => {dispatch(setCompany(data));dispatch(clearUser())})
       .then(() => setIsLoading(false))
 
-      .then(() => navigation.navigate("Company"))
+      .then(() => navigation.replace("Company"))
       .catch((e) => {
-        setError(e);
-        console.log(e);
-        return null;
+        setError(true);
+      
       })
       .finally(() => setIsLoading(false));
   };
@@ -142,6 +144,9 @@ export const LoginCompanyScreen = ({ navigation }) => {
             <Text style={styles.forgot}>¿Olvidaste tu contraseña?</Text>
           </TouchableOpacity>
         </View>
+        <View>
+          {isLoading && <ActivityIndicator/>}
+        </View>
         <Button
           style={{ fontFamily: FONT.medium }}
           mode="contained"
@@ -149,6 +154,8 @@ export const LoginCompanyScreen = ({ navigation }) => {
         >
           Entrar
         </Button>
+        {error && <Text style={{fontFamily:FONT.medium,color:COLORS.red700,fontSize:SIZES.small,textAlign:"center"}}>Contraseña o correo incorrecto</Text>}
+
         <View style={styles.row}>
           <Text style={{ fontFamily: FONT.regular }}>
             ¿No tienes una cuenta aun?{" "}

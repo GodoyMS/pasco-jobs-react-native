@@ -151,7 +151,6 @@ const EditCvUserScreen = () => {
       const base64 = await convertBlobToBase64(blob);
       return base64;
     } catch (error) {
-      console.log("Error while converting to base64:", error);
       return null;
     }
   };

@@ -65,20 +65,20 @@ export const ProfileCompanyScreen = ({ navigation }) => {
     },
     {
       id: 3,
-      name: "Contactar Pasco Jobs",
+      name: "Pasco Jobs",
       iconName: "building-o",
       iconType: "font-awesome",
       onClick: "",
       route:"ContactPascoJobsScreen"
     },
-    {
-      id: 4,
-      name: "Contactar desarrollador",
-      iconName: "code",
-      iconType: "entypo",
-      onClick: "",
-      route:"ContactDeveloperScreen"
-    },
+    // {
+    //   id: 4,
+    //   name: "Contactar desarrollador",
+    //   iconName: "code",
+    //   iconType: "entypo",
+    //   onClick: "",
+    //   route:"ContactDeveloperScreen"
+    // },
   ];
 
   const dispatch = useDispatch();
@@ -298,15 +298,7 @@ export const ProfileCompanyScreen = ({ navigation }) => {
                     >
                       {userInfo.name}
                     </Text>
-                    <Text
-                      style={{
-                        color: COLORS.gray600,
-                        fontFamily: FONT.regular,
-                        fontSize: SIZES.small,
-                      }}
-                    >
-                      {userInfo.position}
-                    </Text>
+                 
                     <Text
                       style={{
                         color: COLORS.tertiary,
@@ -321,6 +313,55 @@ export const ProfileCompanyScreen = ({ navigation }) => {
                   <View>
                     <Icon
                       name="chevron-with-circle-right"
+                      type="entypo"
+                      size={20}
+                    />
+                  </View>
+                </View>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => navigation.navigate("CompanyProfileCompanyScreen", { itemId: userInfo?.id })}
+                activeOpacity={0.6}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  flexDirection: "row",
+                  marginTop: 10,
+                  paddingHorizontal: 20,
+                  paddingVertical: 10,
+                  columnGap: 30,
+                  alignItems: "center",
+                  backgroundColor: COLORS.blue200,
+
+                  marginHorizontal: 20,
+                  borderRadius: 5,
+                }}
+              >
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <View>
+                    <Text
+                      style={{
+                        color: COLORS.blue800,
+                        fontFamily: FONT.regular,
+                        fontSize: 16,
+                      }}
+                    >
+                      Perfil público
+                    </Text>
+                   
+                 
+                  </View>
+                  <View>
+                    <Icon
+                      name="eye"
                       type="entypo"
                       size={20}
                     />

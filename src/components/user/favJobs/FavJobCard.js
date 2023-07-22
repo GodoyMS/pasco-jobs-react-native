@@ -1,4 +1,9 @@
-import { Text, TouchableWithoutFeedback, View } from "react-native";
+import {
+  ActivityIndicator,
+  Text,
+  TouchableWithoutFeedback,
+  View,
+} from "react-native";
 import React, { Component, useState } from "react";
 import { Image } from "react-native";
 import { TouchableOpacity } from "react-native";
@@ -17,7 +22,7 @@ import AgeDateFormat from "@components/dates/AgeDateFormat";
 
 export const FavJobCard = ({ dataFavJob, userId }) => {
   const dispatch = useDispatch();
-
+  const [isLoading, setIsLoading] = useState(false);
   const [isAddedToFav, setIsAddedToFav] = useState(false);
   const navigateToDetails = () => {
     navigation.navigate("JobDetails", { itemId: dataFavJob.job.id });
@@ -26,18 +31,21 @@ export const FavJobCard = ({ dataFavJob, userId }) => {
   const navigation = useNavigation();
 
   const handleDeleteJob = async () => {
+    setIsLoading(true);
     await axios
       .delete(`${backendURL}api/favoriteJobs/${dataFavJob.id}`)
       .then(({ data }) => dispatch(deleteFavoriteJob(data.job.id)))
-      .catch((e) => console.log(e));
+      .then(() => setIsLoading(false))
+      .catch((e) => console.log(e))
+      .finally(() => setIsLoading(false));
   };
 
   const handleAddFavoriteJob = async () => {
     await axios
-      .post(
-        `${backendURL}api/favoriteJobs`,
-        { user: userId, job: dataFavJob.id }
-      )
+      .post(`${backendURL}api/favoriteJobs`, {
+        user: userId,
+        job: dataFavJob.id,
+      })
       .then(({ data }) => dispatch(addFavoriteJob(data)))
       .then(
         () => setIsAddedToFav(true),
@@ -62,11 +70,15 @@ export const FavJobCard = ({ dataFavJob, userId }) => {
           </View>
           <View>
             <TouchableOpacity onPress={handleDeleteJob}>
-              <Icon
-                name="trash"
-                type="evilicon"
-                color={isAddedToFav ? COLORS.red600 : COLORS.secondary}
-              />
+              {isLoading ? (
+                <ActivityIndicator />
+              ) : (
+                <Icon
+                  name="trash"
+                  type="evilicon"
+                  color={isAddedToFav ? COLORS.red600 : COLORS.secondary}
+                />
+              )}
             </TouchableOpacity>
           </View>
         </View>
@@ -104,7 +116,6 @@ export const FavJobCard = ({ dataFavJob, userId }) => {
                 value: dataFavJob?.job?.salary,
                 icon: 123,
               },
-             
             ].map((item) => {
               if (!item.value) return;
               return (
@@ -153,6 +164,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
     backgroundColor: COLORS.primary,
     height: "auto",
-    marginVertical:5
+    marginVertical: 5,
   },
 });

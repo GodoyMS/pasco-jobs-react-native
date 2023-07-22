@@ -7,49 +7,27 @@ import companyDefaultProfile from "@assets/images/company/defaultprofilecompany-
 import { COLORS, FONT, SIZES,SHADOWS } from "@constants/theme";
 import { TouchableOpacity } from "react-native";
 import { Icon } from "@rneui/themed";
+import { useNavigation } from "@react-navigation/native";
 const Company = ({
   companyLogo,
   companyName,
   province,
   district,
   description,
+  companyId
 }) => {
-  console.log(companyLogo);
-
+  
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const navigation=useNavigation();
+
+  const navigateToDetails = () => {
+    navigation.navigate("CompanyProfileUserScreen", { itemId: companyId});
+  };
 
   return (
-    // <View style={styles.container}>
-    //   <View>
+ 
 
-    //   </View>
-    //   <View style={styles.logoBox}>
-    //     <Image
-    //       source={ companyLogo ?   {
-    //         uri:companyLogo
-    //       }:companyDefaultProfile}
-    //       style={styles.logoImage}
-    //     />
-    //   </View>
-
-    //   <View style={styles.jobTitleBox}>
-    //     <Text style={styles.jobTitle}>{companyName}</Text>
-    //   </View>
-
-    //   <View style={styles.companyInfoBox}>
-    //     <Text style={styles.companyName}>{companyName} / </Text>
-    //     <View style={styles.locationBox}>
-    //       <Image
-    //         source={icons.location}
-    //         resizeMode='contain'
-    //         style={styles.locationImage}
-    //       />
-    //       <Text style={styles.locationName}>{province} - {district}</Text>
-    //     </View>
-    //   </View>
-    // </View>
-
-    <View style={{ marginTop: 100, marginHorizontal: 0,    ...SHADOWS.medium,
+    <TouchableOpacity onPress={navigateToDetails} style={{ marginTop: 100, marginHorizontal: 0,    ...SHADOWS.medium,
       shadowColor: COLORS.white, }}>
       <Text
         style={{
@@ -108,9 +86,9 @@ const Company = ({
 
       
         <View
-          style={{ flexDirection: "row", columnGap: 10, paddingHorizontal: 10 }}
+          style={{ flexDirection: "row", columnGap: 20, paddingHorizontal: 10,marginBottom:20,marginTop:10 }}
         >
-          <TouchableOpacity onPress={() => setIsFullScreen(!isFullScreen)} >
+          <TouchableOpacity activeOpacity={0.8} l  onPress={() => setIsFullScreen(!isFullScreen)} >
           <Image
             source={
               companyLogo
@@ -120,10 +98,10 @@ const Company = ({
                 : companyDefaultProfile
             }
             style={{
-              width:   120,
+              width:   100,
               height: "auto",
               aspectRatio: "1/1",
-              borderRadius: 10,
+              borderRadius: 100,
             }}
           />  
           </TouchableOpacity>
@@ -163,33 +141,33 @@ const Company = ({
             marginTop: 10,
           }}
         >
-          <TouchableOpacity
-            activeOpacity={0.7}
+          <View
             style={{
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "center",
               columnGap: 10,
-              backgroundColor: COLORS.tertiary,
+              backgroundColor: COLORS.indigo100,
               paddingHorizontal: 15,
               paddingVertical: 10,
               borderRadius: 10,
+              width:"100%"
             }}
           >
-            <Icon color={COLORS.white} name="message1" type="antdesign" />
+            <Icon color={COLORS.tertiary} name="building" type="font-awesome-5" />
             <Text
               style={{
-                fontFamily: FONT.medium,
-                color: COLORS.white,
+                fontFamily: FONT.bold,
+                color: COLORS.tertiary,
                 fontSize: SIZES.small,
               }}
             >
-              Enviar mensaje
+              Conocer empresa
             </Text>
-          </TouchableOpacity>
+          </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

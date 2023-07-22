@@ -121,8 +121,9 @@ const StepForm3JobForm = ({
   };
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false} scrollEnabled={true}>
-      <View style={{ flex: 1, paddingBottom: 400 }}>
+    <ScrollView  showsVerticalScrollIndicator={false} scrollEnabled={true}>
+      <View style={{ flex: 1, paddingBottom: 500,              marginHorizontal:20,
+ }}>
         <Text
           style={{
             fontFamily: FONT.bold,

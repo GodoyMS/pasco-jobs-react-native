@@ -72,16 +72,16 @@ export const LoginScreen = ({ navigation }) => {
           .then(() => dispatch(addAllFavoriteJobs(currentJobsId)))
           .catch((e) => console.log(e));
       })
-      .then(() => navigation.navigate("User"))
+      .then(() => navigation.replace("User"))
       .catch((e) => {
         setError(true);
       })
       .finally(() => setIsLoading(false));
   };
   return (
-    <View style={{ flex: 1, rowGap: 15 }}>
+    <SafeAreaView style={{ flex: 1, rowGap: 15 }}>
       <View style={{ height: 200, zIndex: 50, flexDirection: "column" }}>
-
+          
       </View>
       <View
         style={{
@@ -158,7 +158,7 @@ export const LoginScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

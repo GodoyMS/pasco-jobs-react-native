@@ -7,10 +7,10 @@ export default function StepHeaderJobForm({ stepForm,title,subTitle,currentStep 
     <View
       style={{
         padding: 10,
-        flex: 1,
         justifyContent: "center",
         alignItems: "center",
         borderRadius: 5,
+
       }}
     >
       <View
@@ -37,7 +37,7 @@ export default function StepHeaderJobForm({ stepForm,title,subTitle,currentStep 
           <Text
             style={{
               fontFamily: FONT.bold,
-              fontSize: SIZES.medium,
+              fontSize: SIZES.small,
               color: stepForm >= currentStep ? COLORS.tertiary : COLORS.gray700,
             }}
           >
