@@ -5,6 +5,7 @@ const userAdsSlice = createSlice({
     infoUserAds: null,
     tokenUserAds: null,
     exp: null,
+    userAdsLocationForAds:null
   },
   reducers: {
     setUserAds: (state, action) => {
@@ -15,6 +16,12 @@ const userAdsSlice = createSlice({
     setOnlyUserAds:(state,action)=>{
       state.infoUserAds = action.payload.user;
 
+    },
+    setUserAdsLocationForAds:(state,action)=>{
+      state.userAdsLocationForAds=action.payload
+    },
+    cleanUserAdsLocationForAds:(state,action)=>{
+      state.userAdsLocationForAds=null
     },
     refreshUserAdsInfo: (state, action) => {
       state.exp = action.payload.exp;
@@ -38,6 +45,8 @@ const userAdsSlice = createSlice({
 export const {
     setUserAds,
     setOnlyUserAds,
+    setUserAdsLocationForAds,
+    cleanUserAdsLocationForAds,
     refreshUserAdsInfo, 
     clearUserAds,
     setPublishNewAd,

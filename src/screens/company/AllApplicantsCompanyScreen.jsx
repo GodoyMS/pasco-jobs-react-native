@@ -1,28 +1,25 @@
 import { Text, StyleSheet, View, Animated } from "react-native";
-import React, { Component, useRef } from "react";
+import React, {  useRef } from "react";
 import { SafeAreaView } from "react-native";
-import { TouchableOpacity } from "react-native";
 import { FlatList } from "react-native";
 import { COLORS, FONT, SIZES } from "@constants/theme";
 import { gql, useQuery } from "@apollo/client";
 import { useSelector } from "react-redux";
-import ApplicationJobCard from "@components/user/applicationJobs/ApplicationJobCard";
 import { useState } from "react";
-import { useFocusEffect } from "@react-navigation/native";
-import { useCallback } from "react";
+
 import CompanyCardUserScreenjsx from "@components/user/companies/CompanyCardUserScreen";
 import { ActivityIndicator } from "react-native";
 import { useEffect } from "react";
-import { Skeleton } from "@rneui/themed";
-import FormLoader from "@components/loaders/FormLoader";
 import ScreenLoader from "@components/loaders/ScreenLoader";
 import { Searchbar } from "react-native-paper";
 import CitySelectorUserCompanies from "@components/user/companies/CitySelectorUserCompanies";
 import FeaturedCompanyCardUserScreen from "@components/user/companies/FeaturedCompanyCardUserScreen";
+import ProfessionalCardCompanyScreen from "@components/company/professionals/ProfessionalCardCompanyScreen";
+import CitySelectorApplicantsCompanyScreen from "@components/company/professionals/CitySelectorApplicantsCompanyScreen";
 
-export const AllCompaniesUserScreen = ({ navigation }) => {
-   const userLocationForCompanies = useSelector(
-    (state) => state.user.userLocationForCompanies
+export const AllApplicantsCompanyScreen = ({ navigation }) => {
+  const companyLocationForApplicants = useSelector(
+    (state) => state.company.companyLocationForApplicants
   );
   const [data, setData] = useState([]); // Array to store the fetched data
   const [page, setPage] = useState(1); // Current page number
@@ -63,22 +60,25 @@ export const AllCompaniesUserScreen = ({ navigation }) => {
   );
 
 
-  const GET_ALL_COMPANIES_USER_SCREEN = gql`
-    query GET_ALL_COMPANIES_USER_SCREEN(
+  const GET_ALL_APPLICANTS_COMPANY_SCREEN = gql`
+    query GET_ALL_APPLICANTS_COMPANY_SCREEN(
       $searchWord: String!
       $page: Int!
       $province: String!
     ) {
-      Employers(
+      Applicants(
         where:{
           OR:[{ name: { like: $searchWord } } 
-            {description:{like:$searchWord}}]
+            {description:{like:$searchWord}} 
+            {position:{like:$searchWord}} 
+
+          ]
           AND:[{province: { like: $province }}]  
         }  
         
        
         page: $page
-        limit: 8
+        limit: 4
         sort: "createdAt"
       ) {
         totalDocs
@@ -90,7 +90,8 @@ export const AllCompaniesUserScreen = ({ navigation }) => {
           name
           province
           profile
-          heading
+          sex
+          position
           district
           description
           id
@@ -99,57 +100,57 @@ export const AllCompaniesUserScreen = ({ navigation }) => {
     }
   `;
 
-  const GET_ALL_FEATURED_COMPANIES_USER_SCREEN = gql`
-    query GET_ALL_FEATURED_COMPANIES_USER_SCREEN {
-      Employers(
-        where:  { featured: { equals: "yes" } }
-        limit: 15
-        sort: "createdAt"
-      ) {
-        totalDocs
-        totalDocs
-        hasPrevPage
-        hasNextPage
-        page
-        docs {
-          name
-          province
-          heading
-          profile
-          district
-          description
-          id
-        }
-      }
-    }
-  `;
-  const { loading: loadingFeatured, data: dataFeaturedCompanies } = useQuery(
-    GET_ALL_FEATURED_COMPANIES_USER_SCREEN,
-    { fetchPolicy: "cache-and-network" }
-  );
+  // const GET_ALL_FEATURED_COMPANIES_USER_SCREEN = gql`
+  //   query GET_ALL_FEATURED_COMPANIES_USER_SCREEN {
+  //     Employers(
+  //       where:  { featured: { equals: "yes" } }
+  //       limit: 10
+  //       sort: "createdAt"
+  //     ) {
+  //       totalDocs
+  //       totalDocs
+  //       hasPrevPage
+  //       hasNextPage
+  //       page
+  //       docs {
+  //         name
+  //         province
+  //         heading
+  //         profile
+  //         district
+  //         description
+  //         id
+  //       }
+  //     }
+  //   }
+  // `;
+  // const { loading: loadingFeatured, data: dataFeaturedCompanies } = useQuery(
+  //   GET_ALL_FEATURED_COMPANIES_USER_SCREEN,
+  //   { fetchPolicy: "cache-and-network" }
+  // );
 
   const {
     loading,
     error,
     data: dataCompanies,
     refetch,
-  } = useQuery(GET_ALL_COMPANIES_USER_SCREEN, {
+  } = useQuery(GET_ALL_APPLICANTS_COMPANY_SCREEN, {
     variables: {
       page,
       searchWord,
-      province: userLocationForCompanies ? userLocationForCompanies : "",
+      province: companyLocationForApplicants ? companyLocationForApplicants : "",
     },
     fetchPolicy: "network-only",
   });
 
   useEffect(() => {
     if (!loading && dataCompanies) {
-      setData((prevData) => [...prevData, ...dataCompanies?.Employers?.docs]);
+      setData((prevData) => [...prevData, ...dataCompanies?.Applicants?.docs]);
     }
   }, [loading, dataCompanies]);
 
   const fetchData = () => {
-    if (!isLoading && dataCompanies?.Employers?.hasNextPage) {
+    if (!isLoading && dataCompanies?.Applicants?.hasNextPage) {
       setIsLoading(true);
       setPage((prevPage) => prevPage + 1);
     }
@@ -190,7 +191,7 @@ export const AllCompaniesUserScreen = ({ navigation }) => {
           onChangeText={handleChangeSearchWord}
           placeholderTextColor={COLORS.gray700}
           inputStyle={{ fontFamily: FONT.regular, fontSize: SIZES.small }}
-          placeholder="Buscar empresas"
+          placeholder="Buscar profesionales"
           mode="bar"
           style={{
             backgroundColor: COLORS.white,
@@ -199,11 +200,11 @@ export const AllCompaniesUserScreen = ({ navigation }) => {
             borderBottomLeftRadius: 0,
             borderTopRightRadius: 0,
             borderBottomRightRadius: 0,
-            height: 50,
+            height: 60,
             alignItems: "center",
           }}
         />
-        <CitySelectorUserCompanies
+        <CitySelectorApplicantsCompanyScreen
           refetch={refetch}
           setPage={setPage}
           setIsCityOpen={setIsCityOpen}
@@ -213,10 +214,9 @@ export const AllCompaniesUserScreen = ({ navigation }) => {
       </View>
 
       <View style={{ flex: 1, flexDirection: "column", marginTop: 10 }}>
-        {!loadingFeatured && (
+        {/* {!loadingFeatured && (
 
-            <Animated.View style={{ height: containerHeight, backgroundColor: COLORS.white }}>
-            
+            <Animated.View style={{ height: containerHeight, backgroundColor: COLORS.white }}>            
               <FlatList
                 style={{
                   flex: 1,
@@ -229,14 +229,11 @@ export const AllCompaniesUserScreen = ({ navigation }) => {
                 keyExtractor={(item, index) => item.id.toString()}
                 showsHorizontalScrollIndicator={false}
                 renderItem={({ item }) => (
-                  <FeaturedCompanyCardUserScreen screen={"CompanyProfileUserScreen"} companyData={item} />
+                  <FeaturedCompanyCardUserScreen companyData={item} />
                 )}
-              />
-
-           
-            </Animated.View>
-            
-        )}
+              />           
+            </Animated.View>            
+        )} */}
 
         <View style={{ flex: 1 }}>
           {loading && page === 1 && <ScreenLoader loading={loading} />}
@@ -252,18 +249,17 @@ export const AllCompaniesUserScreen = ({ navigation }) => {
             </Text>
           )}
 
-          <Animated.FlatList
+          <FlatList
 
             contentContainerStyle={{ paddingBottom: 100 }}
             style={{ flex: 1 }}
             data={data}
-            onScroll={handleScroll}
             showsVerticalScrollIndicator={true}
             numColumns={2}
             keyExtractor={(item, index) => item.id.toString()}
             showsHorizontalScrollIndicator={true}
             renderItem={({ item }) => (
-              <CompanyCardUserScreenjsx screen={"CompanyProfileUserScreen"} companyData={item} />
+              <ProfessionalCardCompanyScreen   companyData={item} />
             )}
             onEndReached={fetchData} // Trigger fetching more data when reaching the end
             onEndReachedThreshold={0.6} // Adjust the threshold as needed
@@ -277,4 +273,4 @@ export const AllCompaniesUserScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({});
 
-export default AllCompaniesUserScreen;
+export default AllApplicantsCompanyScreen;

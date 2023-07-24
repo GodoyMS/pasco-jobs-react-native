@@ -52,7 +52,8 @@
     "read-more-react": "^1.0.10",
     "redux": "^4.2.1",
     "redux-persist": "^6.0.0",
-    "rn-fetch-blob": "^0.12.0"
+    "rn-fetch-blob": "^0.12.0",
+    "expo-linear-gradient": "~12.1.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

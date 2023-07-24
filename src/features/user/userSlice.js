@@ -5,6 +5,8 @@ const userSlice = createSlice({
     infoUser: null,
     tokenUser: null,
     userLocation:null,
+    userLocationForAds:null,
+    userLocationForCompanies:null,
     userFavCategory:null,
     favUserJobs:[],
     infoCompany: null,
@@ -21,12 +23,28 @@ const userSlice = createSlice({
       state.infoUser = action.payload.user;
 
     },
+    setUserLocationForAds:(state,action)=>{
+      state.userLocationForAds=action.payload
+    },
+    cleanUserLocationForAds:(state,action)=>{
+      state.userLocationForAds=null
+    },
     setUserLocation:(state,action)=>{
       state.userLocation=action.payload
-    },
+    },    
     cleanUserLocation:(state,action)=>{
       state.userLocation=null
     },
+
+    setUserLocationForCompanies:(state,action)=>{
+      state.userLocationForCompanies=action.payload
+    },    
+    cleanUserLocationForCompanies:(state,action)=>{
+      state.userLocationForCompanies=null
+    },
+
+
+  
     setUserFavCategory:(state,action)=>{
       state.userFavCategory=action.payload
     },
@@ -86,6 +104,13 @@ export const {
   addFavoriteJob,
   addAllFavoriteJobs,
   deleteFavoriteJob,
+
+  setUserLocationForCompanies,
+  cleanUserLocationForCompanies,
+
+  setUserLocationForAds,
+  cleanUserLocationForAds,
+
   setUserLocation,
   cleanUserLocation,
   setUserFavCategory,

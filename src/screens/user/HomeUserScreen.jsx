@@ -6,25 +6,20 @@ import {
   Image,
   Animated,
 } from "react-native";
-import React, { Component, useEffect, useRef } from "react";
+import React, {  useEffect, useRef } from "react";
 
 import {
   SafeAreaView,
-  ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
 } from "react-native";
 import icons from "@constants/icons";
 import JobCard from "@components/user/home/JobCard";
 import { useState } from "react";
 import { COLORS, SIZES, FONT } from "@constants/theme";
-import { TextInput } from "react-native";
-import stylesHome from "@components/user/home/stylesHome";
-import { Icon } from "@rneui/themed";
+
+import { Icon, Tab } from "@rneui/themed";
 import useFetchJobs from "@hooks/user/fetchJobs";
-import axios from "axios";
 import { FlatList } from "react-native";
-import getUserinfo from "@hooks/user/getUserInfo";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import {
@@ -34,10 +29,17 @@ import {
   setUserFavCategory,
   setUserLocation,
 } from "@features/user/userSlice";
-import { Searchbar } from "react-native-paper";
-import DropDownPicker from "react-native-dropdown-picker";
-import { Modal } from "react-native";
-import { Chip } from "react-native-paper";
+import {
+  PaperProvider,
+  Portal,
+  Searchbar,
+  Modal,
+  TextInput,
+  Button,
+} from "react-native-paper";
+
+import ScreenLoader from "@components/loaders/ScreenLoader";
+import { SelectList } from "react-native-dropdown-select-list";
 
 export const HomeUserScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -82,25 +84,25 @@ export const HomeUserScreen = ({ navigation }) => {
     { label: "Mayor a 10 años", value: "Mayor a 10 años" },
   ]);
 
-  const [openSalary, setOpenSalary] = useState(false);
-  const [valueSalary, setValueSalary] = useState(null);
-  const [itemsSalary, setItemsSalary] = useState([
-    { label: "Hasta S/.1000", value: "&where[salary][less_than_equal]=1000" },
-    { label: "Hasta S/.1500", value: "&where[salary][less_than_equal]=1500" },
-    { label: "Hasta S/.2500", value: "&where[salary][less_than_equal]=2500" },
-    {
-      label: "Mayor a S/.2500",
-      value: "&where[salary][greater_than_equal]=2500",
-    },
-    {
-      label: "Mayor a S/.3000",
-      value: "&where[salary][greater_than_equal]=3000",
-    },
-    {
-      label: "Mayor a S/.5000",
-      value: "&where[salary][greater_than_equal]=5000",
-    },
-  ]);
+  // const [openSalary, setOpenSalary] = useState(false);
+  const [valueSalary, setValueSalary] = useState("");
+  // const [itemsSalary, setItemsSalary] = useState([
+  //   { label: "Hasta S/.1000", value: "&where[salary][less_than_equal]=1000" },
+  //   { label: "Hasta S/.1500", value: "&where[salary][less_than_equal]=1500" },
+  //   { label: "Hasta S/.2500", value: "&where[salary][less_than_equal]=2500" },
+  //   {
+  //     label: "Mayor a S/.2500",
+  //     value: "&where[salary][greater_than_equal]=2500",
+  //   },
+  //   {
+  //     label: "Mayor a S/.3000",
+  //     value: "&where[salary][greater_than_equal]=3000",
+  //   },
+  //   {
+  //     label: "Mayor a S/.5000",
+  //     value: "&where[salary][greater_than_equal]=5000",
+  //   },
+  // ]);
 
   // const [data, setData] = useState("");
   const [searchWord, setSearchWord] = useState("");
@@ -143,7 +145,7 @@ export const HomeUserScreen = ({ navigation }) => {
       );
     if (valueSalary)
       setSearchQuery(
-        (prevSelectedElements) => `${prevSelectedElements}${valueSalary}`
+        (prevSelectedElements) => `${prevSelectedElements}&where[salary][greater_than]=${valueSalary}`
       );
   };
 
@@ -197,18 +199,18 @@ export const HomeUserScreen = ({ navigation }) => {
       items: itemsExperience,
       setItems: setItemsExperience,
     },
-    {
-      id: 3,
-      z: 300,
+    // {
+    //   id: 3,
+    //   z: 300,
 
-      name: "Salario",
-      open: openSalary,
-      setOpen: setOpenSalary,
-      value: valueSalary,
-      setValue: setValueSalary,
-      items: itemsSalary,
-      setItems: setItemsSalary,
-    },
+    //   name: "Salario",
+    //   open: openSalary,
+    //   setOpen: setOpenSalary,
+    //   value: valueSalary,
+    //   setValue: setValueSalary,
+    //   items: itemsSalary,
+    //   setItems: setItemsSalary,
+    // },
     {
       id: 4,
       z: 200,
@@ -261,7 +263,7 @@ export const HomeUserScreen = ({ navigation }) => {
     },
     {
       id: 2,
-      name: "Derecho y Leyes",
+      name: "Derecho y Leyes ",
       value: "Derecho y Leyes",
       icon: icons.derecho,
       color: "",
@@ -344,167 +346,96 @@ export const HomeUserScreen = ({ navigation }) => {
   );
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
-      <View>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            marginHorizontal: 20,
-            marginTop: 50,
-            columnGap: 1,
-            zIndex: 999,
-          }}
-        >
-          <Searchbar
-            value={searchWord}
-            onChangeText={handleSearchWord}
-            style={{
-              backgroundColor: COLORS.white,
-              flex: 1,
-              borderTopLeftRadius: 20,
-              borderBottomLeftRadius: 20,
-              borderTopRightRadius: 0,
-              borderBottomRightRadius: 0,
-            }}
-            inputStyle={{
-              color: COLORS.gray400,
-              fontFamily: FONT.regular,
-              fontSize: SIZES.small,
-            }}
-            placeholder="Buscar puestos de trabajo"
-            placeholderTextColor={COLORS.gray}
-          />
+    <PaperProvider>
+      <Portal>
+        <Modal visible={modalVisible} onDismiss={() => setModalVisible(false)}>
           <View
             style={{
               backgroundColor: COLORS.white,
-              borderTopRightRadius: 20,
-              borderBottomRightRadius: 20,
-              width: 120,
-              height: 56,
+              marginHorizontal: 20,
+              paddingHorizontal: 20,
+              paddingVertical: 40,
+              borderRadius: 10,
             }}
           >
-            <TouchableOpacity
-              onPress={() => setIsCityOpen(!isCityOpen)}
+            <Text
               style={{
-                display: "flex",
-                height: "auto",
-                alignItems: "center",
-                justifyContent: "center",
-                flexDirection: "column",
-                columnGap: 4,
-                paddingLeft: 5,
-                paddingRight: 10,
+                fontFamily: FONT.bold,
+                fontSize: SIZES.large,
+                color: COLORS.gray800,
+                marginBottom: 20,
               }}
             >
-              <Text
-                style={{
-                  fontFamily: FONT.regular,
-                  fontSize: SIZES.small,
-                  borderTopRightRadius: 20,
-                  color: COLORS.gray500,
-                }}
-              >
-                {userLocation ? userLocation : "Ciudad"}
-              </Text>
-              <Image
-                style={{ width: 20, height: 20 }}
-                source={icons.location}
-              />
-            </TouchableOpacity>
-            {isCityOpen && (
+              Filtrar ofertas de trabajo
+            </Text>
+            {filterActions.map((e) => (
+              <View style={{ marginVertical: 5 }} key={e.id}>
+                <SelectList
+                  setSelected={(val) => e.setValue(val)}
+                  data={e.items.map((e) => {
+                    return { key: e.label, value: e.value };
+                  })}
+                  placeholder={e.name}
+                  search={false}
+                  save="value"
+                />
+              </View>
+            ))}
+            <View
+              style={{
+                flexDirection: "row",
+                columnGap: 10,
+                alignItems: "center",
+                marginTop: 10,
+              }}
+            >
               <View
                 style={{
-                  position: "absolute",
-                  top: 56,
-                  backgroundColor: COLORS.indigo50,
-                  borderBottomLeftRadius: 20,
-                  borderBottomRightRadius: 20,
-                  padding: 5,
+                  borderWidth: 1,
+                  borderColor: COLORS.indigo600,
+                  height: "100%",
+                  flexDirection: "row",
+                  width: 50,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderRadius: 10,
                 }}
               >
-                <TouchableOpacity
-                  onPress={() => {
-                    setIsCityOpen(false);
-                    dispatch(setUserLocation("Pasco"));
-                    setPage(1);
-                  }}
-                  style={{ paddingVertical: 15 }}
-                >
-                  <Text
-                    style={{ fontFamily: FONT.regular, fontSize: SIZES.small }}
-                  >
-                    Pasco
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => {
-                    setIsCityOpen(false);
-                    dispatch(setUserLocation("Oxapampa"));
-                    setPage(1);
-                  }}
-                  style={{ paddingVertical: 15 }}
-                >
-                  <Text
-                    style={{ fontFamily: FONT.regular, fontSize: SIZES.small }}
-                  >
-                    Oxapampa
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => {
-                    setIsCityOpen(false);
-                    setPage(1);
-                    dispatch(setUserLocation("Daniel Alcides Carrión"));
-                  }}
-                  style={{ paddingVertical: 15 }}
-                >
-                  <Text
-                    style={{ fontFamily: FONT.regular, fontSize: SIZES.small }}
-                  >
-                    Daniel A. Carrión
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => {
-                    setIsCityOpen(false);
-                    dispatch(cleanUserLocation());
-                    setPage(1);
-                  }}
-                  style={{ paddingVertical: 15 }}
-                >
-                  <Text
-                    style={{ fontFamily: FONT.regular, fontSize: SIZES.small }}
-                  >
-                    Todas las ciudades
-                  </Text>
-                </TouchableOpacity>
+                <Text>S/.</Text>
               </View>
-            )}
+              <TextInput
+                style={{ flex: 1 }}
+                outlineColor={COLORS.tertiary}
+                keyboardType="numeric"
+                mode="outlined"
+                label={"Salario mínimo"}
+                placeholder="1500"
+                value={valueSalary}
+                onChangeText={(text) => setValueSalary(text)}
+              />
+            </View>
+
+            <Button
+              style={{backgroundColor:COLORS.tertiary,marginTop:20,borderRadius:10}}
+
+              mode="contained"
+              onPress={handleFilterQuery}
+              labelStyle={{fontFamily:FONT.medium,fontSize:SIZES.medium}}
+            >
+              Filtrar
+            </Button>
           </View>
 
-          {/* {Platform.OS === "android" && (
-          <TextInput
-            value={searchWord}
-            onChangeText={handleSearchWord}
-            style={stylesHome.inputSearch}
-            placeholder="Buscar puestos de trabajo"
-            placeholderTextColor={COLORS.gray}
-          />
-        )}
-        {Platform.OS === "ios" && (
-          <TextInput
-            value={searchWord}
-            onChangeText={handleSearchWord}
-            style={stylesHome.inputSearch}
-            placeholder="Buscar puestos de trabajo"
-            placeholderTextColor={COLORS.gray}
-          />
-        )} */}
-        </View>
+          {/* <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: COLORS.white,
+              rowGap: 10,
+            }}
+          >
+            
 
-        <Modal visible={modalVisible} animationType="slide" transparent>
-          <View style={styles.modalContainer}>
             {filterActions.map((e) => (
               <DropDownPicker
                 key={e.id}
@@ -526,6 +457,7 @@ export const HomeUserScreen = ({ navigation }) => {
                 mode="BADGE"
               />
             ))}
+
             <View style={{ flexDirection: "row", columnGap: 10 }}>
               <TouchableOpacity
                 onPress={() => setModalVisible(false)}
@@ -566,44 +498,272 @@ export const HomeUserScreen = ({ navigation }) => {
                 </Text>
               </TouchableOpacity>
             </View>
-          </View>
+          </View> */}
         </Modal>
+      </Portal>
 
-
-
-        <Animated.View style={{            height: containerHeight,
-}}>
-        <View style={{flexDirection:"row",justifyContent:"flex-end",paddingHorizontal:20,marginTop:15}}><Icon color={COLORS.secondary} name="arrow-long-right" type="entypo"/></View>
-
-        <View
-          style={{
-            marginTop: 5,
-            marginBottom: 5,
-            zIndex: 600,
-          }}
-        >
-          <FlatList
-            style={{ paddingLeft: 20, height: 50 }}
-            data={categories}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            onEndReachedThreshold={0.1}
-            keyExtractor={(item) => String(item.id)}
-            renderItem={({ item }) => (
+      <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
+        <View>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginHorizontal: 20,
+              marginTop: 30,
+              columnGap: 1,
+              zIndex: 999,
+            }}
+          >
+            <Searchbar
+              value={searchWord}
+              elevation={4}
+              onChangeText={handleSearchWord}
+              style={{
+                backgroundColor: COLORS.white,
+                flex: 1,
+                borderTopLeftRadius: 20,
+                borderBottomLeftRadius: 20,
+                borderTopRightRadius: 0,
+                borderBottomRightRadius: 0,
+                height: 50,
+                alignItems: "center",
+              }}
+              inputStyle={{
+                color: COLORS.gray800,
+                fontFamily: FONT.regular,
+                fontSize: SIZES.small,
+              }}
+              spellCheck={true}
+              placeholder="Buscar puestos de trabajo"
+              placeholderTextColor={COLORS.gray}
+            />
+            <View
+              style={{
+                backgroundColor: COLORS.white,
+                borderTopRightRadius: 20,
+                borderBottomRightRadius: 20,
+                width: 120,
+                height: 50,
+                elevation: 4,
+              }}
+            >
               <TouchableOpacity
-                onPress={() => {
-                  if (activeCategory === item.value) {
-                    setActiveCategory(null);
-                    setPage(1);
-                    dispatch(cleanUserFavCategory());
-                  } else {
-                    setActiveCategory(item.value);
-                    setPage(1);
-                    dispatch(setUserFavCategory(item.value));
-                  }
+                onPress={() => setIsCityOpen(!isCityOpen)}
+                style={{
+                  display: "flex",
+                  height: "auto",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                  columnGap: 4,
+                  paddingLeft: 5,
+                  paddingRight: 10,
                 }}
               >
+                <Text
+                  style={{
+                    fontFamily: FONT.regular,
+                    fontSize: SIZES.small,
+                    borderTopRightRadius: 20,
+                    color: COLORS.gray500,
+                  }}
+                >
+                  {userLocation ? userLocation : "Ciudad"}
+                </Text>
+                <Image
+                  style={{ width: 20, height: 20 }}
+                  source={icons.location}
+                />
+              </TouchableOpacity>
+              {isCityOpen && (
                 <View
+                  style={{
+                    position: "absolute",
+                    top: 56,
+                    backgroundColor: COLORS.indigo50,
+                    borderBottomLeftRadius: 20,
+                    borderBottomRightRadius: 20,
+                    padding: 5,
+                  }}
+                >
+                  <TouchableOpacity
+                    onPress={() => {
+                      setIsCityOpen(false);
+                      dispatch(setUserLocation("Pasco"));
+                      setPage(1);
+                    }}
+                    style={{ paddingVertical: 15 }}
+                  >
+                    <Text
+                      style={{
+                        fontFamily: FONT.regular,
+                        fontSize: SIZES.small,
+                      }}
+                    >
+                      Pasco
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setIsCityOpen(false);
+                      dispatch(setUserLocation("Oxapampa"));
+                      setPage(1);
+                    }}
+                    style={{ paddingVertical: 15 }}
+                  >
+                    <Text
+                      style={{
+                        fontFamily: FONT.regular,
+                        fontSize: SIZES.small,
+                      }}
+                    >
+                      Oxapampa
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setIsCityOpen(false);
+                      setPage(1);
+                      dispatch(setUserLocation("Daniel Alcides Carrión"));
+                    }}
+                    style={{ paddingVertical: 15 }}
+                  >
+                    <Text
+                      style={{
+                        fontFamily: FONT.regular,
+                        fontSize: SIZES.small,
+                      }}
+                    >
+                      Daniel A. Carrión
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setIsCityOpen(false);
+                      dispatch(cleanUserLocation());
+                      setPage(1);
+                    }}
+                    style={{ paddingVertical: 15 }}
+                  >
+                    <Text
+                      style={{
+                        fontFamily: FONT.regular,
+                        fontSize: SIZES.small,
+                      }}
+                    >
+                      Todas las ciudades
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+
+            {/* {Platform.OS === "android" && (
+          <TextInput
+            value={searchWord}
+            onChangeText={handleSearchWord}
+            style={stylesHome.inputSearch}
+            placeholder="Buscar puestos de trabajo"
+            placeholderTextColor={COLORS.gray}
+          />
+        )}
+        {Platform.OS === "ios" && (
+          <TextInput
+            value={searchWord}
+            onChangeText={handleSearchWord}
+            style={stylesHome.inputSearch}
+            placeholder="Buscar puestos de trabajo"
+            placeholderTextColor={COLORS.gray}
+          />
+        )} */}
+          </View>
+
+          <Animated.View style={{ height: containerHeight }}>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                paddingHorizontal: 20,
+                marginTop: 15,
+              }}
+            >
+              <Icon
+                color={COLORS.secondary}
+                name="arrow-long-right"
+                type="entypo"
+              />
+            </View>
+
+            <View
+              style={{
+                marginTop: 5,
+                zIndex: 600,
+              }}
+            >
+              <FlatList
+                style={{
+                  paddingHorizontal: 0,
+                  borderBottomColor: COLORS.indigo100,
+                  borderBottomWidth: 1,
+                  paddingLeft: 10,
+                }}
+                data={categories}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                onEndReachedThreshold={0.1}
+                keyExtractor={(item) => String(item.id)}
+                StickyHeaderComponent={<Text>HELLO</Text>}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    onPress={() => {
+                      if (activeCategory === item.value) {
+                        setActiveCategory(null);
+                        setPage(1);
+                        dispatch(cleanUserFavCategory());
+                      } else {
+                        setActiveCategory(item.value);
+                        setPage(1);
+                        dispatch(setUserFavCategory(item.value));
+                      }
+                    }}
+                  >
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        columnGap: 5,
+
+                        alignItems: "center",
+                        justifyContent: "center",
+
+                        paddingBottom: 5,
+
+                        marginRight: 20,
+                        borderBottomWidth:
+                          userFavCategory === item.value ? 2 : 0,
+                        borderBottomColor:
+                          userFavCategory === item.value
+                            ? COLORS.tertiary
+                            : COLORS.primary,
+                      }}
+                    >
+                      <Image
+                        style={{ width: 20, height: 20 }}
+                        source={item.icon}
+                      />
+                      <Text
+                        style={{
+                          fontFamily: FONT.medium,
+                          fontSize: SIZES.small,
+                          color:
+                            userFavCategory === item.value
+                              ? COLORS.indigo500
+                              : COLORS.gray600,
+                        }}
+                      >
+                        {item.name}
+                      </Text>
+                    </View>
+                    {/* <View
                   style={{
                     flexDirection: "row",
                     columnGap: 5,
@@ -634,47 +794,47 @@ export const HomeUserScreen = ({ navigation }) => {
                   >
                     {item.name}
                   </Text>
-                </View>
-              </TouchableOpacity>
-            )}
-          />
+                </View> */}
+                  </TouchableOpacity>
+                )}
+              />
 
-          {/* <View style={stylesHome.header}>
+              {/* <View style={stylesHome.header}>
               <Text style={stylesHome.headerTitle}>Nearby jobs sdasd</Text>
               <TouchableOpacity>
                 <Text style={stylesHome.headerBtn}>Show all</Text>
               </TouchableOpacity>
             </View> */}
 
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              paddingHorizontal: 20,
-              alignItems: "center",
-              marginTop: 15,
-              zIndex:800
-            }}
-          >
-            <View style={{zIndex:700}}>
-              <Text
+              <View
                 style={{
-                  paddingHorizontal: 0,
-                  fontSize: SIZES.small,
-                  fontFamily: FONT.medium,
-                  color: COLORS.gray,
-                  marginBottom: 0,
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  paddingHorizontal: 20,
+                  alignItems: "center",
+                  marginTop: 15,
+                  zIndex: 800,
                 }}
               >
-                Trabajos recientes
-              </Text>
-            </View>
+                <View style={{ zIndex: 700 }}>
+                  <Text
+                    style={{
+                      paddingHorizontal: 0,
+                      fontSize: SIZES.small,
+                      fontFamily: FONT.medium,
+                      color: COLORS.gray,
+                      marginBottom: 0,
+                    }}
+                  >
+                    Trabajos recientes
+                  </Text>
+                </View>
 
-            {userFavCategory&&
-              (
-                <View>
-             
-                <TouchableOpacity onPress={()=>dispatch(setUserFavCategory(""))}>
+                {userFavCategory && (
+                  <View>
+                    <TouchableOpacity
+                      onPress={() => dispatch(setUserFavCategory(""))}
+                    >
                       <View
                         style={{
                           flexDirection: "row",
@@ -704,159 +864,153 @@ export const HomeUserScreen = ({ navigation }) => {
                         />
                       </View>
                     </TouchableOpacity>
+                  </View>
+                )}
+
+                <View
+                  style={{ flexDirection: "row", columnGap: 5, zIndex: 700 }}
+                >
+                  {(valueContract ||
+                    valueExperience ||
+                    valueSalary ||
+                    valueWorkShift) && (
+                    <TouchableOpacity onPress={handleCleanFilterQuery}>
+                      <View
+                        style={{
+                          flex: 1,
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          backgroundColor: COLORS.white,
+                          borderRadius: 20,
+                          paddingHorizontal: 5,
+                          paddingVertical: 2,
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontFamily: FONT.medium,
+                            fontSize: SIZES.xSmall,
+                            color: COLORS.indigo700,
+                          }}
+                        >
+                          {" "}
+                          Limpiar filtros
+                        </Text>
+                        <Icon
+                          size={20}
+                          name="close"
+                          type="material"
+                          color={COLORS.gray800}
+                        />
+                      </View>
+                    </TouchableOpacity>
+                  )}
+
+                  <TouchableOpacity onPress={openModal}>
+                    <Icon
+                      name="filter-menu"
+                      type="material-community"
+                      color={COLORS.gray600}
+                    />
+                  </TouchableOpacity>
                 </View>
-                
-              )}
-
-           
-
-
-            <View style={{ flexDirection: "row", columnGap: 5,zIndex:700 }}>
-              {(valueContract ||
-                valueExperience ||
-                valueSalary ||
-                valueWorkShift) && (
-                <TouchableOpacity onPress={handleCleanFilterQuery}>
-                  <View
-                    style={{
-                      flex: 1,
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      backgroundColor: COLORS.white,
-                      borderRadius: 20,
-                      paddingHorizontal: 5,
-                      paddingVertical: 2,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        fontFamily: FONT.medium,
-                        fontSize: SIZES.xSmall,
-                        color: COLORS.indigo700,
-                      }}
-                    >
-                      {" "}
-                      Limpiar filtros
-                    </Text>
-                    <Icon
-                      size={20}
-                      name="close"
-                      type="material"
-                      color={COLORS.gray800}
-                    />
-                  </View>
-                </TouchableOpacity>
-              )}
-
-              <TouchableOpacity onPress={openModal}>
-                <Icon
-                  name="filter-menu"
-                  type="material-community"
-                  color={COLORS.gray600}
-                />
-              </TouchableOpacity>
+              </View>
             </View>
-          </View>
+          </Animated.View>
+
+          {!isLoading && dataApi && user ? (
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                marginTop: 10,
+              }}
+            >
+              <Animated.FlatList
+                ref={flatListRef}
+                data={dataApi.docs}
+                contentContainerStyle={{ paddingBottom: 300 }}
+                horizontal={false}
+                showsVerticalScrollIndicator={false}
+                onEndReachedThreshold={0.1}
+                keyExtractor={(item) => String(item.id)}
+                showsHorizontalScrollIndicator={true}
+                onScroll={handleScroll}
+                renderItem={({ item }) => (
+                  <JobCard userId={user.id} dataJob={item} />
+                )}
+                ListFooterComponent={
+                  dataApi.docs.length > 0 ? (
+                    <View
+                      style={{
+                        flex: 1,
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        paddingHorizontal: 20,
+                        alignItems: "center",
+                      }}
+                    >
+                      <Icon
+                        onPress={previousPage}
+                        size={40}
+                        name="chevron-left"
+                        type="material"
+                        color={COLORS.gray800}
+                      />
+                      <Text
+                        style={{
+                          fontFamily: FONT.medium,
+                          fontSize: SIZES.small,
+                          color: COLORS.gray600,
+                        }}
+                      >
+                        Pagina {dataApi.page} de {dataApi.totalPages}
+                      </Text>
+                      <Icon
+                        onPress={nextPage}
+                        size={40}
+                        name="chevron-right"
+                        type="material"
+                        color={COLORS.gray800}
+                      />
+                    </View>
+                  ) : (
+                    <View
+                      style={{
+                        flex: 1,
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        paddingHorizontal: 20,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          marginTop: 50,
+                          fontFamily: FONT.medium,
+                          fontSize: SIZES.small,
+                          color: COLORS.gray600,
+                        }}
+                      >
+                        No se encontraron resultados
+                      </Text>
+                    </View>
+                  )
+
+                  // <ActivityIndicator
+                  //   size="large"
+                  //   style={styles.spinner}
+                  //   color="#AEAEAE"
+                  // />
+                }
+              />
+            </View>
+          ) : (
+            <ScreenLoader loading={true} />
+          )}
         </View>
-        
-        </Animated.View>
-
-
-       
-
-        {!isLoading && dataApi && user ? (
-          <View style={{ display: "flex", flexDirection: "column",marginTop:30 }}>
-            <Animated.FlatList
-              ref={flatListRef}
-              data={dataApi.docs}
-              contentContainerStyle={{ paddingBottom: 300 }}
-              horizontal={false}
-              showsVerticalScrollIndicator={true}
-              onEndReachedThreshold={0.1}
-              keyExtractor={(item) => String(item.id)}
-              showsHorizontalScrollIndicator={true}
-              onScroll={handleScroll}
-              renderItem={({ item }) => (
-                <JobCard userId={user.id} dataJob={item} />
-              )} 
-              
-              ListFooterComponent={
-                dataApi.docs.length > 0 ? (
-                  <View
-                    style={{
-                      flex: 1,
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      paddingHorizontal: 20,
-                      alignItems: "center",
-                    }}
-                  >
-                    <Icon
-                      onPress={previousPage}
-                      size={40}
-                      name="chevron-left"
-                      type="material"
-                      color={COLORS.gray800}
-                    />
-                    <Text
-                      style={{
-                        fontFamily: FONT.medium,
-                        fontSize: SIZES.small,
-                        color: COLORS.gray600,
-                      }}
-                    >
-                      Pagina {dataApi.page} de {dataApi.totalPages}
-                    </Text>
-                    <Icon
-                      onPress={nextPage}
-                      size={40}
-                      name="chevron-right"
-                      type="material"
-                      color={COLORS.gray800}
-                    />
-                  </View>
-                ) : (
-                  <View
-                    style={{
-                      flex: 1,
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      paddingHorizontal: 20,
-                    }}
-                  >
-                    <Text
-                      style={{
-                        marginTop: 50,
-                        fontFamily: FONT.medium,
-                        fontSize: SIZES.small,
-                        color: COLORS.gray600,
-                      }}
-                    >
-                      No se encontraron resultados
-                    </Text>
-                  </View>
-                )
-
-                // <ActivityIndicator
-                //   size="large"
-                //   style={styles.spinner}
-                //   color="#AEAEAE"
-                // />
-              }
-            />
-          </View>
-        ) : (
-          <View>
-            <ActivityIndicator
-              style={{ marginTop: 100 }}
-              size="large"
-              color={COLORS.indigo600}
-            />
-          </View>
-        )}
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </PaperProvider>
   );
 };
 

@@ -85,9 +85,7 @@ export const ProfileUserAdsScreen = ({ navigation }) => {
 
   const dispatch = useDispatch();
   const userAdsInfo = useSelector((state) => state.userads.infoUserAds);
-  const tokenExpTime = useSelector((state) => state.user.exp);
 
-  console.log(userAdsInfo)
   const navigateToDetails = (name) => {
     navigation.push(name);
   };
@@ -186,11 +184,15 @@ export const ProfileUserAdsScreen = ({ navigation }) => {
                   source={{ uri: `data:image/jpeg;base64,${profileBase64}` }}
                 />
                 <View style={{ marginTop: 20 }}>
+                {isLoading && (
+                    <ActivityIndicator style={{ marginVertical: 10 }} />
+                  )}
                   <ButtonModal
-                    style={styles.buttonModalConfirmation}
+                    style={{backgroundColor:COLORS.tertiary}}
+                    disabled={isLoading}
                     onPress={handleImageUpload}
                   >
-                    <Text style={styles.textButton}>
+                    <Text style={{color:COLORS.white}}>
                       Guardar foto de perfil
                     </Text>
                   </ButtonModal>

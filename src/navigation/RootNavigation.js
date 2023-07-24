@@ -36,6 +36,7 @@ import ResetPasswordUserAdsScreen from "@screens/auth/ResetPasswordUserAdsScreen
 import EditUserAdsAccountProfileScreen from "@screens/userAds/account/EditUserAdsAccountProfileScreen";
 import AccountManagerUserAds from "@screens/globals/AccountManagerUserAds";
 import FavoritesUserScreen from "@screens/user/FavoritesUserScreen";
+import ApplicantProfileScreenGlobal from "@screens/globals/ApplicantProfileScreenGlobal";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -372,6 +373,19 @@ const RootNavigation = ({ navigation }) => {
         }}
         name="JobApplicantsCompany"
         component={JobApplicantsCompanyScreen}
+      />
+
+      
+<Stack.Screen
+        options={{
+          headerStyle: { backgroundColor: "transparent" },
+          headerShadowVisible: false,
+          headerBackVisible: true,
+          headerTransparent: true,
+          headerTitle: "",
+        }}
+        name="ApplicantProfileScreenGlobal"
+        component={ApplicantProfileScreenGlobal}
       />
 
       <Stack.Screen

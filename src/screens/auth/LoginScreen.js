@@ -22,6 +22,7 @@ import { addAllFavoriteJobs, setUser } from "@features/user/userSlice";
 import { backendURL } from "@config/config";
 import loginImage from "@assets/images/GodoyMS_a_job_agency_company_in_building_process_in_the_middle__cbe54923-f429-4ab7-9a9e-fa51da4d2c8d.jpg";
 import { clearCompany } from "@features/user/companySlice";
+import { clearUserAds } from "@features/user/userAdsSlice";
 export const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState({ value: "", error: "" });
   const [password, setPassword] = useState({ value: "", error: "" });
@@ -56,7 +57,7 @@ export const LoginScreen = ({ navigation }) => {
         },
       )
 
-      .then(({ data }) => {dispatch(setUser(data));dispatch(clearCompany());setCurrentUserId(data.user.id)})
+      .then(({ data }) => {dispatch(setUser(data));dispatch(clearCompany());setCurrentUserId(data.user.id);dispatch(clearUserAds())})
       .then(() => setIsLoggedIn(true))
       .then(() => setIsLoading(false))
       .then(() => {
@@ -95,6 +96,17 @@ export const LoginScreen = ({ navigation }) => {
         }}
       >
         <View>
+        <Text
+            style={{
+              textAlign: "center",
+              fontFamily: FONT.regular,
+              fontSize: SIZES.small,
+              fontWeight: "bold",
+              color: COLORS.tertiary,
+            }}
+          >
+            Usuarios
+          </Text>
           <Text
             style={{
               textAlign: "left",

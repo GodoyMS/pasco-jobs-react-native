@@ -1,28 +1,24 @@
 import { Text, StyleSheet, View, Animated } from "react-native";
-import React, { Component, useRef } from "react";
+import React, {  useRef } from "react";
 import { SafeAreaView } from "react-native";
-import { TouchableOpacity } from "react-native";
 import { FlatList } from "react-native";
 import { COLORS, FONT, SIZES } from "@constants/theme";
 import { gql, useQuery } from "@apollo/client";
 import { useSelector } from "react-redux";
-import ApplicationJobCard from "@components/user/applicationJobs/ApplicationJobCard";
 import { useState } from "react";
-import { useFocusEffect } from "@react-navigation/native";
-import { useCallback } from "react";
 import CompanyCardUserScreenjsx from "@components/user/companies/CompanyCardUserScreen";
 import { ActivityIndicator } from "react-native";
 import { useEffect } from "react";
-import { Skeleton } from "@rneui/themed";
-import FormLoader from "@components/loaders/FormLoader";
+
 import ScreenLoader from "@components/loaders/ScreenLoader";
 import { Searchbar } from "react-native-paper";
 import CitySelectorUserCompanies from "@components/user/companies/CitySelectorUserCompanies";
 import FeaturedCompanyCardUserScreen from "@components/user/companies/FeaturedCompanyCardUserScreen";
+import CitySelectorCompanyForCompanies from "@components/company/companies/CitySelectorCompanyForCompanies";
 
-export const AllCompaniesUserScreen = ({ navigation }) => {
-   const userLocationForCompanies = useSelector(
-    (state) => state.user.userLocationForCompanies
+export const AllCompaniesCompanyScreen = ({ navigation }) => {
+   const companyLocationForCompanies = useSelector(
+    (state) => state.company.companyLocationForCompanies
   );
   const [data, setData] = useState([]); // Array to store the fetched data
   const [page, setPage] = useState(1); // Current page number
@@ -78,7 +74,7 @@ export const AllCompaniesUserScreen = ({ navigation }) => {
         
        
         page: $page
-        limit: 8
+        limit: 4
         sort: "createdAt"
       ) {
         totalDocs
@@ -103,7 +99,7 @@ export const AllCompaniesUserScreen = ({ navigation }) => {
     query GET_ALL_FEATURED_COMPANIES_USER_SCREEN {
       Employers(
         where:  { featured: { equals: "yes" } }
-        limit: 15
+        limit: 10
         sort: "createdAt"
       ) {
         totalDocs
@@ -137,7 +133,7 @@ export const AllCompaniesUserScreen = ({ navigation }) => {
     variables: {
       page,
       searchWord,
-      province: userLocationForCompanies ? userLocationForCompanies : "",
+      province: companyLocationForCompanies ? companyLocationForCompanies : "",
     },
     fetchPolicy: "network-only",
   });
@@ -203,7 +199,7 @@ export const AllCompaniesUserScreen = ({ navigation }) => {
             alignItems: "center",
           }}
         />
-        <CitySelectorUserCompanies
+        <CitySelectorCompanyForCompanies
           refetch={refetch}
           setPage={setPage}
           setIsCityOpen={setIsCityOpen}
@@ -216,20 +212,19 @@ export const AllCompaniesUserScreen = ({ navigation }) => {
         {!loadingFeatured && (
 
             <Animated.View style={{ height: containerHeight, backgroundColor: COLORS.white }}>
-            
+              <Text style={{paddingLeft:15,fontFamily:FONT.regular,fontSize:SIZES.small,color:COLORS.gray600}}>Destacados</Text>              
               <FlatList
                 style={{
                   flex: 1,
-                  marginTop: 10,
-                  marginVertical: 5,
+                  marginVertical: 10,
                 }}
-                contentContainerStyle={{ height: 200 }}
+                contentContainerStyle={{ height: 180 }}
                 data={dataFeaturedCompanies?.Employers?.docs}
                 horizontal={true}
                 keyExtractor={(item, index) => item.id.toString()}
                 showsHorizontalScrollIndicator={false}
                 renderItem={({ item }) => (
-                  <FeaturedCompanyCardUserScreen screen={"CompanyProfileUserScreen"} companyData={item} />
+                  <FeaturedCompanyCardUserScreen screen={"CompanyProfileCompanyScreen"}  companyData={item} />
                 )}
               />
 
@@ -263,7 +258,7 @@ export const AllCompaniesUserScreen = ({ navigation }) => {
             keyExtractor={(item, index) => item.id.toString()}
             showsHorizontalScrollIndicator={true}
             renderItem={({ item }) => (
-              <CompanyCardUserScreenjsx screen={"CompanyProfileUserScreen"} companyData={item} />
+              <CompanyCardUserScreenjsx screen={"CompanyProfileCompanyScreen"}  companyData={item} />
             )}
             onEndReached={fetchData} // Trigger fetching more data when reaching the end
             onEndReachedThreshold={0.6} // Adjust the threshold as needed
@@ -277,4 +272,4 @@ export const AllCompaniesUserScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({});
 
-export default AllCompaniesUserScreen;
+export default AllCompaniesCompanyScreen;

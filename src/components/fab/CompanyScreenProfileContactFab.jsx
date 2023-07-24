@@ -36,7 +36,6 @@ const CompanyScreenProfileContactFab = ({ infoCompany }) => {
     });
   }
 
-  console.log(infoCompany)
 
 
   return (

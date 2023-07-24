@@ -3,7 +3,7 @@ import {
   Text,
   View,
   TouchableOpacity,
-  TouchableHighlight,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
 import { Portal, Button as ButtonModal, Modal } from "react-native-paper";
@@ -34,7 +34,11 @@ const FormRegistrationUserStep = ({ step, setStep, navigation }) => {
   const [position, setPosition] = useState({ value: "", error: "" });
   const [description, setDescription] = useState({ value: "", error: "" });
   const [province, setProvince] = useState("");
+  const [provinceError, setProvinceError] = useState("");
+
   const [district, setDistrict] = useState("");
+  const [districtError, setDistrictError] = useState("");
+
   const [age, setAge] = useState({ value: "", error: "" });
   const [sex, setSex] = useState({ value: "Hombre", error: "" });
 
@@ -55,6 +59,7 @@ const FormRegistrationUserStep = ({ step, setStep, navigation }) => {
   };
 
   const onSignUpPressed = async () => {
+    setIsLoading(true);
     await axios
       .post(`${backendURL}api/applicants`, {
         name: name.value,
@@ -64,7 +69,7 @@ const FormRegistrationUserStep = ({ step, setStep, navigation }) => {
         description: description.value,
         district: district,
         province: province,
-        position:position.value,
+        position: position.value,
         region: "Pasco",
         sex: sex.value,
         profile: profileImageLink,
@@ -101,8 +106,18 @@ const FormRegistrationUserStep = ({ step, setStep, navigation }) => {
       const positionError = positionValidator(position.value);
       const descriptionError = descriptionValidator(description.value);
       const ageError = ageValidator(age.value);
+      const provinceError = province ? "" : "Selecciona una provincia";
+      const districtError = district ? "" : "Selecciona un distrito";
 
-      if (positionError || descriptionError || ageError) {
+      if (
+        positionError ||
+        descriptionError ||
+        ageError ||
+        provinceError ||
+        districtError
+      ) {
+        setDistrictError(districtError);
+        setProvinceError(provinceError);
         setPosition({ ...position, error: positionError });
         setDescription({ ...description, error: descriptionError });
         setAge({ ...age, error: ageError });
@@ -140,10 +155,16 @@ const FormRegistrationUserStep = ({ step, setStep, navigation }) => {
           </Text>
           <View style={{ marginTop: 20 }}>
             <ButtonModal
-              style={styles.buttonModalConfirmation}
+              style={{
+                backgroundColor: COLORS.tertiary,
+                paddingHorizontal: 10,
+                paddingVertical: 3,
+                borderRadius: 20,
+                marginHorizontal: "auto",
+              }}
               onPress={() => navigation.navigate("LoginScreen")}
             >
-              <Text style={styles.textButton}>Iniciar Sesión</Text>
+              <Text style={{ color: COLORS.white }}>Iniciar Sesión</Text>
             </ButtonModal>
           </View>
         </Modal>
@@ -156,9 +177,6 @@ const FormRegistrationUserStep = ({ step, setStep, navigation }) => {
             label="Nombre"
             returnKeyType="next"
             selectionColor={COLORS.gray800}
-            
-
-            
             value={name.value}
             onChangeText={(text) => setName({ value: text, error: "" })}
             error={!!name.error}
@@ -209,6 +227,10 @@ const FormRegistrationUserStep = ({ step, setStep, navigation }) => {
             description={description}
             setDescription={setDescription}
             sex={sex}
+            districtError={districtError}
+            setDistrictError={setDistrictError}
+            provinceError={provinceError}
+            setProvinceError={setProvinceError}
             setSex={setSex}
             province={province}
             setProvince={setProvince}
@@ -221,13 +243,10 @@ const FormRegistrationUserStep = ({ step, setStep, navigation }) => {
       {step === 3 && (
         <>
           <Step3Form
-            
             profileImageBase64={profileImageBase64}
-            setProfileImageBase64={setProfileImageBase64}            
+            setProfileImageBase64={setProfileImageBase64}
             profileImageLink={profileImageLink}
             setProfileImageLink={setProfileImageLink}
-
-
             cvDocumentBase64={cvDocumentBase64}
             setCvDocumentBase64={setCvDocumentBase64}
             cvDocumentLink={cvDocumentLink}
@@ -298,12 +317,14 @@ const FormRegistrationUserStep = ({ step, setStep, navigation }) => {
           )}
         </View>
       )}
+      {isLoading && <ActivityIndicator />}
       {step === 3 && (
         <>
           <Button
+          disabled={isLoading}
             mode="contained"
             onPress={onSignUpPressed}
-            style={{ marginTop: 60, fontFamily: FONT.medium }}
+            style={{ marginTop: 20, fontFamily: FONT.medium }}
           >
             Registrarse
           </Button>
@@ -311,19 +332,12 @@ const FormRegistrationUserStep = ({ step, setStep, navigation }) => {
             <Text style={{ fontFamily: FONT.regular }}>
               ¿Ya tienes una cuenta?{" "}
             </Text>
-            <TouchableOpacity onPress={() => navigation.replace("LoginScreen")}>
+            <TouchableOpacity  onPress={() => navigation.replace("LoginScreen")}>
               <Text style={styles.link}>Iniciar sesión</Text>
             </TouchableOpacity>
           </View>
         </>
       )}
-
-      
-
-
-
-
-
     </View>
   );
 };

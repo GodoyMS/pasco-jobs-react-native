@@ -9,29 +9,19 @@ import {
   View,
 } from "react-native";
 import React from "react";
-import whatsapp from "@assets/icons/whatsapp2.png";
-import gmail from "@assets/icons/gmail.png";
 import { useState } from "react";
 import { COLORS, FONT, SIZES } from "@constants/theme";
 import { gql, useQuery } from "@apollo/client";
-import companyDefaultProfile from "@assets/images/company/defaultprofilecompany-min.png";
 import {
   Button,
   Dialog,
-  FAB,
   Modal,
   PaperProvider,
   Portal,
-  Surface,
 } from "react-native-paper";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Icon } from "@rneui/themed";
-import { Linking } from "react-native";
-import CommentsSectionCompanyProfile from "@components/user/companyProfile/CommentsSectionCompanyProfile";
-import SubmitCommentCompanyProfile from "@components/user/companyProfile/SubmitCommentCompanyProfile";
-import { useSelector } from "react-redux";
-import JobsSectionCompanyProfile from "@components/user/companyProfile/JobsSectionCompanyProfile";
-import CompanyScreenProfileContactFab from "@components/fab/CompanyScreenProfileContactFab";
+
 
 import woman from "@assets/images/manwoman/womanFlatIllustration.jpg";
 import man from "@assets/images/manwoman/manFlatIllustration.jpg";
@@ -40,8 +30,6 @@ import ApplicantFabCompanyApplications from "@components/fab/ApplicantFabCompany
 const ApplicantProfileCompanyScreen = (props) => {
   const [profileVisible, setProfileVisible] = useState(false);
   const [cvVisible, setCvVisible] = useState(false);
-
-  const [tab, setTab] = useState("company");
   const {
     navigation,
     route: { params },
@@ -56,6 +44,7 @@ const ApplicantProfileCompanyScreen = (props) => {
         position
         sex
         age
+        showCv
         cv
         id
         name
@@ -296,7 +285,9 @@ const ApplicantProfileCompanyScreen = (props) => {
             {/* <CommentsSectionCompanyProfile/> */}
           </ScrollView>
         )}
-        <View
+
+        {data?.Applicant?.cv && data?.Applicant?.showCv==="yes" && (
+          <View
           style={{
             position: "absolute",
 
@@ -347,6 +338,9 @@ const ApplicantProfileCompanyScreen = (props) => {
             />
           </TouchableOpacity>
         </View>
+
+        )}
+        
       </SafeAreaView>
     </PaperProvider>
   );

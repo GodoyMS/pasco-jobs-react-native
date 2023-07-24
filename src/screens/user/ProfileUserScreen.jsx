@@ -10,7 +10,7 @@ import {
   Button,
   StyleSheet,
   ScrollView,
-  
+  ActivityIndicator,
 } from "react-native";
 import woman from "@assets/images/manwoman/womanFlatIllustration.jpg";
 import man from "@assets/images/manwoman/manFlatIllustration.jpg";
@@ -42,7 +42,7 @@ export const ProfileUserScreen = ({ navigation }) => {
       iconName: "user",
       iconType: "feather",
       onClick: "",
-      route:"AccountManagerUser"
+      route: "AccountManagerUser",
     },
     {
       id: 1,
@@ -50,8 +50,7 @@ export const ProfileUserScreen = ({ navigation }) => {
       iconName: "info",
       iconType: "feather",
       onClick: "",
-      route:"InformationUserScreeen"
-
+      route: "InformationUserScreeen",
     },
     {
       id: 2,
@@ -59,8 +58,7 @@ export const ProfileUserScreen = ({ navigation }) => {
       iconName: "flag",
       iconType: "feather",
       onClick: "",
-      route:"ReportAProblem"
-
+      route: "ReportAProblem",
     },
     {
       id: 3,
@@ -68,7 +66,7 @@ export const ProfileUserScreen = ({ navigation }) => {
       iconName: "building-o",
       iconType: "font-awesome",
       onClick: "",
-      route:"ContactPascoJobsScreen"
+      route: "ContactPascoJobsScreen",
     },
     // {
     //   id: 4,
@@ -134,10 +132,9 @@ export const ProfileUserScreen = ({ navigation }) => {
         name: userInfo.name,
       })
       .then(({ data }) =>
-        axios.patch(
-          `${backendURL}api/applicants/${userInfo.id}`,
-          { profile: data.url }
-        )
+        axios.patch(`${backendURL}api/applicants/${userInfo.id}`, {
+          profile: data.url,
+        })
       )
       .then(({ data }) => dispatch(setOnlyUserInfo({ user: data.doc })))
       .catch((e) => console.log(e))
@@ -147,7 +144,6 @@ export const ProfileUserScreen = ({ navigation }) => {
       });
   };
 
-  console.log(userInfo);
   return (
     <Provider>
       <SafeAreaView
@@ -158,7 +154,7 @@ export const ProfileUserScreen = ({ navigation }) => {
           justifyContent: "space-between",
         }}
       >
-        <ScrollView >
+        <ScrollView>
           {userInfo && (
             <Portal>
               <Modal
@@ -184,11 +180,15 @@ export const ProfileUserScreen = ({ navigation }) => {
                   source={{ uri: `data:image/jpeg;base64,${profileBase64}` }}
                 />
                 <View style={{ marginTop: 20 }}>
+                  {isLoading && (
+                    <ActivityIndicator style={{ marginVertical: 10 }} />
+                  )}
                   <ButtonModal
-                    
+                    disabled={isLoading}
+                    style={{ backgroundColor: COLORS.tertiary }}
                     onPress={handleImageUpload}
                   >
-                    <Text style={{color:COLORS.indigo800}}>
+                    <Text style={{ color: COLORS.white }}>
                       Guardar foto de perfil
                     </Text>
                   </ButtonModal>
@@ -196,19 +196,16 @@ export const ProfileUserScreen = ({ navigation }) => {
               </Modal>
             </Portal>
           )}
-          <FormLoader isLoading={isLoading} message={"Actualizando"}/>
 
           <StatusBar />
           {userInfo && (
             <>
               <View
                 style={{
-                  
-                  
                   position: "relative",
-                  height:"auto",
-                  width:"100%",
-                  aspectRatio:"1/1"
+                  height: "auto",
+                  width: "100%",
+                  aspectRatio: "1/1",
                 }}
               >
                 <TouchableOpacity
@@ -245,9 +242,7 @@ export const ProfileUserScreen = ({ navigation }) => {
                   <Image
                     resizeMode="cover"
                     style={{ width: "100%", height: "100%", borderRadius: 10 }}
-                    source={ userInfo?.sex === "Hombre"
-                ? man
-                : woman}
+                    source={userInfo?.sex === "Hombre" ? man : woman}
                   />
                 )}
               </View>
@@ -438,7 +433,6 @@ export const ProfileUserScreen = ({ navigation }) => {
                     >
                       Trabajos guardados
                     </Text>
-                   
                   </View>
                   <View>
                     <Icon
@@ -472,7 +466,7 @@ export const ProfileUserScreen = ({ navigation }) => {
 
               {generalRoutes.map((e) => (
                 <TouchableOpacity
-                  onPress={()=>navigateToDetails(e.route)}
+                  onPress={() => navigateToDetails(e.route)}
                   key={e.id}
                   activeOpacity={0.6}
                   style={{

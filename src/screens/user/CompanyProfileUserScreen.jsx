@@ -9,8 +9,9 @@ import {
   View,
 } from "react-native";
 import React from "react";
-import whatsapp from "@assets/icons/whatsapp2.png"
-import gmail from "@assets/icons/gmail.png"
+import whatsapp from "@assets/icons/whatsapp2.png";
+import gmail from "@assets/icons/gmail.png";
+import { Tab, TabView } from "@rneui/themed";
 
 import { useState } from "react";
 import { COLORS, FONT, SIZES } from "@constants/theme";
@@ -25,6 +26,7 @@ import SubmitCommentCompanyProfile from "@components/user/companyProfile/SubmitC
 import { useSelector } from "react-redux";
 import JobsSectionCompanyProfile from "@components/user/companyProfile/JobsSectionCompanyProfile";
 import CompanyScreenProfileContactFab from "@components/fab/CompanyScreenProfileContactFab";
+import ScreenLoader from "@components/loaders/ScreenLoader";
 
 const CompanyProfileUserScreen = (props) => {
   const [profileVisible, setProfileVisible] = useState(false);
@@ -54,7 +56,7 @@ const CompanyProfileUserScreen = (props) => {
       }
     }
   `;
-  const { error, data } = useQuery(GET_COMPANY, {
+  const { error, data,loading } = useQuery(GET_COMPANY, {
     variables: { employerId: params?.itemId ? params?.itemId : "" },
 
     fetchPolicy: "cache-and-network",
@@ -74,16 +76,8 @@ const CompanyProfileUserScreen = (props) => {
       .catch((error) => console.log("An error occurred", error));
   };
 
-  if (!data)
-    return (
-      <View style={{ flex: 1 }}>
-        <ActivityIndicator
-          size={40}
-          color={COLORS.tertiary}
-          style={{ marginTop: 50 }}
-        />
-      </View>
-    );
+  if (loading)
+    return <ScreenLoader loading={loading}/>
   return (
     <PaperProvider>
       <SafeAreaView style={{ flex: 1 }}>
@@ -129,8 +123,8 @@ const CompanyProfileUserScreen = (props) => {
             Esta empresa no se encuentra disponible{" "}
           </Text>
         ) : (
-          <View style={{ marginHorizontal: 15, flex: 1, marginTop: 30 }}>
-            <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+          <View style={{ flex: 1, marginTop: 70 }}>
+            <View style={{ flexDirection: "row", justifyContent: "flex-end",marginHorizontal:20,marginBottom:15 }}>
               <Button
                 onPress={() => setIsCommentActive(true)}
                 mode="contained"
@@ -149,8 +143,8 @@ const CompanyProfileUserScreen = (props) => {
               </Button>
             </View>
 
-            <View style={{ flexDirection: "row" }}>
-              <View style={{ flexDirection: "row", justifyContent: "center" }}>
+            <View style={{ flexDirection: "row", marginHorizontal: 15 }}>
+              <View style={{ flexDirection: "row", justifyContent: "flex-start" }}>
                 <TouchableOpacity onPress={() => setProfileVisible(true)}>
                   <Image
                     source={
@@ -210,113 +204,212 @@ const CompanyProfileUserScreen = (props) => {
               </View>
             </View>
 
-            <View
-              style={{
-                width: "100%",
-                flexDirection: "row",
-                columnGap: 20,
-                alignItems: "center",
-                justifyContent: "center",
-                marginTop: 20,
+            <Tab
+              style={{ marginTop: 10}}
+              value={tab}
+              onChange={(e) => setTab(e)}
+              iconPosition="left"
+              
+              indicatorStyle={{
+                backgroundColor: COLORS.tertiary,
+                height: 3,
               }}
             >
-              <TouchableOpacity
-                onPress={() => setTab("company")}
-                style={{
-                  borderBottomColor:
-                    tab === "company" ? COLORS.tertiary : COLORS.gray500,
-                  borderBottomWidth: tab === "company" ? 2 : 0,
+              <Tab.Item
+              style={{paddingHorizontal:20 }}
+                title="La empresa"
+                titleStyle={(active) => {
+                  return {
+                    fontSize: 12,
+                    color: active ? COLORS.tertiary : COLORS.gray700,
+                    fontFamily: FONT.medium,
+                  };
                 }}
-              >
-                <Text
-                  style={{
-                    fontFamily: FONT.regular,
-                    fontSize: SIZES.small,
-                    color: tab === "company" ? COLORS.tertiary : COLORS.gray700,
-                  }}
-                >
-                  La empresa
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setTab("reviews")}
-                style={{
-                  borderBottomColor:
-                    tab === "reviews" ? COLORS.tertiary : COLORS.gray500,
-                  borderBottomWidth: tab === "reviews" ? 2 : 0,
+                icon={(active) => {
+                  return {
+                    name: active ? "building": "building-o",
+                    type: "font-awesome",
+                    color: active ? COLORS.tertiary : COLORS.gray700,
+                    size: 20,
+                  };
                 }}
-              >
-                <Text
-                  style={{
-                    fontFamily: FONT.regular,
-                    fontSize: SIZES.small,
-                    color: tab === "reviews" ? COLORS.tertiary : COLORS.gray700,
-                  }}
-                >
-                  Valorización
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => setTab("jobs")}
-                style={{
-                  borderBottomColor:
-                    tab === "jobs" ? COLORS.tertiary : COLORS.gray500,
-                  borderBottomWidth: tab === "jobs" ? 2 : 0,
+              />
+              <Tab.Item
+                title="Comentarios"
+                titleStyle={(active) => {
+                  return {
+                    fontSize: 12,
+                    color: active ? COLORS.tertiary : COLORS.gray700,
+                    fontFamily: FONT.medium,
+                  };
                 }}
-              >
-                <Text
-                  style={{
-                    fontFamily: FONT.regular,
-                    fontSize: SIZES.small,
-                    color: tab === "jobs" ? COLORS.tertiary : COLORS.gray700,
-                  }}
-                >
-                  Ofertas laborales
-                </Text>
-              </TouchableOpacity>
-            </View>
+                icon={(active) => {
+                  return {
+                    name: active ? "comments" :"comments-o",
+                    type: "font-awesome",
+                    color: active ? COLORS.tertiary : COLORS.gray700,
+                    size: 20,
+                  };
+                }}
+              />
+              <Tab.Item
+                title="Empleos"
+                titleStyle={(active) => {
+                  return {
+                    fontSize: 12,
+                    color: active ? COLORS.tertiary : COLORS.gray700,
+                    fontFamily: FONT.medium,
+                  };
+                }}
+                icon={(active) => {
+                  return {
+                    name: active ? "work":"work-outline",
+                    type: "material",
+                    color: active ? COLORS.tertiary : COLORS.gray700,
+                    size: 20,
+                  };
+                }}
+              />
+            </Tab>
 
-            {tab === "company" && (
-              <ScrollView showsVerticalScrollIndicator>
-                <View
-                  style={{
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginTop: 40,
-                    width: "100%",
-                  }}
-                >
-                  <Text
+            <TabView value={tab} onChange={setTab} animationType="spring">
+              <TabView.Item style={{ width: "100%" }}>
+                <View style={{ marginHorizontal: 15 }}>
+                  <View
                     style={{
-                      fontFamily: FONT.medium,
-                      color: COLORS.gray900,
-                      fontSize: SIZES.medium,
-                      marginBottom: 10,
-                      textAlign: "left",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginTop: 40,
                       width: "100%",
                     }}
                   >
-                    Acerca de la empresa
-                  </Text>
-                  <Text
-                    style={{
-                      fontFamily: FONT.regular,
-                      color: COLORS.gray700,
-                      fontSize: SIZES.small,
-                      textAlign: "justify",
-                      width: "100%",
-                    }}
-                  >
-                    {data?.Employer?.description}{" "}
-                  </Text>
-                </View>
+                    <Text
+                      style={{
+                        fontFamily: FONT.medium,
+                        color: COLORS.gray900,
+                        fontSize: SIZES.medium,
+                        marginBottom: 10,
+                        textAlign: "left",
+                        width: "100%",
+                      }}
+                    >
+                      Acerca de la empresa
+                    </Text>
+                    <Text
+                      style={{
+                        fontFamily: FONT.regular,
+                        color: COLORS.gray700,
+                        fontSize: SIZES.small,
+                        textAlign: "justify",
+                        width: "100%",
+                      }}
+                    >
+                      {data?.Employer?.description}{" "}
+                    </Text>
+                  </View>
 
-                {(data?.Employer?.phone ||
-                  data?.Employer?.whatsapp ||
-                  data?.Employer?.contactEmail 
-               ) && (
-                  <>
+                  {(data?.Employer?.phone ||
+                    data?.Employer?.whatsapp ||
+                    data?.Employer?.contactEmail) && (
+                    <>
+                      <View
+                        style={{
+                          flexDirection: "column",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          marginTop: 40,
+                          width: "100%",
+                        }}
+                      >
+                        <Text
+                          style={{
+                            fontFamily: FONT.medium,
+                            color: COLORS.gray900,
+                            fontSize: SIZES.medium,
+                            marginBottom: 10,
+                            textAlign: "left",
+                            width: "100%",
+                          }}
+                        >
+                          Contacto
+                        </Text>
+                        <View
+                          style={{
+                            flexDirection: "column",
+                            rowGap: 10,
+                            width: "100%",
+                          }}
+                        >
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              width: "100%",
+                              alignItems: "center",
+                              columnGap: 5,
+                            }}
+                          >
+                            <Icon size={15} name="phone" type="material" />
+                            <Text
+                              style={{
+                                fontFamily: FONT.regular,
+                                fontSize: SIZES.small,
+                              }}
+                            >
+                              {" "}
+                              {data?.Employer?.phone}
+                            </Text>
+                          </View>
+
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              width: "100%",
+                              alignItems: "center",
+                              columnGap: 5,
+                            }}
+                          >
+                            <Image
+                              source={whatsapp}
+                              style={{ width: 15, height: 15 }}
+                            />
+                            <Text
+                              style={{
+                                fontFamily: FONT.regular,
+                                fontSize: SIZES.small,
+                              }}
+                            >
+                              {" "}
+                              {data?.Employer?.whatsapp}
+                            </Text>
+                          </View>
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              width: "100%",
+                              alignItems: "center",
+                              columnGap: 5,
+                            }}
+                          >
+                            <Image
+                              source={gmail}
+                              style={{ width: 15, height: 15 }}
+                            />
+                            <Text
+                              style={{
+                                fontFamily: FONT.regular,
+                                fontSize: SIZES.small,
+                              }}
+                            >
+                              {" "}
+                              {data?.Employer?.contactEmail}
+                            </Text>
+                          </View>
+                        </View>
+                      </View>
+                    </>
+                  )}
+                  {data?.Employer?.address && (
                     <View
                       style={{
                         flexDirection: "column",
@@ -325,7 +418,7 @@ const CompanyProfileUserScreen = (props) => {
                         marginTop: 40,
                         width: "100%",
                       }}
-                    >                    
+                    >
                       <Text
                         style={{
                           fontFamily: FONT.medium,
@@ -336,98 +429,97 @@ const CompanyProfileUserScreen = (props) => {
                           width: "100%",
                         }}
                       >
-                        Contacto
+                        Dirección
                       </Text>
-                      <View style={{flexDirection:"column",rowGap:10,width:"100%"}}>
-                        
-                          <View style={{flexDirection:"row",width:"100%",alignItems:"center",columnGap:5}}>
-                          <Icon size={15} name="phone" type="material"/>
-                            <Text style={{fontFamily:FONT.regular,fontSize:SIZES.small}}> {data?.Employer?.phone}</Text>
-                          </View>
-
-                          <View style={{flexDirection:"row",width:"100%",alignItems:"center",columnGap:5}}>
-                          <Image source={whatsapp} style={{width:15,height:15}} />
-                            <Text style={{fontFamily:FONT.regular,fontSize:SIZES.small}}> {data?.Employer?.whatsapp}</Text>
-                          </View>
-                          <View style={{flexDirection:"row",width:"100%",alignItems:"center",columnGap:5}}>
-                          <Image source={gmail} style={{width:15,height:15}} />
-                            <Text style={{fontFamily:FONT.regular,fontSize:SIZES.small}}> {data?.Employer?.contactEmail}</Text>
-                          </View>
+                      <View
+                        style={{
+                          flexDirection: "column",
+                          rowGap: 10,
+                          width: "100%",
+                        }}
+                      >
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            width: "100%",
+                            alignItems: "center",
+                            columnGap: 5,
+                          }}
+                        >
+                          <Icon size={15} name="location" type="entypo" />
+                          <Text
+                            style={{
+                              fontFamily: FONT.regular,
+                              fontSize: SIZES.small,
+                            }}
+                          >
+                            {" "}
+                            {data?.Employer?.address}
+                          </Text>
+                        </View>
                       </View>
                     </View>
-                  </>
-                )}
-                {   data?.Employer?.address && (
-                                      <View
-                                      style={{
-                                        flexDirection: "column",
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                        marginTop: 40,
-                                        width: "100%",
-                                      }}
-                                    >                    
-                                      <Text
-                                        style={{
-                                          fontFamily: FONT.medium,
-                                          color: COLORS.gray900,
-                                          fontSize: SIZES.medium,
-                                          marginBottom: 10,
-                                          textAlign: "left",
-                                          width: "100%",
-                                        }}
-                                      >
-                                        Dirección
-                                      </Text>
-                                      <View style={{flexDirection:"column",rowGap:10,width:"100%"}}>
-                                        
-                                          <View style={{flexDirection:"row",width:"100%",alignItems:"center",columnGap:5}}>
-                                          <Icon size={15} name="location" type="entypo"/>
-                                            <Text style={{fontFamily:FONT.regular,fontSize:SIZES.small}}> {data?.Employer?.address}</Text>
-                                          </View>
-                                      </View>
-                                    </View>
+                  )}
+                  {data?.Employer?.website && (
+                    <View
+                      style={{
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        marginTop: 40,
+                        width: "100%",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontFamily: FONT.medium,
+                          color: COLORS.gray900,
+                          fontSize: SIZES.medium,
+                          marginBottom: 10,
+                          textAlign: "left",
+                          width: "100%",
+                        }}
+                      >
+                        Página web
+                      </Text>
+                      <View
+                        style={{
+                          flexDirection: "column",
+                          rowGap: 10,
+                          width: "100%",
+                        }}
+                      >
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            width: "100%",
+                            alignItems: "center",
+                            columnGap: 5,
+                          }}
+                        >
+                          <Text
+                            style={{
+                              fontFamily: FONT.regular,
+                              fontSize: SIZES.small,
+                            }}
+                          >
+                            {" "}
+                            {data?.Employer?.website}
+                          </Text>
+                        </View>
+                      </View>
+                    </View>
+                  )}
+                </View>
+              </TabView.Item>
+              <TabView.Item style={{ width: "100%" }}>
+                <CommentsSectionCompanyProfile idCompany={params.itemId} />
+              </TabView.Item>
+              <TabView.Item style={{ width: "100%" }}>
+                <JobsSectionCompanyProfile idCompany={params.itemId} />
+              </TabView.Item>
+            </TabView>
 
-                )}
-                {   data?.Employer?.website && (
-                                      <View
-                                      style={{
-                                        flexDirection: "column",
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                        marginTop: 40,
-                                        width: "100%",
-                                      }}
-                                    >                    
-                                      <Text
-                                        style={{
-                                          fontFamily: FONT.medium,
-                                          color: COLORS.gray900,
-                                          fontSize: SIZES.medium,
-                                          marginBottom: 10,
-                                          textAlign: "left",
-                                          width: "100%",
-                                        }}
-                                      >
-                                        Página web
-                                      </Text>
-                                      <View style={{flexDirection:"column",rowGap:10,width:"100%"}}>
-                                        
-                                          <View style={{flexDirection:"row",width:"100%",alignItems:"center",columnGap:5}}>
-                                            <Text style={{fontFamily:FONT.regular,fontSize:SIZES.small}}> {data?.Employer?.website}</Text>
-                                          </View>
-                                      </View>
-                                    </View>
-
-                )}
-              </ScrollView>
-            )}
-            {tab === "reviews" && (
-              <CommentsSectionCompanyProfile idCompany={params.itemId} />
-            )}
-            {tab === "jobs" && (
-              <JobsSectionCompanyProfile idCompany={params.itemId} />
-            )}
             {(data?.Employer?.phone ||
               data?.Employer?.whatsapp ||
               data?.Employer?.contactEmail) && (

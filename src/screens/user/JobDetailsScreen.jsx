@@ -21,6 +21,8 @@ import { gql, useQuery } from "@apollo/client";
 import { Icon } from "@rneui/themed";
 import { Button, Modal, PaperProvider, Portal } from "react-native-paper";
 import { SelectList } from "react-native-dropdown-select-list";
+import FormLoader from "@components/loaders/FormLoader";
+import ScreenLoader from "@components/loaders/ScreenLoader";
 
 export const JobDetailsUserScreen = (props) => {
   const tabs = ["Descripción", "Requisitos", "Responsabilidades"];
@@ -199,7 +201,7 @@ export const JobDetailsUserScreen = (props) => {
 
   if (!dataJob){
 
-   return <ActivityIndicator size={40} color={COLORS.tertiary} style={{marginTop:150}}/>
+   return <ScreenLoader loading={loading}/>
   }
   
   else{

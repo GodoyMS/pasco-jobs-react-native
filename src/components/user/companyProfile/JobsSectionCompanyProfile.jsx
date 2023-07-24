@@ -43,6 +43,7 @@ const navigateToDetails = (idJob) => {
  
   return (
     <View style={{ flex: 1}}>
+      <View style={{marginHorizontal:10}}>
       <Text style={{ paddingVertical: 10 }}>({data?.Jobs?.totalDocs} ofertas)</Text>
       <FlatList
         showsVerticalScrollIndicator={false}
@@ -52,6 +53,9 @@ const navigateToDetails = (idJob) => {
         )} 
         keyExtractor={(item, index) => item.id.toString()}
       />
+
+      </View>
+      
     </View>
   );
 };

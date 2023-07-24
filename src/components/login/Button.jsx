@@ -7,6 +7,8 @@ export default function Button({ mode, style, ...props }) {
   return (
     <PaperButton
     
+    
+    
       style={[
         styles.button,
         mode === 'outlined' && { backgroundColor:COLORS.indigo600 },

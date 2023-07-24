@@ -18,7 +18,6 @@ const UserAdsLogout = () => {
       dispatch(clearUserAds());
       navigation.replace("FirstScreen");
     } catch (error) {
-      console.log(error);
       dispatch(clearUserAds());
       navigation.replace("FirstScreen");
 

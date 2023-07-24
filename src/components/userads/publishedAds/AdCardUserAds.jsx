@@ -38,6 +38,8 @@ const AdCardUserAds = ({ data, refetch, dataAds, setDataAds }) => {
   };
   const { width } = useWindowDimensions();
 
+
+  const[aspectRatio, setAspectRatio]=useState(1)
   const handleImageLoad = (event) => {
     const { width, height } = event.nativeEvent.source;
     setAspectRatio(width / height);

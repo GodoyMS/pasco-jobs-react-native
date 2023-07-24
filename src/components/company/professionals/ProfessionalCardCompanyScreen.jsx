@@ -6,17 +6,20 @@ import { Icon } from "@rneui/themed";
 import { useNavigation } from "@react-navigation/native";
 import { COLORS, SIZES, FONT } from "@constants/theme";
 
+import woman from "@assets/images/manwoman/womanFlatIllustration.jpg";
+import man from "@assets/images/manwoman/manFlatIllustration.jpg";
 import companyDefaultProfile from "@assets/images/company/defaultprofilecompany-min.png";
 
-const CompanyCardUserScreenjsx = React.memo(({ companyData,screen }) => {
+const ProfessionalCardCompanyScreen = React.memo(({ companyData }) => {
   const navigation = useNavigation();
 
   const navigateToDetails = () => {
-    navigation.navigate(screen, {
+    navigation.navigate("ApplicantProfileCompanyScreen", {
       itemId: companyData?.id,
     });
   };
 
+  console.log(companyData);
 
   return (
     <>
@@ -51,13 +54,16 @@ const CompanyCardUserScreenjsx = React.memo(({ companyData,screen }) => {
               rowGap: 5,
             }}
           >
+  
             <Image
               source={
                 companyData?.profile
                   ? {
                       uri: companyData?.profile,
                     }
-                  : companyDefaultProfile
+                  : companyData?.sex==="Hombre"
+                  ? man
+                  :woman
               }
               style={{
                 width: 60,
@@ -93,14 +99,15 @@ const CompanyCardUserScreenjsx = React.memo(({ companyData,screen }) => {
             <View style={{ flexDirection: "column", rowGap: 5, }}>
              
               <Text
+              numberOfLines={2}
                 style={{
                   fontSize: SIZES.small,
                   fontFamily: FONT.regular,
-                  color: COLORS.gray800,
+                  color: COLORS.gray900,
                   flexDirection: "row",
                 }}
               >
-                {companyData?.heading}
+                {companyData?.position}
               </Text>
               <View
                 style={{
@@ -119,7 +126,7 @@ const CompanyCardUserScreenjsx = React.memo(({ companyData,screen }) => {
                   style={{
                     fontSize: 8,
                     fontFamily: FONT.regular,
-                    color: COLORS.gray700,
+                    color: COLORS.gray600,
                     flexDirection: "row",
                   }}
                 >
@@ -145,4 +152,4 @@ const CompanyCardUserScreenjsx = React.memo(({ companyData,screen }) => {
   );
 });
 
-export default CompanyCardUserScreenjsx;
+export default ProfessionalCardCompanyScreen;

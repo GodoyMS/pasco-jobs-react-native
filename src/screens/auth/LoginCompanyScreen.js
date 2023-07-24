@@ -22,6 +22,7 @@ import axios from "axios";
 import { setCompany } from "@features/user/companySlice";
 import { backendURL } from "@config/config";
 import { clearUser } from "@features/user/userSlice";
+import { clearUserAds } from "@features/user/userAdsSlice";
 export const LoginCompanyScreen = ({ navigation }) => {
   const [email, setEmail] = useState({ value: "", error: "" });
   const [password, setPassword] = useState({ value: "", error: "" });
@@ -52,7 +53,7 @@ export const LoginCompanyScreen = ({ navigation }) => {
         }
       )
 
-      .then(({ data }) => {dispatch(setCompany(data));dispatch(clearUser())})
+      .then(({ data }) => {dispatch(setCompany(data));dispatch(clearUser());dispatch(clearUserAds())})
       .then(() => setIsLoading(false))
 
       .then(() => navigation.replace("Company"))
@@ -104,6 +105,18 @@ export const LoginCompanyScreen = ({ navigation }) => {
           </Text>
         </ImageBackground> */}
       </View>
+
+      <Text
+            style={{
+              textAlign: "center",
+              fontFamily: FONT.regular,
+              fontSize: SIZES.small,
+              fontWeight: "bold",
+              color: COLORS.tertiary,
+            }}
+          >
+            Empresas
+          </Text>
           <Text
             style={{
               textAlign: "left",

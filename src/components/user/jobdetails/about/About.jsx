@@ -6,7 +6,6 @@ import { useWindowDimensions } from 'react-native';
 
 const About = ({ info }) => {
   const { width } = useWindowDimensions();
-  console.log(info)
   return (
     <View style={styles.container}>
       <Text style={styles.headText}>Sobre el trabajo:</Text>

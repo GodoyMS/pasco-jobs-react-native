@@ -76,7 +76,6 @@ const JobDetailsCompanyScreen = (props) => {
     }
   }, [data]);
 
-  console.log(tabsToRender);
   const displayTabContent = () => {
     switch (activeTab) {
       case "Descripción":

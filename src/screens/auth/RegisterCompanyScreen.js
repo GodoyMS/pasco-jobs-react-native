@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   TouchableOpacity,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
@@ -43,6 +44,7 @@ export const RegisterCompanyScreen = ({ navigation }) => {
   const [email, setEmail] = useState({ value: "", error: "" });
   const [password, setPassword] = useState({ value: "", error: "" });
   const [description, setDescription] = useState({ value: "", error: "" });
+  const [heading, setHeading] = useState({ value: "", error: "" });
 
   const [visibleModal, setVisibleModal] = useState(false);
 
@@ -104,7 +106,7 @@ export const RegisterCompanyScreen = ({ navigation }) => {
     navigation.navigate("LoginCompanyScreen");
   };
 
-  console.log(profileImageLink)
+  console.log(profileImageLink);
 
   const onSignUpPressed = async () => {
     const nameError = nameValidator(name.value);
@@ -112,7 +114,8 @@ export const RegisterCompanyScreen = ({ navigation }) => {
     const passwordError = passwordValidator(password.value);
     const descriptionError = description.value
       ? ""
-      : "Realiza una descripción breve";
+      : "Realiza una descripción de tu empresa";
+    const headingError = heading.value ? "" : "Escribe el rubro de tu empresa";
     const provinceError = province ? "" : "Selecciona una provincia";
     const districtError = district ? "" : "Selecciona un distrito";
 
@@ -121,6 +124,7 @@ export const RegisterCompanyScreen = ({ navigation }) => {
       passwordError ||
       nameError ||
       descriptionError ||
+      headingError ||
       provinceError ||
       districtError
     ) {
@@ -128,11 +132,12 @@ export const RegisterCompanyScreen = ({ navigation }) => {
       setEmail({ ...email, error: emailError });
       setPassword({ ...password, error: passwordError });
       setDescription({ ...description, error: descriptionError });
+      setHeading({ ...heading, error: headingError });
       setDistrictError(districtError);
       setProvinceError(provinceError);
       return;
     }
-
+    setIsLoading(true);
     await axios
       .post(`${backendURL}api/employers`, {
         name: name.value,
@@ -142,6 +147,7 @@ export const RegisterCompanyScreen = ({ navigation }) => {
         province: province,
         district: district,
         description: description.value,
+        heading: heading.value,
         profile: profileImageLink,
       })
       .then(() => setIsRegister(true))
@@ -259,7 +265,7 @@ export const RegisterCompanyScreen = ({ navigation }) => {
               alignSelf: "center",
               alignItems: "center",
               width: "100%",
-              marginBottom:60
+              marginBottom: 60,
             }}
           >
             <Text
@@ -276,18 +282,32 @@ export const RegisterCompanyScreen = ({ navigation }) => {
             </Text>
 
             <View style={{ width: "100%", marginTop: 10 }}>
-              <TextInput
-                multiline={true}
-                label="Descripción"
-                returnKeyType="next"
-                numberOfLines={4}
-                value={description.value}
-                onChangeText={(text) =>
-                  setDescription({ value: text, error: "" })
-                }
-                error={!!description.error}
-                errorText={description.error}
-              />
+              <View style={{ width: "100%" }}>
+                <TextInput
+                  multiline={false}
+                  label="Rubro de la empresa"
+                  returnKeyType="next"
+                  placeholder="Ej (Empresa de construcción, Tienda de electrónica, etc)"
+                  value={heading.value}
+                  onChangeText={(text) =>
+                    setHeading({ value: text, error: "" })
+                  }
+                  error={!!heading.error}
+                  errorText={heading.error}
+                />
+                <TextInput
+                  multiline={true}
+                  label="Descripción"
+                  returnKeyType="next"
+                  numberOfLines={4}
+                  value={description.value}
+                  onChangeText={(text) =>
+                    setDescription({ value: text, error: "" })
+                  }
+                  error={!!description.error}
+                  errorText={description.error}
+                />
+              </View>
             </View>
 
             <Text
@@ -295,9 +315,9 @@ export const RegisterCompanyScreen = ({ navigation }) => {
                 fontFamily: FONT.medium,
                 fontSize: SIZES.medium,
                 color: COLORS.gray800,
-                width:"100%",
-                textAlign:"left",
-                marginTop:30
+                width: "100%",
+                textAlign: "left",
+                marginTop: 30,
               }}
             >
               Imagen de perfil
@@ -529,7 +549,9 @@ export const RegisterCompanyScreen = ({ navigation }) => {
               width: "100%",
             }}
           >
+            {isLoading && <ActivityIndicator />}
             <Button
+              disabled={isLoading}
               mode="contained"
               onPress={onSignUpPressed}
               style={{ marginTop: 24, fontFamily: FONT.medium }}

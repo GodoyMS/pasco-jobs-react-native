@@ -185,7 +185,7 @@ const AdCardUserScreen = React.memo(({ data, refetch, dataAds, setDataAds }) => 
           <View style={styles.container}>
             <Text style={{color:COLORS.gray900,fontFamily:FONT.medium,fontSize:SIZES.medium,marginBottom:7}} >{dataAds?.title}</Text>
             <RenderHTML
-              tagsStyles={{ div: { textAlign: "justify",fontSize:SIZES.small,fontFamily:FONT.regular},p:{ textAlign: "justify",fontSize:SIZES.small,fontFamily:FONT.regular,color:COLORS.gray700} }}
+              tagsStyles={{ div: { textAlign: "justify",fontSize:SIZES.small,fontFamily:FONT.regular,color:COLORS.gray700},p:{ textAlign: "justify",fontSize:SIZES.small,fontFamily:FONT.regular,color:COLORS.gray700} }}
               contentWidth={width}
               
             

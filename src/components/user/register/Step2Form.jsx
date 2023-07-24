@@ -1,20 +1,13 @@
-import { View, Text, Picker } from "react-native";
-import {
-  Button,
-  Menu,
-  Divider,
-  Provider,
-  PaperProvider,
-  Select,
-  List,
-} from "react-native-paper";
+import { View, Text } from "react-native";
+
 import TextInput from "@components/login/TextInput";
 
 import React, { useState } from "react";
-import provinces from "@data/data.json";
-import DropDownPicker from "react-native-dropdown-picker";
+
 import { COLORS, FONT, SIZES } from "@constants/theme";
-import { RadioButton } from 'react-native-paper';
+import { RadioButton } from "react-native-paper";
+import { SelectList } from "react-native-dropdown-select-list";
+import provincesDistricts from "@data/data.json";
 
 const Step2Form = ({
   position,
@@ -25,38 +18,126 @@ const Step2Form = ({
   setAge,
   district,
   setDistrict,
+  provinceError,
+  districtError,
+  setDistrictError,
+  setProvinceError,
   province,
   setProvince,
   sex,
   setSex,
 }) => {
+  // const [selectedObject, setSelectedObject] = useState(null);
+  // const [selectedDistrict, setSelectedDistrict] = useState(null);
+  // const [valueProvince, setValueProvince] = useState(null);
+  // const [valueDistrict, setValueDistric] = useState(null);
 
-  const [selectedObject, setSelectedObject] = useState(null);
-  const [selectedDistrict, setSelectedDistrict] = useState(null);
-  const [valueProvince, setValueProvince] = useState(null);
-  const [valueDistrict, setValueDistric] = useState(null);
 
-  const [openProvince, setOpenProvince] = useState(null);
-  const [openDistrict, setOpenDistrict] = useState(null);
 
-  const handleObjectChange = (value) => {
-    const selected = provinces.find((obj) => obj.name === value);
-    setValueProvince(value);
-    setProvince(value)
-    setSelectedObject(selected);
-  };
+  // const handleObjectChange = (value) => {
+  //   const selected = provinces.find((obj) => obj.name === value);
+  //   setValueProvince(value);
+  //   setProvince(value);
+  //   setSelectedObject(selected);
+  // };
 
-  const handleChangeDistrict = (value) => {
-    setValueDistric(value);
-    setDistrict(value)
-  };
+  // const handleChangeDistrict = (value) => {
+  //   setValueDistric(value);
+  //   setDistrict(value);
+  // };
 
-  const handleProvinceChange = (value) => {
-    setSelectedProvince(value);
-  };
+  // const handleProvinceChange = (value) => {
+  //   setSelectedProvince(value);
+  // };
   return (
     <>
       <View
+        style={{
+          flexDirection: "column",
+          maxWidth: 400,
+          justifyContent: "center",
+          padding: 20,
+          alignSelf: "center",
+          alignItems: "center",
+          width: "100%",
+        }}
+      >
+        <Text
+          style={{
+            textAlign: "left",
+            fontFamily: FONT.medium,
+            fontSize: SIZES.large,
+            fontWeight: "bold",
+            color: COLORS.gray800,
+            width: "100%",
+          }}
+        >
+          Ubicación
+        </Text>
+
+        <View style={{ width: "100%", marginTop: 10 }}>
+          <SelectList
+            key={1}
+            setSelected={(val) => setProvince(val)}
+            data={provincesDistricts.map((e) => {
+              return { key: e.id, value: e.name };
+            })}
+            placeholder="Provincia"
+            search={false}
+            onSelect={() => {
+              setDistrict("");
+              setProvinceError("");
+            }}
+            save="value"
+          />
+          {provinceError && (
+            <Text
+              style={{
+                textAlign: "center",
+                marginTop: 10,
+                color: COLORS.red600,
+                fontFamily: FONT.medium,
+              }}
+            >
+              {provinceError}
+            </Text>
+          )}
+        </View>
+
+        {province && (
+          <View style={{ marginTop: 10, width: "100%" }}>
+            <SelectList
+              key={2}
+              setSelected={(val) => setDistrict(val)}
+              onSelect={() => setDistrictError("")}
+              data={provincesDistricts
+                .find((obj) => obj.name === province)
+                .districts.map((e) => {
+                  return { key: e.id, value: e.name };
+                })}
+              searchPlaceholder={`Buscar un distrito de ${province}`}
+              placeholder="Distrito"
+              search={true}
+              save="value"
+              notFoundText="No se encontró ningún distrito"
+            />
+            {districtError && (
+              <Text
+                style={{
+                  textAlign: "center",
+                  marginTop: 10,
+                  color: COLORS.red600,
+                  fontFamily: FONT.medium,
+                }}
+              >
+                {districtError}
+              </Text>
+            )}
+          </View>
+        )}
+      </View>
+
+      {/* <View
         style={{
           paddingBottom: 20,
           display: "flex",
@@ -70,9 +151,8 @@ const Step2Form = ({
         <DropDownPicker
           placeholder="Provincia"
           open={openProvince}
-          
           containerStyle={{ zIndex: 200, width: 180 }}
-          style={{backgroundColor:"transparent" }}
+          style={{ backgroundColor: "transparent" }}
           value={valueProvince}
           setValue={handleObjectChange}
           onChangeValue={handleObjectChange}
@@ -90,7 +170,7 @@ const Step2Form = ({
           <DropDownPicker
             placeholder="Distrito"
             open={openDistrict}
-            style={{backgroundColor:"transparent" }}
+            style={{ backgroundColor: "transparent" }}
             containerStyle={{ zIndex: 200, width: 180 }}
             mode="BADGE"
             setOpen={setOpenDistrict}
@@ -103,7 +183,7 @@ const Step2Form = ({
             }))}
           />
         )}
-      </View>
+      </View> */}
       <TextInput
         label="Puesto"
         returnKeyType="next"
@@ -116,7 +196,6 @@ const Step2Form = ({
         textContentType="jobTitle"
         keyboardType="default"
       />
-
       <TextInput
         label="Descripcion breve"
         multiline={true}
@@ -135,7 +214,6 @@ const Step2Form = ({
         keyboardType="numeric"
         label="Edad"
         returnKeyType="next"
-        
         placeholder=""
         value={age.value}
         onChangeText={(text) => setAge({ value: text, error: "" })}
@@ -143,20 +221,42 @@ const Step2Form = ({
         errorText={age.error}
         autoCapitalize="none"
       />
-     
-    <View style={{justifyContent:"flex-start",width:"100%",marginTop:50}}>
-        <Text style={{fontFamily:FONT.medium,fontSize:SIZES.medium,paddingLeft:15}}>Sexo:</Text>
+      <View
+        style={{ justifyContent: "flex-start", width: "100%", marginTop: 50 }}
+      >
+        <Text
+          style={{
+            fontFamily: FONT.medium,
+            fontSize: SIZES.medium,
+            paddingLeft: 15,
+          }}
+        >
+          Sexo:
+        </Text>
         <View>
-        <RadioButton.Group  onValueChange={value => setSex({value,error:""})} value={sex.value} >
-        <RadioButton.Item style={{width:"50%"}} color={COLORS.indigo800}  labelStyle={{fontFamily:FONT.medium,color:COLORS.indigo800}}   position="leading"  label="Hombre" value="Hombre" />
-        <RadioButton.Item style={{width:"50%"}} color={COLORS.indigo800}   labelStyle={{fontFamily:FONT.medium,color:COLORS.indigo800}}  position="leading" label="Mujer" value="Mujer" />
-        </RadioButton.Group>
-        </View>     
-    </View>
-
-
-  
-    
+          <RadioButton.Group
+            onValueChange={(value) => setSex({ value, error: "" })}
+            value={sex.value}
+          >
+            <RadioButton.Item
+              style={{ width: "50%" }}
+              color={COLORS.indigo800}
+              labelStyle={{ fontFamily: FONT.medium, color: COLORS.indigo800 }}
+              position="leading"
+              label="Hombre"
+              value="Hombre"
+            />
+            <RadioButton.Item
+              style={{ width: "50%" }}
+              color={COLORS.indigo800}
+              labelStyle={{ fontFamily: FONT.medium, color: COLORS.indigo800 }}
+              position="leading"
+              label="Mujer"
+              value="Mujer"
+            />
+          </RadioButton.Group>
+        </View>
+      </View>
     </>
   );
 };

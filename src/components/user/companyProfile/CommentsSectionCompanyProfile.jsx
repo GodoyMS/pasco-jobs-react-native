@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { gql, useQuery } from "@apollo/client";
@@ -15,15 +16,20 @@ import man from "@assets/images/manwoman/manFlatIllustration.jpg";
 import { Icon } from "@rneui/themed";
 import AgeDateFormat from "@components/dates/AgeDateFormat";
 import CommentCompanyCard from "./CommentCompanyCard";
-
+import ScreenLoader from "@components/loaders/ScreenLoader";
 
 const CommentsSectionCompanyProfile = ({ idCompany }) => {
-
-
+  const [data, setData] = useState([]); // Array to store the fetched data
+  const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(1); // Current page number
+  
   const GET_COMMENTS_BY_COMPANY = gql`
-    query GET_COMMENTS_BY_COMPANY($employerId: String!) {
-      CompanyComments(where: { company: { equals: $employerId } }) {
+    query GET_COMMENTS_BY_COMPANY($employerId:String!  
+      $page: Int! ) {
+      CompanyComments(where: { company: { equals: $employerId }  }  limit:6  page:$page ) {
         totalDocs
+        hasNextPage
+        page
         docs {
           user {
             profile
@@ -35,26 +41,70 @@ const CommentsSectionCompanyProfile = ({ idCompany }) => {
           text
           createdAt
           stars
+        
         }
       }
     }
   `;
-  const { error, data } = useQuery(GET_COMMENTS_BY_COMPANY, {
-    variables: { employerId: idCompany },
+  const {
+    loading,
+    error,
+    data: dataComments,
+  } = useQuery(GET_COMMENTS_BY_COMPANY, {
+    variables: { employerId: idCompany,page },
 
     fetchPolicy: "cache-and-network",
   });
 
-  
+  useEffect(() => {
+    if (!loading && dataComments) {
+      setData((prevData) => [...prevData, ...dataComments?.CompanyComments?.docs]);
+    }
+  }, [loading, dataComments]);
+
+  const fetchData = () => {
+    if (!isLoading && dataComments?.CompanyComments?.hasNextPage) {
+      setIsLoading(true);
+      setPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  const renderFooter = () => {
+    return isLoading ? <ActivityIndicator color={COLORS.tertiary} /> : null;
+  };
+
+  useEffect(() => {
+    if (!loading) {
+      setIsLoading(false);
+    }
+  }, [loading]);
+
+  if (loading && page === 1) {
+    return <ScreenLoader loading={loading} />;
+  }
+
+  if (error) {
+    return (
+      <View>
+        <Text> Error loading data </Text>
+      </View>
+    );
+  }
+
   return (
-    <View style={{ flex: 1,marginHorizontal:10 }}>
-      <Text style={{ paddingVertical: 10 }}>({data?.CompanyComments?.totalDocs} comentarios)</Text>
+    <View style={{ flex: 1, marginHorizontal: 10 }}>
+      <Text style={{ paddingVertical: 10 }}>
+        ({data?.CompanyComments?.totalDocs} comentarios)
+      </Text>
       <FlatList
         showsVerticalScrollIndicator={false}
-        data={data ? data.CompanyComments.docs : []}
-        renderItem={({ item }) => (
-          <CommentCompanyCard item={item}  />
-        )}         keyExtractor={(item, index) => item.id.toString()}
+        data={data}
+        renderItem={({ item }) => <CommentCompanyCard item={item} />}
+        keyExtractor={(item, index) => item.id.toString()}
+        onEndReached={fetchData} // Trigger fetching more data when reaching the end
+        onEndReachedThreshold={0.6} // Adjust the threshold as needed
+        ListFooterComponent={renderFooter} 
+       
       />
     </View>
   );

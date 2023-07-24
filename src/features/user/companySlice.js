@@ -4,13 +4,16 @@ const companySlice = createSlice({
   initialState: {
     infoCompany: null,
     tokenCompany: null,
+    companyLocationForApplicants: null,
+    companyLocationForCompanies: null,
+
     // userLocation:null,
     // userFavCategory:null,
     // favUserJobs:[],
     // infoCompany: null,
     // tokenCompany: null,
     exp: null,
-    finalists:[],
+    finalists: [],
   },
   reducers: {
     setCompany: (state, action) => {
@@ -18,10 +21,24 @@ const companySlice = createSlice({
       state.tokenCompany = action.payload.token;
       state.exp = action.payload.exp;
     },
-    setOnlyCompanyInfo:(state,action)=>{
+    setOnlyCompanyInfo: (state, action) => {
       state.infoCompany = action.payload.user;
-
     },
+    setCompanyLocationForApplicants: (state, action) => {
+      state.companyLocationForApplicants = action.payload;
+    },
+    cleanCompanyLocationForApplicants: (state, action) => {
+      state.companyLocationForApplicants = null;
+    },
+
+    setCompanyLocationFormCompanies:(state,action)=>{
+      state.companyLocationForCompanies=action.payload
+    },
+    cleanCompanyLocationForCompanies:(state,action)=>{
+      state.companyLocationForCompanies=null
+    },
+
+
     refreshCompanyInfo: (state, action) => {
       state.exp = action.payload.exp;
       state.tokenUser = action.payload.refreshedToken;
@@ -30,20 +47,20 @@ const companySlice = createSlice({
       state.infoCompany = null;
       state.tokenCompany = null;
       state.exp = null;
-      state.finalists=[];
+      state.finalists = [];
     },
     setPublishNewJob: (state, action) => {
       return action.payload;
     },
-    setFinalists:(state,action)=>{
-      state.finalists=action.payload;
+    setFinalists: (state, action) => {
+      state.finalists = action.payload;
     },
-    deleteFinalist:(state,action)=>{
-      state.finalists=state.finalists.filter(obj=>obj!==action.payload)
+    deleteFinalist: (state, action) => {
+      state.finalists = state.finalists.filter((obj) => obj !== action.payload);
     },
-    addFinalist:(state,action)=>{
-      state.finalists.push(action.payload)
-    }
+    addFinalist: (state, action) => {
+      state.finalists.push(action.payload);
+    },
     // setUserLocation:(state,action)=>{
     //   state.userLocation=action.payload
     // },
@@ -91,16 +108,19 @@ const companySlice = createSlice({
     //   state.exp = null;
     // },
   },
-
 });
 
 export const {
   setCompany,
   setOnlyCompanyInfo,
-  clearCompany, 
+  setCompanyLocationForApplicants,
+  setCompanyLocationFormCompanies,
+  cleanCompanyLocationForCompanies,
+  cleanCompanyLocationForApplicants,
+  clearCompany,
   refreshCompanyInfo,
   setFinalist,
   deleteFinalist,
-  addFinalist  
+  addFinalist,
 } = companySlice.actions;
 export default companySlice.reducer;

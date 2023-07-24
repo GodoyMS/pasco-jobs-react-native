@@ -11,6 +11,7 @@ import { useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
 import { PaperProvider } from "react-native-paper";
+import ScreenLoader from "@components/loaders/ScreenLoader";
 
 export const ApplicationsUserScreen = ({ navigation }) => {
   const infoUser = useSelector((state) => state.user.infoUser);
@@ -78,6 +79,9 @@ export const ApplicationsUserScreen = ({ navigation }) => {
       refetch();
     }, [])
   );
+  if(loading){
+    return <ScreenLoader loading={loading}/>
+  }
   return (
     <PaperProvider>
 

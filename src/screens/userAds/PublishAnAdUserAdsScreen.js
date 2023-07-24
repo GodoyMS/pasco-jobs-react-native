@@ -134,7 +134,6 @@ const PublishAnAdUserAdsScreen = () => {
         district: district.toString(),
         image: profileImageLink,
       })
-      .then(({ data }) => console.log(data))
       .then(() => setIsSucces(true))
       .catch((e) => console.log(e))
       .finally(() => setIsLoading(false));

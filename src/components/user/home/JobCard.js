@@ -18,7 +18,6 @@ import AgeDateFormat from "@components/dates/AgeDateFormat";
 
 const JobCard = React.memo ( ({ dataJob, userId }) => {
   const favJobsRedux = useSelector((state) => state.user.favUserJobs);
-  console.log(favJobsRedux);
   const [isAddedToFav, setIsAddedToFav] = useState(false);
   const dispatch = useDispatch();
   const [isSaveLoading, setIsSaveLoading] = useState(false);

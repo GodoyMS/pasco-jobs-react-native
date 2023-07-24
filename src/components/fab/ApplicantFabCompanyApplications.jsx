@@ -9,7 +9,6 @@ const ApplicantFabCompanyApplications = ({ applicantInfo }) => {
   const onStateChange = ({ open }) => setState({ open });
   const { open } = state;
   const actions = [];
-  console.log(applicantInfo)
 
   if (applicantInfo?.phone) {
     actions.push({

@@ -147,7 +147,6 @@ export const ProfileCompanyScreen = ({ navigation }) => {
       });
   };
 
-  console.log(userInfo);
   return (
     <Provider>
       <SafeAreaView
@@ -183,11 +182,15 @@ export const ProfileCompanyScreen = ({ navigation }) => {
                   source={{ uri: `data:image/jpeg;base64,${profileBase64}` }}
                 />
                 <View style={{ marginTop: 20 }}>
+                {isLoading && (
+                    <ActivityIndicator style={{ marginVertical: 10 }} />
+                  )}
                   <ButtonModal
-                    style={styles.buttonModalConfirmation}
+                    disabled={isLoading}
+                    style={{backgroundColor:COLORS.tertiary}}
                     onPress={handleImageUpload}
                   >
-                    <Text style={styles.textButton}>
+                    <Text style={{color:COLORS.white}}>
                       Guardar foto de perfil
                     </Text>
                   </ButtonModal>
@@ -195,7 +198,6 @@ export const ProfileCompanyScreen = ({ navigation }) => {
               </Modal>
             </Portal>
           )}
-          <FormLoader isLoading={isLoading} message={"Actualizando"}/>
 
           <StatusBar />
           {userInfo && (

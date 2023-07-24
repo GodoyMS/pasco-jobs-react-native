@@ -27,13 +27,13 @@ const Company = ({
   return (
  
 
-    <TouchableOpacity onPress={navigateToDetails} style={{ marginTop: 100, marginHorizontal: 0,    ...SHADOWS.medium,
+    <TouchableOpacity onPress={navigateToDetails} style={{ marginTop: 30, marginHorizontal: 0,    ...SHADOWS.medium,
       shadowColor: COLORS.white, }}>
       <Text
         style={{
           fontFamily: FONT.medium,
-          fontSize: SIZES.large,
-          marginBottom: 30,
+          fontSize: SIZES.medium,
+          marginBottom: 5,
         }}
       >
         Sobre la empresa

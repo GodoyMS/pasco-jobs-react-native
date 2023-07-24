@@ -1,38 +1,56 @@
-import { Text, StyleSheet, View } from "react-native";
-import React, { Component } from "react";
+import {
+  Text,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  RefreshControl,
+} from "react-native";
+import React from "react";
 import { SafeAreaView } from "react-native";
-import { TouchableOpacity } from "react-native";
 import { FlatList } from "react-native";
 import { COLORS, FONT, SIZES } from "@constants/theme";
 import { gql, useQuery } from "@apollo/client";
-import { useSelector } from "react-redux";
-import ApplicationJobCard from "@components/user/applicationJobs/ApplicationJobCard";
+import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
-import { useFocusEffect } from "@react-navigation/native";
-import { useCallback } from "react";
-import CompanyCardUserScreenjsx from "@components/user/companies/CompanyCardUserScreen";
 import { ActivityIndicator } from "react-native";
 import { useEffect } from "react";
-import AdCardUserAds from "@components/userads/publishedAds/AdCardUserAds";
 import AdCardUserScreen from "@components/user/ads/AdCardUserScreen";
+import ScreenLoader from "@components/loaders/ScreenLoader";
+import { Searchbar } from "react-native-paper";
+
+import CitySelectorUserAds from "@components/user/ads/CitySelectorUserAds";
 
 export const AdsUserScreen = ({ navigation }) => {
-  const infoUser = useSelector((state) => state.user.infoUser);
+  // const infoUser = useSelector((state) => state.user.infoUser);
+  const userLocationForAds = useSelector(
+    (state) => state.user.userLocationForAds
+  );
   const [data, setData] = useState([]); // Array to store the fetched data
   const [page, setPage] = useState(1); // Current page number
-  const [isLoading, setIsLoading] = useState(false); 
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchWord, setSearchWord] = useState("");
+  const [isCityOpen, setIsCityOpen] = useState(false);
 
   const GET_ALL_ADS_BY_USER = gql`
-    query GET_ALL_ADS_USER_SCREEN($page: Int!) {
-      Ads(page: $page limit:4 sort:"-createdAt") {
+    query GET_ALL_ADS_USER_SCREEN(
+      $searchWord: String!
+      $page: Int!
+      $province: String!
+    ) {
+      Ads(
+        where: { title: { like: $searchWord }, province: { like: $province } }
+        page: $page
+        limit: 10
+        sort: "-createdAt"
+      ) {
         totalDocs
-        
+
         hasPrevPage
         hasNextPage
         page
         docs {
           title
-          author{
+          author {
             name
             profile
             whatsapp
@@ -41,7 +59,7 @@ export const AdsUserScreen = ({ navigation }) => {
           image
 
           createdAt
-          province          
+          province
           district
           description
           id
@@ -49,11 +67,38 @@ export const AdsUserScreen = ({ navigation }) => {
       }
     }
   `;
-  const { loading, error, data: dataAds, refetch } = useQuery(
-    GET_ALL_ADS_BY_USER,
-    { variables: { page }, fetchPolicy: 'network-only' }
-  );
-  
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setData([]);
+    setPage(1)
+    refetch({ page, searchWord, province: userLocationForAds ? userLocationForAds : "" });
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
+  const handleChangeSearchWord = (text) => {
+    setData([]);
+    setPage(1)    
+    setSearchWord(text);
+  };
+
+  const {
+    loading,
+    error,
+    data: dataAds,
+    refetch,
+  } = useQuery(GET_ALL_ADS_BY_USER, {
+    variables: {
+      searchWord,
+      page,
+      province: userLocationForAds ? userLocationForAds : "",
+    },
+    fetchPolicy: "network-only",
+  });
+
   useEffect(() => {
     if (!loading && dataAds) {
       setData((prevData) => [...prevData, ...dataAds?.Ads?.docs]);
@@ -68,7 +113,7 @@ export const AdsUserScreen = ({ navigation }) => {
   };
 
   const renderFooter = () => {
-    return isLoading ? <ActivityIndicator /> : null;
+    return ( isLoading && !refreshing) ? <ActivityIndicator /> : null;
   };
 
   useEffect(() => {
@@ -77,21 +122,22 @@ export const AdsUserScreen = ({ navigation }) => {
     }
   }, [loading]);
 
-  if (loading && page === 1) {
-    return <ActivityIndicator />;
-  }
+  // if (loading && page === 1) {
+  //   return <ScreenLoader loading={loading} />;
+  // }
 
   if (error) {
-    return <View><Text> Error loading data </Text></View>;
+    return (
+      <View>
+        <Text> Error loading data </Text>
+      </View>
+    );
   }
-
-  
-
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
-      <View style={{ marginTop: 20 }}>
-        <View style={{ marginTop: SIZES.medium, gap: SIZES.small }}>
+      <View style={{ marginTop: 30 }}>
+        {/* <View style={{ marginTop: SIZES.medium, gap: SIZES.small }}>
           <Text
             style={{
               paddingHorizontal: 20,
@@ -103,29 +149,53 @@ export const AdsUserScreen = ({ navigation }) => {
           >
             Anuncios
           </Text>
-        </View>
+        </View> */}
       </View>
-     
-          <View style={{ flex: 1 }}>
-            <FlatList
+      <View style={{ flexDirection: "row", zIndex: 999,backgroundColor:COLORS.white,width:"100%" }}>
+        <Searchbar
+          elevation={4}
+          value={searchWord}
+          onChangeText={handleChangeSearchWord}
+          placeholderTextColor={COLORS.gray700}
+          inputStyle={{ fontFamily: FONT.regular, fontSize: SIZES.small }}
+          placeholder="Buscar anuncios"
+          mode="bar"
+          style={{  backgroundColor: COLORS.white,
+            flex: 1,
+            borderTopLeftRadius: 0,
+            borderBottomLeftRadius: 0,
+            borderTopRightRadius: 0,
+            borderBottomRightRadius: 0,
+            height: 50,
+            alignItems: "center",}}
+        />
+        <CitySelectorUserAds
+          refetch={refetch}
+          setPage={setPage}
+          setIsCityOpen={setIsCityOpen}
+          isCityOpen={isCityOpen}
+          setData={setData}
+        />
+      </View>
 
-              contentContainerStyle={{ paddingBottom: 100 }}
-              style={{ flex: 1 }}
-              data={data}
-              showsVerticalScrollIndicator={false}
-              keyExtractor={(item,index) => item.id.toString()}
-              showsHorizontalScrollIndicator={false}
-              renderItem={({ item }) => (
-                <AdCardUserScreen dataAds={item} />
-              )}
-              onEndReached={fetchData} // Trigger fetching more data when reaching the end
-              onEndReachedThreshold={0.6} // Adjust the threshold as needed
-              ListFooterComponent={renderFooter} 
-             
+      <View style={{ flex: 1 }}>
+        {loading && !refreshing && page === 1 && <ScreenLoader loading={loading} />}
+        {!loading && !refreshing && data.length===0 && (<Text  style={{marginTop:50,textAlign:"center",fontFamily:FONT.regular}}>No se encontraron resultados</Text>)}
+        <FlatList
 
-            />
-          </View>
-      
+          refreshControl={ <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          contentContainerStyle={{ paddingBottom: 100 }}
+          style={{ flex: 1 }}
+          data={data}
+          showsVerticalScrollIndicator={false}
+          keyExtractor={(item, index) => item.id.toString()}
+          showsHorizontalScrollIndicator={false}
+          renderItem={({ item }) => <AdCardUserScreen dataAds={item} />}
+          onEndReached={fetchData} // Trigger fetching more data when reaching the end
+          onEndReachedThreshold={0.6} // Adjust the threshold as needed
+          ListFooterComponent={renderFooter}
+        />
+      </View>
     </SafeAreaView>
   );
 };
