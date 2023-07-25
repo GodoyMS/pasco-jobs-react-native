@@ -140,6 +140,7 @@ const ApplicationJobCard = ({
           marginVertical: 1,
           marginHorizontal: 20,
           backgroundColor: COLORS.white,
+          elevation:3
         }}
       >
         <View

@@ -12,13 +12,14 @@ import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
 import { PaperProvider } from "react-native-paper";
 import ScreenLoader from "@components/loaders/ScreenLoader";
+import { Icon } from "@rneui/themed";
 
 export const ApplicationsUserScreen = ({ navigation }) => {
   const infoUser = useSelector((state) => state.user.infoUser);
 
   const GET_APPLICATIONS_BY_USER = gql`
-    query GET_APPLICATIONS_BY_USER($applicantId: String!) {
-      Applications(where: { applicant: { equals: $applicantId } }) {
+    query GET_APPLICATIONS_BY_USER($applicantId: String!,$page:Int!) {
+      Applications(where: { applicant: { equals: $applicantId } } page:$page limit:10 sort:"-createdAt") {
         docs {
           id
           job {
@@ -50,6 +51,7 @@ export const ApplicationsUserScreen = ({ navigation }) => {
           }
         }
         totalDocs
+        totalPages
         hasPrevPage
         hasNextPage
         page
@@ -59,13 +61,14 @@ export const ApplicationsUserScreen = ({ navigation }) => {
     
   const [data, setData] = useState(null);
   const [dataApplicationsLocal, setDataApplicationsLocal] = useState([]);
+  const [page,setPage]=useState(1)
   const {
     loading,
     error,
     data: dataApplications,
     refetch,
   } = useQuery(GET_APPLICATIONS_BY_USER, {
-    variables: { applicantId: infoUser?.id  ? infoUser?.id : "" },
+    variables: { applicantId: infoUser?.id  ? infoUser?.id : "",page },
     onCompleted: (data) => {
 
       setData(data.Applications);
@@ -120,6 +123,54 @@ export const ApplicationsUserScreen = ({ navigation }) => {
                 dataJob={item}
               />
             )}
+
+            ListFooterComponent={
+              dataApplicationsLocal.length > 0 && (
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    paddingHorizontal: 20,
+                    alignItems: "center",
+                  }}
+                >
+                  {data?.hasPrevPage && (
+                    <Icon
+                    onPress={()=>setPage(page-1)}
+                  
+                    size={40}
+                    name="chevron-left"
+                    type="material"
+                    color={COLORS.gray800}
+                  />
+                  )}
+                  
+                  <Text
+                    style={{
+                      fontFamily: FONT.medium,
+                      fontSize: SIZES.small,
+                      color: COLORS.gray600,
+                    }}
+                  >
+                    Pagina {data.page} de {data.totalPages}
+                  </Text>
+                 {data?.hasNextPage &&  <Icon
+                    onPress={()=>setPage(page+1)}
+                    size={40}
+                    name="chevron-right"
+                    type="material"
+                    color={COLORS.gray800}
+                  />}
+                </View>
+              ) 
+              // <ActivityIndicator
+              //   size="large"
+              //   style={styles.spinner}
+              //   color="#AEAEAE"
+              // />
+            }
+            
           />
         </View>
       )}

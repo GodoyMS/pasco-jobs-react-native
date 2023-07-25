@@ -27,9 +27,6 @@ const FeaturedCompanyCardUserScreen = React.memo(({ companyData,screen }) => {
           height:"100%",
           borderRadius:10,
           flex:1,
-          
-          
-        
           paddingHorizontal: 0,
           marginHorizontal:5
         }}
@@ -38,14 +35,15 @@ const FeaturedCompanyCardUserScreen = React.memo(({ companyData,screen }) => {
         <View
             style={{
              position:"absolute",
-             bottom:10,
-             left:5,
-             right:5,
+             bottom:5,
+            paddingHorizontal:5,
              zIndex:100,
-             width:"100%"
+             width:"100%",
+           
             }}
           >
-              <Text
+            <View style={{  backgroundColor:"rgba(0,0,0,0.6)",paddingVertical:2,borderRadius:5}}>
+            <Text
                 style={{
                   fontSize: 12,
                   fontFamily: FONT.medium,
@@ -55,9 +53,11 @@ const FeaturedCompanyCardUserScreen = React.memo(({ companyData,screen }) => {
                 }}
               >
                 {companyData?.name}
-              </Text>       
+              </Text>
+              
 
-         
+            </View>
+            
           </View>
         <Image
           resizeMode="cover"

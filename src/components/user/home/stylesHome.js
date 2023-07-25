@@ -52,6 +52,7 @@ const stylesHome = StyleSheet.create({
     marginVertical: 5,
     marginHorizontal: 0,
     backgroundColor: COLORS.white,
+    elevation:3
   },
   containerOneCardJob: {
     display: "flex",

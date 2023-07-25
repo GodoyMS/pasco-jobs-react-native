@@ -13,12 +13,13 @@ import { StatusBar } from "expo-status-bar";
 import { gql, useQuery } from "@apollo/client";
 import { useLayoutEffect } from "react";
 import { useCallback } from "react";
+import { Icon } from "@rneui/themed";
 export const FavoritesUserScreen = () => {
   const [dataFavJobs, setDataFavJobs] = useState(null);
   const [error, setError] = useState(null);
   const user=useSelector((state)=>state.user.infoUser)
   const favJobsIds=useSelector((state)=>state.user.favUserJobs)
-
+  const [page,setPage]=useState(1)
   // const fetchData = async () => {
   //   try {
       
@@ -33,9 +34,13 @@ export const FavoritesUserScreen = () => {
   // };
 
   const GET_COMPANY = gql`
-  query GET_FAVJOBS_BY_USER($userId: String!) {
-    FavoriteJobs(where:{user:{equals:$userId}}) {
+  query GET_FAVJOBS_BY_USER($userId: String!,$page:Int!) {
+    FavoriteJobs(where:{user:{equals:$userId}} page:$page limit:10) {
       totalDocs
+      page
+      hasNextPage
+      hasPrevPage
+      totalPages
       docs{
         job{
           title
@@ -53,18 +58,20 @@ export const FavoritesUserScreen = () => {
             name
             id
           }
+        
           salary
           province
           district
           id           
         }
+
         id    
       }
     }
   }
 `;
 const { error:errorGQL,loading, refetch,data } = useQuery(GET_COMPANY, {
-  variables: { userId: user?.id ? user?.id : ""},
+  variables: { userId: user?.id ? user?.id : "",page},
 
   fetchPolicy: "network-only",
 });
@@ -129,6 +136,53 @@ useLayoutEffect(
             renderItem={({ item }) => (
               <FavJobCard userId={user.id} dataFavJob={item} />
             )}
+
+            ListFooterComponent={
+              data?.FavoriteJobs?.docs?.length > 0 && (
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    paddingHorizontal: 20,
+                    alignItems: "center",
+                  }}
+                >
+                  {data?.FavoriteJobs?.hasPrevPage && (
+                    <Icon
+                    onPress={()=>setPage(page-1)}
+                  
+                    size={40}
+                    name="chevron-left"
+                    type="material"
+                    color={COLORS.gray800}
+                  />
+                  )}
+                  
+                  <Text
+                    style={{
+                      fontFamily: FONT.medium,
+                      fontSize: SIZES.small,
+                      color: COLORS.gray600,
+                    }}
+                  >
+                    Pagina {data?.FavoriteJobs?.page} de {data?.FavoriteJobs?.totalPages}
+                  </Text>
+                 {data?.FavoriteJobs?.hasNextPage &&  <Icon
+                    onPress={()=>setPage(page+1)}
+                    size={40}
+                    name="chevron-right"
+                    type="material"
+                    color={COLORS.gray800}
+                  />}
+                </View>
+              ) 
+              // <ActivityIndicator
+              //   size="large"
+              //   style={styles.spinner}
+              //   color="#AEAEAE"
+              // />
+            }
           />
         </View>
       )}

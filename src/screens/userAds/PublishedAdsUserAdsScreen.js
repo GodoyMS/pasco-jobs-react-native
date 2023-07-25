@@ -1,4 +1,12 @@
-import { ActivityIndicator, FlatList, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import React from "react";
 import { gql, useQuery } from "@apollo/client";
 import { useSelector } from "react-redux";
@@ -7,21 +15,23 @@ import AdCardUserAds from "@components/userads/publishedAds/AdCardUserAds";
 import { useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
+import { Icon } from "@rneui/themed";
 
 const PublishedAdsUserAdsScreen = () => {
   const userAds = useSelector((state) => state.userads.infoUserAds);
-const[dataAds,setDataAds]=useState([])
+  const [page, setPage] = useState(1);
+  const [dataAds, setDataAds] = useState([]);
   const GET_USERS = gql`
-    query GET_ADS_BY_USER_AD($useradsId: String!) {
-      Ads(where: { author: { equals: $useradsId } }) {
+    query GET_ADS_BY_USER_AD($useradsId: String!, $page: Int!) {
+      Ads(where: { author: { equals: $useradsId } }, page: $page, limit: 4) {
         totalDocs
-        
         hasPrevPage
         hasNextPage
         page
+        totalPages
         docs {
           title
-          author{
+          author {
             name
             profile
             whatsapp
@@ -29,7 +39,7 @@ const[dataAds,setDataAds]=useState([])
           }
           image
           createdAt
-          province          
+          province
           district
           description
           id
@@ -39,7 +49,10 @@ const[dataAds,setDataAds]=useState([])
   `;
 
   const { loading, error, data, refetch } = useQuery(GET_USERS, {
-    variables: { useradsId: userAds ? userAds?.id : "" },onCompleted:(data)=>{setDataAds(data.Ads.docs)},
+    variables: { useradsId: userAds ? userAds?.id : "", page },
+    onCompleted: (data) => {
+      setDataAds(data.Ads.docs);
+    },
 
     fetchPolicy: "network-only",
   });
@@ -48,20 +61,6 @@ const[dataAds,setDataAds]=useState([])
       refetch();
     }, [])
   );
-  
-
-  if(loading){
-    return (
-      <View style={{flex:1}}>
-        <View style={{flexDirection:"column",justifyContent:"center",height:"100%"}}>
-        <ActivityIndicator color={COLORS.tertiary} size={40}/>
-
-        </View>
-
-      </View>
-    )
-  }
-  
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -76,11 +75,23 @@ const[dataAds,setDataAds]=useState([])
         >
           Anuncios publicados
         </Text>
+        {loading && (
+          <View style={{ flex: 1, marginTop: 200 }}>
+            <View
+              style={{
+                flexDirection: "column",
+                justifyContent: "center",
+                height: "100%",
+              }}
+            >
+              <ActivityIndicator color={COLORS.tertiary} size={40} />
+            </View>
+          </View>
+        )}
 
         {userAds && dataAds && dataAds.length > 0 && !loading && (
           <View style={{ display: "flex", flexDirection: "column" }}>
             <FlatList
-            
               data={dataAds}
               contentContainerStyle={{ paddingBottom: 200 }}
               horizontal={false}
@@ -89,10 +100,10 @@ const[dataAds,setDataAds]=useState([])
               keyExtractor={(item) => String(item.id)}
               showsHorizontalScrollIndicator={false}
               renderItem={({ item }) => (
-                <AdCardUserAds dataAds={item} />
+                <AdCardUserAds dataAds={item} userAds={userAds} page={page} refetch={refetch} />
               )}
               ListFooterComponent={
-                data?.Ads?.docs.length > 10 && (
+                data?.Ads?.docs.length > 0 && (
                   <View
                     style={{
                       flex: 1,
@@ -102,12 +113,15 @@ const[dataAds,setDataAds]=useState([])
                       alignItems: "center",
                     }}
                   >
-                    <Icon
-                      size={40}
-                      name="chevron-left"
-                      type="material"
-                      color={COLORS.gray800}
-                    />
+                    {data?.Ads?.hasPrevPage && (
+                      <Icon
+                        onPress={() => setPage(page - 1)}
+                        size={40}
+                        name="chevron-left"
+                        type="material"
+                        color={COLORS.gray800}
+                      />
+                    )}
                     <Text
                       style={{
                         fontFamily: FONT.medium,
@@ -117,12 +131,15 @@ const[dataAds,setDataAds]=useState([])
                     >
                       Pagina {data?.Ads?.page} de {data?.Ads?.totalPages}
                     </Text>
-                    <Icon
-                      size={40}
-                      name="chevron-right"
-                      type="material"
-                      color={COLORS.gray800}
-                    />
+                    {data?.Ads?.hasNextPage && (
+                      <Icon
+                        onPress={() => setPage(page + 1)}
+                        size={40}
+                        name="chevron-right"
+                        type="material"
+                        color={COLORS.gray800}
+                      />
+                    )}
                   </View>
                 )
 
@@ -135,10 +152,7 @@ const[dataAds,setDataAds]=useState([])
             />
           </View>
         )}
-
-
-
-    </View>
+      </View>
     </SafeAreaView>
   );
 };

@@ -25,8 +25,8 @@ const CitySelectorUserAds = ({
     <View
       style={{
         backgroundColor: COLORS.white,
-        borderTopRightRadius: 0,
-        borderBottomRightRadius: 0,
+        borderTopRightRadius: 20,
+        borderBottomRightRadius: 20,
         width: 120,
         height: 50,
         elevation: 4,
@@ -62,7 +62,7 @@ const CitySelectorUserAds = ({
           style={{
             position: "absolute",
             top: 56,
-            backgroundColor: COLORS.indigo50,
+            backgroundColor: COLORS.white,
             borderBottomLeftRadius: 10,
             borderBottomRightRadius: 10,
             padding: 5,

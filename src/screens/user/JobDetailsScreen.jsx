@@ -1,5 +1,5 @@
 import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import { SafeAreaView, ActivityIndicator } from "react-native";
 import { ScrollView } from "react-native";
 import { Image } from "react-native";
@@ -53,14 +53,14 @@ export const JobDetailsUserScreen = (props) => {
   }, [favJobsRedux, params]);
 
   const handleAddFavoriteJob = async () => {
-    setIsSavingLoading(true)
+    setIsSavingLoading(true);
     await axios
       .post(`${backendURL}api/favoriteJobs`, {
         user: userId,
         job: params.itemId,
       })
       .then(({ data }) => dispatch(addFavoriteJob(data.doc)))
-      .then(()=>setIsSavingLoading(false))
+      .then(() => setIsSavingLoading(false))
 
       .then(() => {
         setShowMessage(true);
@@ -69,7 +69,7 @@ export const JobDetailsUserScreen = (props) => {
         }, 1000);
       })
       .catch((e) => console.log(e))
-      .finally(()=>setIsSavingLoading(false))
+      .finally(() => setIsSavingLoading(false));
   };
   const fetchData = () => {
     axios
@@ -188,23 +188,21 @@ export const JobDetailsUserScreen = (props) => {
   };
 
   const sendJobReport = async () => {
-    setIsSendindReportLoading(true)
-    await axios.post(`${backendURL}api/jobReports`, {
-      job: params.itemId,
-      user: userId,
-      reason: reportReason,
-    })
-    .then(()=>setIsReportSuccess(true))
-    .catch(()=>void(null))
-    .finally(()=>setIsSendindReportLoading(false))
+    setIsSendindReportLoading(true);
+    await axios
+      .post(`${backendURL}api/jobReports`, {
+        job: params.itemId,
+        user: userId,
+        reason: reportReason,
+      })
+      .then(() => setIsReportSuccess(true))
+      .catch(() => void null)
+      .finally(() => setIsSendindReportLoading(false));
   };
 
-  if (!dataJob){
-
-   return <ScreenLoader loading={loading}/>
-  }
-  
-  else{
+  if (!dataJob) {
+    return <ScreenLoader loading={loading} />;
+  } else {
     return (
       <PaperProvider>
         <Portal>
@@ -212,38 +210,83 @@ export const JobDetailsUserScreen = (props) => {
             visible={isReportActive}
             onDismiss={() => setIsReportActive(false)}
           >
-            <View style={{backgroundColor:COLORS.white,marginHorizontal:20,paddingHorizontal:20,paddingVertical:40,borderRadius:10}}>
-            <Text style={{fontFamily:FONT.bold,fontSize:SIZES.large,color:COLORS.gray800,marginBottom:20}}>¿Porque deseas reportar esta oferta laboral?</Text>
-            <SelectList
-              setSelected={(val) => setReportReason(val)}
-              data={[
-                { key: 1, value: "Disciminatorio u ofensivo" },
-                {
-                  key: 2,
-                  value: "Es publicidad o un aviso, no una oferta de empleo",
-                },
-                { key: 3, value: "Es engañosa o falsa" },
-                { key: 4, value: "Solicitan dinero" },
-                {
-                  key: 5,
-                  value: "Repiten la misma oferta laboral",
-                  key: 5,
-                  value: "Pagan muy mal para el trabajo solicitado",
-                },
-              ]}
-              placeholder="Motivo de denuncia"
-              search={false}              
-              save="value"
-            />
-            {isSendingReportLoading && <ActivityIndicator style={{marginTop:20}}/>}
-            <Button onPress={(isReportSucces || isSendingReportLoading ) ? ()=>void(null) :sendJobReport } style={{backgroundColor:isReportSucces? COLORS.green300: COLORS.tertiary,marginTop:20,borderRadius:10}} textColor="white" mode="elevated" >
-              { isReportSucces ? "Enviado enviado" : "Enviar"}
+            <View
+              style={{
+                backgroundColor: COLORS.white,
+                marginHorizontal: 20,
+                paddingHorizontal: 20,
+                paddingVertical: 40,
+                borderRadius: 10,
+              }}
+            >
+              <Text
+                style={{
+                  fontFamily: FONT.bold,
+                  fontSize: SIZES.large,
+                  color: COLORS.gray800,
+                  marginBottom: 20,
+                }}
+              >
+                ¿Porque deseas reportar esta oferta laboral?
+              </Text>
+              <SelectList
+                setSelected={(val) => setReportReason(val)}
+                data={[
+                  { key: 1, value: "Disciminatorio u ofensivo" },
+                  {
+                    key: 2,
+                    value: "Es publicidad o un aviso, no una oferta de empleo",
+                  },
+                  { key: 3, value: "Es engañosa o falsa" },
+                  { key: 4, value: "Solicitan dinero" },
+                  {
+                    key: 5,
+                    value: "Repiten la misma oferta laboral",
+                  },{
+                    key: 6,
+                    value: "Pagan muy mal para el trabajo solicitado",
+                  }
+                ]}
+                placeholder="Motivo de denuncia"
+                search={false}
+                save="value"
+              />
+              {isSendingReportLoading && (
+                <ActivityIndicator style={{ marginTop: 20 }} />
+              )}
+              <Button
+                onPress={
+                  isReportSucces || isSendingReportLoading
+                    ? () => void null
+                    : sendJobReport
+                }
+                style={{
+                  backgroundColor: isReportSucces
+                    ? COLORS.green300
+                    : COLORS.tertiary,
+                  marginTop: 20,
+                  borderRadius: 10,
+                }}
+                textColor="white"
+                mode="elevated"
+              >
+                {isReportSucces ? "Enviado enviado" : "Enviar"}
               </Button>
 
-              {isReportSucces && <Text style={{fontFamily:FONT.regular,fontSize:SIZES.small,color:COLORS.gray900,textAlign:"center",marginTop:15}}>Gracias por ayudarnos a mejorar la plataforma</Text>}
-
+              {isReportSucces && (
+                <Text
+                  style={{
+                    fontFamily: FONT.regular,
+                    fontSize: SIZES.small,
+                    color: COLORS.gray900,
+                    textAlign: "center",
+                    marginTop: 15,
+                  }}
+                >
+                  Gracias por ayudarnos a mejorar la plataforma
+                </Text>
+              )}
             </View>
-            
           </Modal>
         </Portal>
 

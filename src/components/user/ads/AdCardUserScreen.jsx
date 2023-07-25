@@ -19,7 +19,7 @@ import defaultAdUser from "@assets/userads/userdefault.png";
 import axios from "axios";
 import RenderHTML from "react-native-render-html";
  
-const AdCardUserScreen = React.memo(({ data, refetch, dataAds, setDataAds }) => {
+const AdCardUserScreen = React.memo(({ data, refetch, dataAds, setDataAds ,setCurrentAdId,setIsReportActive}) => {
   const [visible, setVisible] = useState(false);
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
@@ -115,6 +115,10 @@ const AdCardUserScreen = React.memo(({ data, refetch, dataAds, setDataAds }) => 
           marginVertical: 4,
         }}
       >
+        <View style={{flexDirection:"row",justifyContent:"flex-end"}}>
+          <Icon name="flag" type="feather" color={COLORS.tertiary} activeOpacity={0.7} onPress={()=>{setCurrentAdId(dataAds?.id);setIsReportActive(true)}}/>
+
+        </View>
         <View
           style={{ flexDirection: "row", columnGap: 10, paddingHorizontal: 20 }}
         >

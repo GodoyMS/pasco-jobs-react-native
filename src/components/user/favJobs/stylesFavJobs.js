@@ -4,7 +4,7 @@ import {  COLORS, FONT, SIZES } from "@constants/theme";
 import { Platform } from "react-native";
 const stylesFavJobs = StyleSheet.create({
   container: {
-    marginTop: SIZES.xLarge,
+    marginTop: 30,
   },
   header: {
     flexDirection: "row",

@@ -90,7 +90,7 @@ const ContactPascoJobsScreen = () => {
               Asimismo, se ha desarollado un sistema donde las personas
               podran publicar sus anuncios de manera muy sencilla.
               {"\n \n"}
-              <Text style={{ fontFamily: FONT.bold }}>
+              <Text style={{ fontFamily: FONT.bold,fontSize:SIZES.medium,color:COLORS.tertiary }}>
                 {" "}
                 ¡Gracias por ser parte de la era del empleo digital y
                 sostenible!
@@ -102,8 +102,8 @@ const ContactPascoJobsScreen = () => {
             <View style={{ marginHorizontal: 20 }}>
               <Text
                 style={{
-                  fontFamily: FONT.medium,
-                  color: COLORS.gray800,
+                  fontFamily: FONT.bold,
+                  color: COLORS.gray900,
                   fontSize: SIZES.small,
                   textAlign: "left",
                 }}
@@ -190,8 +190,8 @@ const ContactPascoJobsScreen = () => {
             <View style={{ marginHorizontal: 20 }}>
               <Text
                 style={{
-                  fontFamily: FONT.medium,
-                  color: COLORS.gray800,
+                  fontFamily: FONT.bold,
+                  color: COLORS.gray900,
                   fontSize: SIZES.small,
                   textAlign: "left",
                 }}
@@ -337,7 +337,7 @@ const ContactPascoJobsScreen = () => {
                       color: COLORS.gray700,
                     }}
                   >
-                    Full Stack Developer
+                    Desarrollador de software
                   </Text>
                 </View>
               </View>

@@ -67,7 +67,6 @@ const PublishedJobsCompanyScreen = () => {
 
   return (
     <PaperProvider>
-
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
       <View style={{ marginTop: 50, marginHorizontal: 20 }}>
         <Text
@@ -156,7 +155,7 @@ const PublishedJobsCompanyScreen = () => {
                 marginBottom: 20,
               }}
             >
-              Aun no tienes ninguna oferta de trabajo publicada
+              Aun no tienes ninguna oferta de trabajo publicado
             </Text>
             <Image
               resizeMode="cover"

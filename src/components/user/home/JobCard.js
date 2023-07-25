@@ -55,6 +55,7 @@ const JobCard = React.memo ( ({ dataJob, userId }) => {
   return (
     <TouchableOpacity
       activeOpacity={0.7}
+    
       style={styles.cardJob}
       onPress={navigateToDetails}
     >

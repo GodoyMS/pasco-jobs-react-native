@@ -404,8 +404,10 @@ export const HomeUserScreen = ({ navigation }) => {
                 <Text>S/.</Text>
               </View>
               <TextInput
-                style={{ flex: 1 }}
+                style={{ flex: 1,backgroundColor:COLORS.white }}
                 outlineColor={COLORS.tertiary}
+                textColor={COLORS.gray700}
+              
                 keyboardType="numeric"
                 mode="outlined"
                 label={"Salario mínimo"}
@@ -420,7 +422,7 @@ export const HomeUserScreen = ({ navigation }) => {
 
               mode="contained"
               onPress={handleFilterQuery}
-              labelStyle={{fontFamily:FONT.medium,fontSize:SIZES.medium}}
+              labelStyle={{fontFamily:FONT.medium,fontSize:SIZES.medium,color:COLORS.white}}
             >
               Filtrar
             </Button>
@@ -509,7 +511,7 @@ export const HomeUserScreen = ({ navigation }) => {
               flexDirection: "row",
               alignItems: "center",
               marginHorizontal: 20,
-              marginTop: 30,
+              marginTop: 35,
               columnGap: 1,
               zIndex: 999,
             }}
@@ -537,7 +539,9 @@ export const HomeUserScreen = ({ navigation }) => {
               placeholder="Buscar puestos de trabajo"
               placeholderTextColor={COLORS.gray}
             />
-            <View
+            <TouchableOpacity
+                onPress={() => setIsCityOpen(!isCityOpen)}
+                activeOpacity={0.7}
               style={{
                 backgroundColor: COLORS.white,
                 borderTopRightRadius: 20,
@@ -547,8 +551,7 @@ export const HomeUserScreen = ({ navigation }) => {
                 elevation: 4,
               }}
             >
-              <TouchableOpacity
-                onPress={() => setIsCityOpen(!isCityOpen)}
+              <View
                 style={{
                   display: "flex",
                   height: "auto",
@@ -574,13 +577,13 @@ export const HomeUserScreen = ({ navigation }) => {
                   style={{ width: 20, height: 20 }}
                   source={icons.location}
                 />
-              </TouchableOpacity>
+              </View>
               {isCityOpen && (
                 <View
                   style={{
                     position: "absolute",
                     top: 56,
-                    backgroundColor: COLORS.indigo50,
+                    backgroundColor: COLORS.white,
                     borderBottomLeftRadius: 20,
                     borderBottomRightRadius: 20,
                     padding: 5,
@@ -656,7 +659,7 @@ export const HomeUserScreen = ({ navigation }) => {
                   </TouchableOpacity>
                 </View>
               )}
-            </View>
+            </TouchableOpacity>
 
             {/* {Platform.OS === "android" && (
           <TextInput

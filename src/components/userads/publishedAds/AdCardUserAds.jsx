@@ -21,7 +21,7 @@ import axios from "axios";
 import RenderHTML from "react-native-render-html";
 import ReadMore from "read-more-react";
 
-const AdCardUserAds = ({ data, refetch, dataAds, setDataAds }) => {
+const AdCardUserAds = ({  refetch, dataAds, setDataAds,userAds,page }) => {
   const [visible, setVisible] = useState(false);
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
@@ -30,16 +30,16 @@ const AdCardUserAds = ({ data, refetch, dataAds, setDataAds }) => {
   const deleteJob = async () => {
     setIsLoading(true);
     await axios
-      .delete(`${backendURL}api/ads/${data.id}`)
-      .then(() => setDataAds(dataAds.filter((obj) => obj.id !== data.id)))
+      .delete(`${backendURL}api/ads/${dataAds.id}`)
+      // .then(() => setDataAds(dataAds.filter((obj) => obj.id !== data.id)))
 
-      .catch((e) => console.log(e))
-      .finally(() => setIsLoading(false));
+      // .catch((e) => console.log(e))
+      // .finally(() => setIsLoading(false));
+      .then(()=>refetch({page,useradsId: userAds ? userAds?.id : ""}))
   };
   const { width } = useWindowDimensions();
 
-
-  const[aspectRatio, setAspectRatio]=useState(1)
+  const [aspectRatio, setAspectRatio] = useState(1);
   const handleImageLoad = (event) => {
     const { width, height } = event.nativeEvent.source;
     setAspectRatio(width / height);
@@ -78,6 +78,7 @@ const AdCardUserAds = ({ data, refetch, dataAds, setDataAds }) => {
           <View style={{ flexDirection: "row", columnGap: 10, marginTop: 10 }}>
             <Button
               mode="contained"
+              disabled={isLoading}
               style={{
                 backgroundColor: COLORS.red700,
                 borderRadius: 6,
@@ -86,9 +87,9 @@ const AdCardUserAds = ({ data, refetch, dataAds, setDataAds }) => {
               onPress={deleteJob}
             >
               {isLoading ? (
-                <Text> ...</Text>
+                <Text style={{color:COLORS.white,fontSize:SIZES.small,fontFamily:FONT.regular}}> Eliminando..</Text>
               ) : (
-                <Text style={{ color: COLORS.white }}>Eliminar</Text>
+                <Text style={{ color: COLORS.white,fontFamily:FONT.regular}}>Eliminar</Text>
               )}
             </Button>
             <Button
@@ -112,11 +113,16 @@ const AdCardUserAds = ({ data, refetch, dataAds, setDataAds }) => {
           paddingHorizontal: 20,
           backgroundColor: COLORS.white,
           height: "auto",
-          paddingTop: 40,
+          paddingTop: 10,
           paddingBottom: 20,
           marginVertical: 4,
         }}
       >
+        <View style={{flexDirection:"row",justifyContent:"flex-end",paddingBottom:10}}>
+          <TouchableOpacity onPress={showModal}>
+            <Icon name="delete" color={COLORS.red600} type="material" />
+          </TouchableOpacity>
+        </View>
         <View
           style={{ flexDirection: "row", columnGap: 10, paddingHorizontal: 20 }}
         >
@@ -202,21 +208,20 @@ const AdCardUserAds = ({ data, refetch, dataAds, setDataAds }) => {
               </TouchableOpacity>
             )}
             {dataAds && dataAds?.image && (
-                  <Image
-                  borderRadius={10}
-                  resizeMode="cover"
-                  source={{
-                    uri: dataAds?.image,
-                  }}
-                  style={{
-                    width: "100%",
-                    aspectRatio,
-                    maxHeight: 300,
-                  }}
-                  onLoad={handleImageLoad}
-                />
+              <Image
+                borderRadius={10}
+                resizeMode="cover"
+                source={{
+                  uri: dataAds?.image,
+                }}
+                style={{
+                  width: "100%",
+                  aspectRatio,
+                  maxHeight: 300,
+                }}
+                onLoad={handleImageLoad}
+              />
             )}
-                        
           </View>
         </View>
 
@@ -239,8 +244,11 @@ const AdCardUserAds = ({ data, refetch, dataAds, setDataAds }) => {
             >
               {dataAds?.author?.phone && (
                 <TouchableOpacity
-                onPress={()=> Linking.openURL(`tel:${dataAds?.author?.phone}`).catch((e)=>console.log(e))}
-
+                  onPress={() =>
+                    Linking.openURL(`tel:${dataAds?.author?.phone}`).catch(
+                      (e) => console.log(e)
+                    )
+                  }
                   activeOpacity={0.7}
                   style={{ flexDirection: "column" }}
                 >
@@ -264,7 +272,11 @@ const AdCardUserAds = ({ data, refetch, dataAds, setDataAds }) => {
 
               {dataAds?.author?.whatsapp && (
                 <TouchableOpacity
-                onPress={()=> Linking.openURL(`https://api.whatsapp.com/send?phone=${dataAds?.author?.whatsapp}`).catch((e)=>console.log(e))}
+                  onPress={() =>
+                    Linking.openURL(
+                      `https://api.whatsapp.com/send?phone=${dataAds?.author?.whatsapp}`
+                    ).catch((e) => console.log(e))
+                  }
                   activeOpacity={0.7}
                   style={{ flexDirection: "column" }}
                 >
