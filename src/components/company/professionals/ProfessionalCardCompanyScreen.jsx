@@ -29,6 +29,7 @@ const ProfessionalCardCompanyScreen = React.memo(({ companyData }) => {
           paddingHorizontal: 0,
           backgroundColor: COLORS.primary,
           marginVertical: 10,
+          zIndex:50
         }}
         onPress={navigateToDetails}
       >

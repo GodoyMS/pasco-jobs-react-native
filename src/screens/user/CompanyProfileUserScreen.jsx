@@ -27,10 +27,11 @@ import { useSelector } from "react-redux";
 import JobsSectionCompanyProfile from "@components/user/companyProfile/JobsSectionCompanyProfile";
 import CompanyScreenProfileContactFab from "@components/fab/CompanyScreenProfileContactFab";
 import ScreenLoader from "@components/loaders/ScreenLoader";
+import { StatusBar } from "expo-status-bar";
 
 const CompanyProfileUserScreen = (props) => {
   const [profileVisible, setProfileVisible] = useState(false);
-  const [tab, setTab] = useState("company");
+  const [tab, setTab] = useState(0);
   const [isCommentActive, setIsCommentActive] = useState(false);
   const userId = useSelector((state) => state.user.infoUser.id);
   const {
@@ -81,6 +82,7 @@ const CompanyProfileUserScreen = (props) => {
   return (
     <PaperProvider>
       <SafeAreaView style={{ flex: 1 }}>
+        <StatusBar/>
         <SubmitCommentCompanyProfile
           active={isCommentActive}
           idCompany={params.itemId}

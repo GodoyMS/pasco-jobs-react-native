@@ -21,8 +21,8 @@ import { gql, useQuery } from "@apollo/client";
 import { Icon } from "@rneui/themed";
 import { Button, Modal, PaperProvider, Portal } from "react-native-paper";
 import { SelectList } from "react-native-dropdown-select-list";
-import FormLoader from "@components/loaders/FormLoader";
 import ScreenLoader from "@components/loaders/ScreenLoader";
+import { StatusBar } from "expo-status-bar";
 
 export const JobDetailsUserScreen = (props) => {
   const tabs = ["Descripción", "Requisitos", "Responsabilidades"];
@@ -291,6 +291,7 @@ export const JobDetailsUserScreen = (props) => {
         </Portal>
 
         <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite }}>
+          <StatusBar/>
           <>
             <ScrollView
               style={{ marginTop: 40 }}
@@ -599,6 +600,7 @@ export const JobDetailsUserScreen = (props) => {
 
             {
               <Footer
+                expired={dataJob?.expired}
                 jobAuthor={dataJob.author.id}
                 idJob={params.itemId}
                 idApplicant={userId}

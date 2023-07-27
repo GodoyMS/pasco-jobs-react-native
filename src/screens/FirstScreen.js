@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import Background from "@components/login/Background";
 import firstSreenImage from "@assets/images/firstScreenBgMobile.png";
 import { TouchableOpacity } from "react-native";
+import { StatusBar } from "expo-status-bar";
 
 const FirstScreen = ({ navigation }) => {
   const { width, height } = Dimensions.get("window");
@@ -32,6 +33,7 @@ const FirstScreen = ({ navigation }) => {
 
   return (
     <Background backgroundImage={firstSreenImage}>
+      
     <SafeAreaView
       style={{
         flex: 1,
@@ -43,6 +45,7 @@ const FirstScreen = ({ navigation }) => {
         rowGap: 20,
       }}
     >
+      <StatusBar/>
       <View style={{ flexDirection: "column" }}>
         <Text
           style={{

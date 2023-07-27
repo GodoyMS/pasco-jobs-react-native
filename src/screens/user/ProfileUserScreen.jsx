@@ -1,13 +1,11 @@
 import LogoutSection from "@components/user/profile/LogoutSection";
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import {
   Image,
   SafeAreaView,
   Text,
-  ImageBackground,
   TouchableOpacity,
   View,
-  Button,
   StyleSheet,
   ScrollView,
   ActivityIndicator,
@@ -15,7 +13,6 @@ import {
 import woman from "@assets/images/manwoman/womanFlatIllustration.jpg";
 import man from "@assets/images/manwoman/manFlatIllustration.jpg";
 import { useSelector } from "react-redux";
-import userImage from "@assets/images/user.png";
 import { COLORS, FONT, SIZES } from "@constants/theme";
 import { useDispatch } from "react-redux";
 import { StatusBar } from "expo-status-bar";
@@ -23,16 +20,13 @@ import axios from "axios";
 import { setOnlyUserInfo, setUser } from "@features/user/userSlice";
 import { backendURL } from "@config/config";
 import { Icon } from "@rneui/themed";
-import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import {
   Portal,
   Button as ButtonModal,
   Modal,
-  PaperProvider,
   Provider,
 } from "react-native-paper";
-import FormLoader from "@components/loaders/FormLoader";
 
 export const ProfileUserScreen = ({ navigation }) => {
   const generalRoutes = [
@@ -81,7 +75,7 @@ export const ProfileUserScreen = ({ navigation }) => {
 
   const dispatch = useDispatch();
   const userInfo = useSelector((state) => state.user.infoUser);
-  const tokenExpTime = useSelector((state) => state.user.exp);
+  // const tokenExpTime = useSelector((state) => state.user.exp);
 
   const navigateToDetails = (name) => {
     navigation.push(name);
@@ -125,6 +119,7 @@ export const ProfileUserScreen = ({ navigation }) => {
     }
   };
   const handleImageUpload = async () => {
+    setError(false)
     setIsLoading(true);
     await axios
       .post(`${backendURL}api/profilesupload/upload`, {
@@ -137,7 +132,7 @@ export const ProfileUserScreen = ({ navigation }) => {
         })
       )
       .then(({ data }) => dispatch(setOnlyUserInfo({ user: data.doc })))
-      .catch((e) => console.log(e))
+      .catch((e) => setError(true))
       .finally(() => {
         setIsLoading(false);
         setVisibleModalProfile(false);
@@ -192,6 +187,20 @@ export const ProfileUserScreen = ({ navigation }) => {
                       Guardar foto de perfil
                     </Text>
                   </ButtonModal>
+
+                  {error && (
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        fontFamily: FONT.regular,
+                        fontSize: SIZES.xSmall,
+                        marginTop: 10,
+                        color: COLORS.indigo700,
+                      }}
+                    >
+                      Imagen muy grande o formato no admitido
+                    </Text>
+                  )}
                 </View>
               </Modal>
             </Portal>
@@ -441,6 +450,70 @@ export const ProfileUserScreen = ({ navigation }) => {
                       size={20}
                     />
                   </View>
+                </View>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => navigation.navigate("ApplicantProfileCompanyScreen", {
+                  itemId: userInfo?.id,
+                })}
+                activeOpacity={0.6}
+                style={{
+                  backgroundColor: COLORS.indigo100,
+                  marginHorizontal: 20,
+                  borderRadius: 10,
+                  marginTop: 10,
+                  rowGap:10,  
+
+                  flexDirection: "column",
+                }}
+              >
+                <View
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    flexDirection: "row",
+                    paddingHorizontal: 20,
+                    paddingTop: 15,
+                    
+                    columnGap: 20,
+                    alignItems: "center",
+                  }}
+                >
+                  <Icon name="user-check" type="feather" size={20} />
+
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <View>
+                      <Text
+                        style={{
+                          color: COLORS.gray800,
+                          fontFamily: FONT.bold,
+                          fontSize: SIZES.medium,
+                        }}
+                      >
+                        Perfil público
+                      </Text>
+                    </View>
+                    <View>
+                      <Icon
+                        name="chevron-with-circle-right"
+                        type="entypo"
+                        size={20}
+                      />
+                    </View>
+                  </View>
+                </View>
+                <View >
+                  <Text style={{ paddingHorizontal: 20,fontFamily:FONT.regular,fontSize:SIZES.small,paddingBottom:10,color:COLORS.tertiary }}>
+                    Solo las empresas pueden ver tu perfil 
+                  </Text>
                 </View>
               </TouchableOpacity>
               {/**ACCOUNT */}

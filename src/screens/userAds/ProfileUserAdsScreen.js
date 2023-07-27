@@ -1,13 +1,10 @@
-import LogoutSection from "@components/user/profile/LogoutSection";
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import {
   Image,
   SafeAreaView,
   Text,
-  ImageBackground,
   TouchableOpacity,
   View,
-  Button,
   StyleSheet,
   ScrollView,
   
@@ -22,20 +19,16 @@ import { StatusBar } from "expo-status-bar";
 import axios from "axios";
 
 import { backendURL } from "@config/config";
-import { Platform } from "react-native";
 import { Icon } from "@rneui/themed";
-import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import {
   Portal,
   Button as ButtonModal,
   Modal,
-  PaperProvider,
   Provider,
 } from "react-native-paper";
 import FormLoader from "@components/loaders/FormLoader";
-import { setOnlyCompanyInfo } from "@features/user/companySlice";
-import CompanyLogout from "@components/company/profile/CompanyLogout";
+
 import { setOnlyUserAds } from "@features/user/userAdsSlice";
 import UserAdsLogout from "@components/userads/profile/UserAdsLogout";
 
@@ -128,6 +121,7 @@ export const ProfileUserAdsScreen = ({ navigation }) => {
     }
   };
   const handleImageUpload = async () => {
+    setError(false)
     setIsLoading(true);
     await axios
       .post(`${backendURL}api/profilesupload/upload`, {
@@ -141,7 +135,7 @@ export const ProfileUserAdsScreen = ({ navigation }) => {
         )
       )
       .then(({ data }) => dispatch(setOnlyUserAds({ user: data.doc })))
-      .catch((e) => console.log(e))
+      .catch((e) => setError(true))
       .finally(() => {
         setIsLoading(false);
         setVisibleModalProfile(false);
@@ -158,6 +152,7 @@ export const ProfileUserAdsScreen = ({ navigation }) => {
           justifyContent: "space-between",
         }}
       >
+        <StatusBar/>
         <ScrollView >
           {userAdsInfo && (
             <Portal>
@@ -196,13 +191,25 @@ export const ProfileUserAdsScreen = ({ navigation }) => {
                       Guardar foto de perfil
                     </Text>
                   </ButtonModal>
+                  {error && (
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        fontFamily: FONT.regular,
+                        fontSize: SIZES.xSmall,
+                        marginTop: 10,
+                        color: COLORS.indigo700,
+                      }}
+                    >
+                      Imagen muy grande o formato no admitido
+                    </Text>
+                  )}
                 </View>
               </Modal>
             </Portal>
           )}
           <FormLoader isLoading={isLoading} message={"Actualizando"}/>
 
-          <StatusBar />
           {userAdsInfo && (
             <>
               <View

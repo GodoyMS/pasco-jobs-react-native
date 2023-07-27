@@ -13,6 +13,7 @@ import { useCallback } from "react";
 import { PaperProvider } from "react-native-paper";
 import ScreenLoader from "@components/loaders/ScreenLoader";
 import { Icon } from "@rneui/themed";
+import { StatusBar } from "expo-status-bar";
 
 export const ApplicationsUserScreen = ({ navigation }) => {
   const infoUser = useSelector((state) => state.user.infoUser);
@@ -68,7 +69,7 @@ export const ApplicationsUserScreen = ({ navigation }) => {
     data: dataApplications,
     refetch,
   } = useQuery(GET_APPLICATIONS_BY_USER, {
-    variables: { applicantId: infoUser?.id  ? infoUser?.id : "",page },
+    variables: { applicantId: infoUser?.id  ? infoUser?.id : "", page },
     onCompleted: (data) => {
 
       setData(data.Applications);
@@ -89,15 +90,16 @@ export const ApplicationsUserScreen = ({ navigation }) => {
     <PaperProvider>
 
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
+      <StatusBar/>
       <View style={{ marginTop: 50 }}>
 
         <View style={{ marginTop: SIZES.medium, gap: SIZES.small }}>
           <Text
             style={{
               paddingHorizontal: 20,
-              fontSize: SIZES.large,
+              fontSize: SIZES.medium,
               fontFamily: FONT.medium,
-              color: COLORS.gray,
+              color: COLORS.gray800,
               marginBottom: 10,
             }}
           >

@@ -26,7 +26,7 @@ import { nameValidator } from "@helpers/nameValidator";
 import useRegister from "@hooks/user/auth/register";
 import { SelectList } from "react-native-dropdown-select-list";
 import provincesDistricts from "@data/data.json";
-import userDefault from "@assets/userads/userdefault.png"
+import userDefault from "@assets/userads/userdefault.png";
 
 import {
   Modal,
@@ -34,12 +34,12 @@ import {
   Text as TextModal,
   Button as ButtonModal,
   PaperProvider,
+  Checkbox,
 } from "react-native-paper";
 import loginBackground from "@assets/images/loginbg.png";
 import { Image } from "react-native";
 
 const Stack = createStackNavigator();
-
 
 export const RegisterUserAdsScreen = ({ navigation }) => {
   const [name, setName] = useState({ value: "", error: "" });
@@ -62,6 +62,13 @@ export const RegisterUserAdsScreen = ({ navigation }) => {
   //PROFILE IMAGE
   const [profileImageLink, setProfileImageLink] = useState("");
   const [profileImageBase64, setProfileImageBase64] = useState("");
+  const[isImageUploading,setIsImageUploading]=useState(false)
+  //SHOW PASS
+  const [visiblePass, setVisiblePass] = useState(false);
+
+  //IMAGE SAVE ERROR
+
+  const[isImageSavedToSubmitError,setIsImageSavedToSubmitError]=useState("")
 
   const handleImagePicker = async () => {
     try {
@@ -93,21 +100,23 @@ export const RegisterUserAdsScreen = ({ navigation }) => {
     }
   };
   const handleImageUpload = async () => {
+
+    setIsImageUploading(true)
     await axios
       .post(`${backendURL}api/profilesupload/upload`, {
         base64: `data:image/png;base64,${profileImageBase64}`,
         name: name.value,
       })
       .then(({ data }) => setProfileImageLink(data.url))
-      .catch((e) => console.log(e));
+      .then(()=>setIsImageUploading(false))
+      .catch((e) => console.log(e))
+      .finally(()=>setIsImageUploading(false))
   };
 
   const hideModal = () => {
     setIsRegister(false);
     navigation.navigate("LoginCompanyScreen");
   };
-
-  console.log(profileImageLink)
 
   const onSignUpPressed = async () => {
     const nameError = nameValidator(name.value);
@@ -118,6 +127,7 @@ export const RegisterUserAdsScreen = ({ navigation }) => {
       : "Realiza una descripción breve";
     const provinceError = province ? "" : "Selecciona una provincia";
     const districtError = district ? "" : "Selecciona un distrito";
+    const imageSavedToSubmitError=(profileImageBase64&& !profileImageLink) ? "Guarda tu imágen"  : ""
 
     if (
       emailError ||
@@ -125,7 +135,8 @@ export const RegisterUserAdsScreen = ({ navigation }) => {
       nameError ||
       descriptionError ||
       provinceError ||
-      districtError
+      districtError ||
+      imageSavedToSubmitError
     ) {
       setName({ ...name, error: nameError });
       setEmail({ ...email, error: emailError });
@@ -133,6 +144,7 @@ export const RegisterUserAdsScreen = ({ navigation }) => {
       setDescription({ ...description, error: descriptionError });
       setDistrictError(districtError);
       setProvinceError(provinceError);
+      setIsImageSavedToSubmitError(imageSavedToSubmitError)
       return;
     }
 
@@ -145,7 +157,7 @@ export const RegisterUserAdsScreen = ({ navigation }) => {
         province: province,
         district: district,
         description: description.value,
-        profile: profileImageLink
+        profile: profileImageLink,
       })
       .then(() => setIsRegister(true))
       .then(() => setIsLoading(false))
@@ -195,8 +207,10 @@ export const RegisterUserAdsScreen = ({ navigation }) => {
                   borderRadius: 10,
                 }}
               >
-                <Text style={{ fontFamily: FONT.medium,color:COLORS.tertiary }}>
-                  Anunciante  registrado con éxito, ahora puedes iniciar sesión
+                <Text
+                  style={{ fontFamily: FONT.medium, color: COLORS.tertiary }}
+                >
+                  Anunciante registrado con éxito, ahora puedes iniciar sesión
                 </Text>
                 <View style={{ marginTop: 20 }}>
                   <ButtonModal
@@ -249,8 +263,32 @@ export const RegisterUserAdsScreen = ({ navigation }) => {
               onChangeText={(text) => setPassword({ value: text, error: "" })}
               error={!!password.error}
               errorText={password.error}
-              secureTextEntry
+              secureTextEntry={!visiblePass}
             />
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "flex-start",
+                width: "100%",
+                columnGap: 4,
+                alignItems: "center",
+                marginBottom: 20,
+              }}
+            >
+              <Checkbox
+                color={COLORS.tertiary}
+                theme={"light"}
+                status={visiblePass ? "checked" : "unchecked"}
+                onPress={() => {
+                  setVisiblePass(!visiblePass);
+                }}
+              />
+              <Text
+                style={{ fontFamily: FONT.regular, fontSize: SIZES.xSmall }}
+              >
+                {visiblePass ? "Ocultar contraseña" : "Mostrar contraseña"}
+              </Text>
+            </View>
           </View>
 
           <View
@@ -262,7 +300,7 @@ export const RegisterUserAdsScreen = ({ navigation }) => {
               alignSelf: "center",
               alignItems: "center",
               width: "100%",
-              marginBottom:60
+              marginBottom: 60,
             }}
           >
             <Text
@@ -299,42 +337,51 @@ export const RegisterUserAdsScreen = ({ navigation }) => {
                 fontFamily: FONT.medium,
                 fontSize: SIZES.medium,
                 color: COLORS.gray800,
-                width:"100%",
-                textAlign:"left",
-                marginTop:30
+                width: "100%",
+                textAlign: "left",
+                marginTop: 30,
               }}
             >
-              Imagen de perfil <Text style={{fontSize:SIZES.small}}> (Opcional)</Text> 
+              Imagen de perfil{" "}
+              <Text style={{ fontSize: SIZES.small }}> (Opcional)</Text>
             </Text>
 
             <View style={{ marginTop: 10 }}>
               {!profileImageBase64 && (
-                <Image
-                  borderRadius={50}
-                  resizeMode="cover"
-                  source={userDefault}
-                  style={{
-                    width: "100%",
-                    height: "auto",
-                    borderRadius: 10,
-                    aspectRatio: "1/1",
-                  }}
-                />
+                <View
+                  style={{ flexDirection: "row", justifyContent: "center" }}
+                >
+                  <Image
+                    borderRadius={50}
+                    resizeMode="cover"
+                    source={userDefault}
+                    style={{
+                      width: "50%",
+                      height: "auto",
+                      borderRadius: 1000,
+                      aspectRatio: "1/1",
+                    }}
+                  />
+                </View>
               )}
               {profileImageBase64 && (
-                <Image
-                  borderRadius={150}
-                  resizeMode="cover"
-                  source={{
-                    uri: `data:image/jpeg;base64,${profileImageBase64}`,
-                  }}
-                  style={{
-                    width: "100%",
-                    height: "auto",
-                    borderRadius: 10,
-                    aspectRatio: "1/1",
-                  }}
-                />
+                <View
+                  style={{ flexDirection: "row", justifyContent: "center" }}
+                >
+                  <Image
+                    borderRadius={150}
+                    resizeMode="cover"
+                    source={{
+                      uri: `data:image/jpeg;base64,${profileImageBase64}`,
+                    }}
+                    style={{
+                      width: "50%",
+                      height: "auto",
+                      borderRadius: 1000,
+                      aspectRatio: "1/1",
+                    }}
+                  />
+                </View>
               )}
 
               <View
@@ -349,60 +396,82 @@ export const RegisterUserAdsScreen = ({ navigation }) => {
                 }}
               >
                 {!profileImageLink && (
-                  <TouchableOpacity
-                    style={{
-                      paddingVertical: 20,
-                      borderRadius: 15,
-                      width: 150,
-                      backgroundColor: COLORS.indigo700,
-                      flexDirection: "row",
-                      paddingHorizontal: 10,
-                      justifyContent: "center",
-                      columnGap: 10,
-                      alignItems: "center",
-                    }}
-                    onPress={
-                      profileImageBase64 ? handleImageUpload : handleImagePicker
-                    }
-                  >
-                    <Text
+                  <View style={{width:"100%"}}>
+                    <TouchableOpacity
                       style={{
-                        textAlign: "center",
-                        width: "auto",
-                        color: COLORS.white,
-                        fontFamily: FONT.medium,
+                        paddingVertical: 10,
+                        borderRadius: 8,
+                        width: "100%",
+                        backgroundColor: COLORS.indigo700,
+                        flexDirection: "row",
+                        paddingHorizontal: 5,
+
+                        justifyContent: "center",
+                        columnGap: 10,
+                        alignItems: "center",
                       }}
+                      disabled={isImageUploading}
+                      onPress={
+                        profileImageBase64
+                          ? handleImageUpload
+                          : handleImagePicker
+                      }
                     >
-                      {profileImageBase64 ? "Guardar imagen" : "Subir Imagen"}
-                    </Text>
-                    <Icon
-                      name={profileImageBase64 ? "save" : "upload"}
-                      type="feather"
-                      color={COLORS.white}
-                    />
-                  </TouchableOpacity>
+                      <Text
+                        style={{
+                          textAlign: "center",
+                          width: "auto",
+                          color: COLORS.white,
+                          fontFamily: FONT.medium,
+                        }}
+                      >
+                        {isImageUploading ? <ActivityIndicator color={"white"}/>   :  profileImageBase64 ? "Guardar imagen" : "Subir Imagen"}
+                      </Text>
+                      {!isImageUploading && <Icon
+                        name={profileImageBase64 ? "save" : "upload"}
+                        type="feather"
+                        color={COLORS.white}
+                      />}
+                    </TouchableOpacity>
+
+                    {!profileImageBase64 && (
+                      <View>
+                        <Text
+                          style={{
+                            fontFamily: FONT.regular,
+                            fontSize: SIZES.small,
+                            color: COLORS.gray700,
+                            marginTop: 10,
+                            textAlign: "justify",
+                          }}
+                        >
+                          Una imágen de perfil brindara mas confianza a las
+                          personas
+                        </Text>
+                      </View>
+                    )}
+                  </View>
                 )}
+               
                 {profileImageLink && (
                   <View
                     style={{
-                      paddingVertical: 20,
+                      paddingVertical: 0,
                       borderRadius: 15,
-                      width: 150,
-                      backgroundColor: COLORS.green400,
+                      width: "100%",
                       flexDirection: "row",
                       paddingHorizontal: 10,
                       justifyContent: "center",
                       columnGap: 10,
                       alignItems: "center",
                     }}
-                    onPress={handleImagePicker}
                   >
                     <Text
                       style={{
                         textAlign: "center",
                         width: "auto",
-                        color: COLORS.white,
-                        fontFamily: FONT.medium,
+                        color: COLORS.green500,
+                        fontFamily: FONT.regular,
                       }}
                     >
                       Perfil guardado
@@ -410,27 +479,12 @@ export const RegisterUserAdsScreen = ({ navigation }) => {
                     <Icon
                       name={"checkcircle"}
                       type="antdesign"
-                      color={COLORS.white}
+                      color={COLORS.green400}
                     />
                   </View>
                 )}
-
-                {!profileImageBase64 && (
-                  <View style={{ flex: 1 }}>
-                    <Text
-                      style={{
-                        fontFamily: FONT.regular,
-                        fontSize: SIZES.medium,
-                        color: COLORS.gray700,
-                        marginTop: 10,
-                        textAlign: "justify",
-                      }}
-                    >
-                      Una imágen de perfil brindara mas confianza a las personas
-                    </Text>
-                  </View>
-                )}
               </View>
+      
             </View>
           </View>
 
@@ -531,14 +585,23 @@ export const RegisterUserAdsScreen = ({ navigation }) => {
               width: "100%",
             }}
           >
-            {isLoading &&  <ActivityIndicator/> }
+            {isLoading && <ActivityIndicator />}
             <Button
               mode="contained"
-              onPress={isLoading ? ()=>void(null) : onSignUpPressed}
+              onPress={isLoading ? () => void null : onSignUpPressed}
               style={{ marginTop: 24, fontFamily: FONT.medium }}
             >
               {isLoading ? "Registrando ..." : "Registrase"}
             </Button>
+            {isImageSavedToSubmitError && <Text
+                style={{
+                  marginBottom: 10,
+                  fontFamily: FONT.medium,
+                  color: COLORS.red600,
+                }}
+              >
+               {isImageSavedToSubmitError}
+              </Text> }
             {(email.error ||
               password.error ||
               name.error ||
@@ -556,8 +619,6 @@ export const RegisterUserAdsScreen = ({ navigation }) => {
                 Hay uno o mas campos inválidos
               </Text>
             )}
-
-           
           </View>
         </ScrollView>
       </PaperProvider>

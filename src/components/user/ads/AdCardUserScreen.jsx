@@ -58,7 +58,9 @@ const AdCardUserScreen = React.memo(({ data, refetch, dataAds, setDataAds ,setCu
     : dataAds?.description.slice(0, maxChars);
 
   return (
-    <PaperProvider>
+    <>
+    {dataAds?.author && dataAds?.title && (
+      <PaperProvider>
       <Portal>
         <Modal
           visible={visible}
@@ -312,6 +314,8 @@ const AdCardUserScreen = React.memo(({ data, refetch, dataAds, setDataAds ,setCu
         )}
       </View>
     </PaperProvider>
+    )}
+    </>
   );
 });
 

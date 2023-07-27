@@ -11,6 +11,7 @@ import { SafeAreaView } from "react-native";
 import UpdatePasswordUserAds from "@components/globals/UpdatePasswordUserAds";
 import UpdateEmailUserAds from "@components/globals/UpdateEmailUserAds";
 import DeleteAccountUserAds from "@components/globals/DeleteAccountUserAds";
+import { StatusBar } from "expo-status-bar";
 
 const AccountManagerUserAds = ({navigation}) => {
   const[visiblePassword,setVisiblePassword]=useState(false)
@@ -26,6 +27,7 @@ const AccountManagerUserAds = ({navigation}) => {
     <PaperProvider>
 
     <SafeAreaView style={{ flex: 1}}>
+      <StatusBar/>
 
      
 

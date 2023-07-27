@@ -1,16 +1,12 @@
-import LogoutSection from "@components/user/profile/LogoutSection";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Image,
   SafeAreaView,
   Text,
-  ImageBackground,
   TouchableOpacity,
   View,
-  Button,
   StyleSheet,
   ScrollView,
-  
 } from "react-native";
 
 import { useSelector } from "react-redux";
@@ -19,24 +15,19 @@ import { COLORS, FONT, SIZES } from "@constants/theme";
 import { useDispatch } from "react-redux";
 import { StatusBar } from "expo-status-bar";
 import axios from "axios";
-import { setOnlyUserInfo, setUser } from "@features/user/userSlice";
 
 import { backendURL } from "@config/config";
-import { Platform } from "react-native";
 import { Icon } from "@rneui/themed";
-import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import {
   Portal,
   Button as ButtonModal,
   Modal,
-  PaperProvider,
   Provider,
 } from "react-native-paper";
-import FormLoader from "@components/loaders/FormLoader";
 import { setOnlyCompanyInfo } from "@features/user/companySlice";
 import CompanyLogout from "@components/company/profile/CompanyLogout";
-
+import { ActivityIndicator } from "react-native";
 export const ProfileCompanyScreen = ({ navigation }) => {
   const generalRoutes = [
     {
@@ -45,7 +36,7 @@ export const ProfileCompanyScreen = ({ navigation }) => {
       iconName: "user",
       iconType: "feather",
       onClick: "",
-      route :"AccountManagerCompany"
+      route: "AccountManagerCompany",
     },
     {
       id: 1,
@@ -53,7 +44,7 @@ export const ProfileCompanyScreen = ({ navigation }) => {
       iconName: "info",
       iconType: "feather",
       onClick: "",
-      route:"InformationCompanyScreen"
+      route: "InformationCompanyScreen",
     },
     {
       id: 2,
@@ -61,7 +52,7 @@ export const ProfileCompanyScreen = ({ navigation }) => {
       iconName: "flag",
       iconType: "feather",
       onClick: "",
-      route:"ReportAProblem"
+      route: "ReportAProblem",
     },
     {
       id: 3,
@@ -69,7 +60,7 @@ export const ProfileCompanyScreen = ({ navigation }) => {
       iconName: "building-o",
       iconType: "font-awesome",
       onClick: "",
-      route:"ContactPascoJobsScreen"
+      route: "ContactPascoJobsScreen",
     },
     // {
     //   id: 4,
@@ -83,7 +74,6 @@ export const ProfileCompanyScreen = ({ navigation }) => {
 
   const dispatch = useDispatch();
   const userInfo = useSelector((state) => state.company.infoCompany);
-  const tokenExpTime = useSelector((state) => state.user.exp);
 
   const navigateToDetails = (name) => {
     navigation.push(name);
@@ -128,19 +118,19 @@ export const ProfileCompanyScreen = ({ navigation }) => {
   };
   const handleImageUpload = async () => {
     setIsLoading(true);
+    setError(false)
     await axios
       .post(`${backendURL}api/profilesupload/upload`, {
         base64: `data:image/png;base64,${profileBase64}`,
         name: userInfo.name,
       })
       .then(({ data }) =>
-        axios.patch(
-          `${backendURL}api/employers/${userInfo.id}`,
-          { profile: data.url }
-        )
+        axios.patch(`${backendURL}api/employers/${userInfo.id}`, {
+          profile: data.url,
+        })
       )
       .then(({ data }) => dispatch(setOnlyCompanyInfo({ user: data.doc })))
-      .catch((e) => console.log(e))
+      .catch((e) => setError(true))
       .finally(() => {
         setIsLoading(false);
         setVisibleModalProfile(false);
@@ -156,7 +146,7 @@ export const ProfileCompanyScreen = ({ navigation }) => {
           justifyContent: "space-between",
         }}
       >
-        <ScrollView >
+        <ScrollView>
           {userInfo && (
             <Portal>
               <Modal
@@ -182,18 +172,32 @@ export const ProfileCompanyScreen = ({ navigation }) => {
                   source={{ uri: `data:image/jpeg;base64,${profileBase64}` }}
                 />
                 <View style={{ marginTop: 20 }}>
-                {isLoading && (
+                  {isLoading && (
                     <ActivityIndicator style={{ marginVertical: 10 }} />
                   )}
                   <ButtonModal
                     disabled={isLoading}
-                    style={{backgroundColor:COLORS.tertiary}}
+                    style={{ backgroundColor: COLORS.tertiary }}
                     onPress={handleImageUpload}
                   >
-                    <Text style={{color:COLORS.white}}>
+                    <Text style={{ color: COLORS.white }}>
                       Guardar foto de perfil
                     </Text>
                   </ButtonModal>
+
+                  {error && (
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        fontFamily: FONT.regular,
+                        fontSize: SIZES.xSmall,
+                        marginTop: 10,
+                        color: COLORS.indigo700,
+                      }}
+                    >
+                      Imagen muy grande o formato no admitido
+                    </Text>
+                  )}
                 </View>
               </Modal>
             </Portal>
@@ -204,12 +208,10 @@ export const ProfileCompanyScreen = ({ navigation }) => {
             <>
               <View
                 style={{
-                  
-                  
                   position: "relative",
-                  height:"auto",
-                  width:"100%",
-                  aspectRatio:"1/1"
+                  height: "auto",
+                  width: "100%",
+                  aspectRatio: "1/1",
                 }}
               >
                 <TouchableOpacity
@@ -300,7 +302,7 @@ export const ProfileCompanyScreen = ({ navigation }) => {
                     >
                       {userInfo.name}
                     </Text>
-                 
+
                     <Text
                       style={{
                         color: COLORS.tertiary,
@@ -323,7 +325,11 @@ export const ProfileCompanyScreen = ({ navigation }) => {
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={() => navigation.navigate("CompanyProfileCompanyScreen", { itemId: userInfo?.id })}
+                onPress={() =>
+                  navigation.navigate("CompanyProfileCompanyScreen", {
+                    itemId: userInfo?.id,
+                  })
+                }
                 activeOpacity={0.6}
                 style={{
                   display: "flex",
@@ -358,20 +364,13 @@ export const ProfileCompanyScreen = ({ navigation }) => {
                     >
                       Perfil público
                     </Text>
-                   
-                 
                   </View>
                   <View>
-                    <Icon
-                      name="eye"
-                      type="entypo"
-                      size={20}
-                    />
+                    <Icon name="eye" type="entypo" size={20} />
                   </View>
                 </View>
               </TouchableOpacity>
 
-             
               {/**ACCOUNT */}
               <View style={{ marginHorizontal: 30, marginVertical: 20 }}>
                 <View
@@ -395,7 +394,7 @@ export const ProfileCompanyScreen = ({ navigation }) => {
 
               {generalRoutes.map((e) => (
                 <TouchableOpacity
-                  onPress={()=>navigateToDetails(e.route)}
+                  onPress={() => navigateToDetails(e.route)}
                   key={e.id}
                   activeOpacity={0.6}
                   style={{
@@ -431,7 +430,7 @@ export const ProfileCompanyScreen = ({ navigation }) => {
                         }}
                       >
                         {e.name}
-                      </Text>                   
+                      </Text>
                     </View>
                     <View>
                       <Icon

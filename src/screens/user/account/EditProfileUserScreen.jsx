@@ -22,6 +22,7 @@ import FormLoader from "@components/loaders/FormLoader";
 import { Icon } from "@rneui/themed";
 import SaveButton from "@components/buttons/SaveButton";
 import Lottie from 'lottie-react-native';
+import { StatusBar } from "expo-status-bar";
 
 const EditProfileUserScreen = () => {
   const userInfo = useSelector((state) => state.user.infoUser);
@@ -80,6 +81,7 @@ const EditProfileUserScreen = () => {
         justifyContent: "space-between",
       }}
     >
+      <StatusBar/>
       <ScrollView style={{ marginTop: 90 }}>
 
         {userInfo && (

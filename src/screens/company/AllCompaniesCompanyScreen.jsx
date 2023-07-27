@@ -1,5 +1,5 @@
 import { Text, StyleSheet, View, Animated } from "react-native";
-import React, {  useRef } from "react";
+import React, { useRef } from "react";
 import { SafeAreaView } from "react-native";
 import { FlatList } from "react-native";
 import { COLORS, FONT, SIZES } from "@constants/theme";
@@ -12,12 +12,21 @@ import { useEffect } from "react";
 
 import ScreenLoader from "@components/loaders/ScreenLoader";
 import { Searchbar } from "react-native-paper";
-import CitySelectorUserCompanies from "@components/user/companies/CitySelectorUserCompanies";
 import FeaturedCompanyCardUserScreen from "@components/user/companies/FeaturedCompanyCardUserScreen";
 import CitySelectorCompanyForCompanies from "@components/company/companies/CitySelectorCompanyForCompanies";
+import { StatusBar } from "expo-status-bar";
+
+function shuffleArray(array) {
+  const shuffledArray = [...array];
+  for (let i = shuffledArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+  }
+  return shuffledArray;
+}
 
 export const AllCompaniesCompanyScreen = ({ navigation }) => {
-   const companyLocationForCompanies = useSelector(
+  const companyLocationForCompanies = useSelector(
     (state) => state.company.companyLocationForCompanies
   );
   const [data, setData] = useState([]); // Array to store the fetched data
@@ -30,6 +39,8 @@ export const AllCompaniesCompanyScreen = ({ navigation }) => {
     setPage(1);
     setSearchWord(text);
   };
+
+  const [shuffledData, setShuffledData] = useState([]);
 
   //HIDE FEATURED COMPANIES
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -58,7 +69,6 @@ export const AllCompaniesCompanyScreen = ({ navigation }) => {
     }
   );
 
-
   const GET_ALL_COMPANIES_USER_SCREEN = gql`
     query GET_ALL_COMPANIES_USER_SCREEN(
       $searchWord: String!
@@ -66,15 +76,16 @@ export const AllCompaniesCompanyScreen = ({ navigation }) => {
       $province: String!
     ) {
       Employers(
-        where:{
-          OR:[{ name: { like: $searchWord } } 
-            {description:{like:$searchWord}}]
-          AND:[{province: { like: $province }}]  
-        }  
-        
-       
+        where: {
+          OR: [
+            { name: { like: $searchWord } }
+            { description: { like: $searchWord } }
+          ]
+          AND: [{ province: { like: $province } }]
+        }
+
         page: $page
-        limit: 4
+        limit: 20
         sort: "createdAt"
       ) {
         totalDocs
@@ -98,8 +109,8 @@ export const AllCompaniesCompanyScreen = ({ navigation }) => {
   const GET_ALL_FEATURED_COMPANIES_USER_SCREEN = gql`
     query GET_ALL_FEATURED_COMPANIES_USER_SCREEN {
       Employers(
-        where:  { featured: { equals: "yes" } }
-        limit: 10
+        where: { featured: { equals: "yes" } }
+        limit: 20
         sort: "createdAt"
       ) {
         totalDocs
@@ -121,7 +132,11 @@ export const AllCompaniesCompanyScreen = ({ navigation }) => {
   `;
   const { loading: loadingFeatured, data: dataFeaturedCompanies } = useQuery(
     GET_ALL_FEATURED_COMPANIES_USER_SCREEN,
-    { fetchPolicy: "cache-and-network" }
+    {
+      fetchPolicy: "cache-and-network",
+      onCompleted: (data) =>
+        setShuffledData(shuffleArray(data?.Employers?.docs)),
+    }
   );
 
   const {
@@ -171,66 +186,87 @@ export const AllCompaniesCompanyScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
-      <View
-        style={{
-          marginTop: 30,
-          flexDirection: "row",
-          zIndex: 999,
-          backgroundColor: COLORS.white,
-          width: "100%",
-        }}
-      >
-        <Searchbar
-          elevation={4}
-          value={searchWord}
-          onChangeText={handleChangeSearchWord}
-          placeholderTextColor={COLORS.gray700}
-          inputStyle={{ fontFamily: FONT.regular, fontSize: SIZES.small }}
-          placeholder="Buscar empresas"
-          mode="bar"
+      <StatusBar/>
+      <View style={{ marginHorizontal: 20, zIndex: 999, marginTop: 50 }}>
+        <Text
           style={{
-            backgroundColor: COLORS.white,
-            flex: 1,
-            borderTopLeftRadius: 0,
-            borderBottomLeftRadius: 0,
-            borderTopRightRadius: 0,
-            borderBottomRightRadius: 0,
-            height: 50,
-            alignItems: "center",
+            fontFamily: FONT.medium,
+            textAlign: "center",
+            marginBottom: 5,
+            color: COLORS.tertiary,
           }}
-        />
-        <CitySelectorCompanyForCompanies
-          refetch={refetch}
-          setPage={setPage}
-          setIsCityOpen={setIsCityOpen}
-          isCityOpen={isCityOpen}
-          setData={setData}
-        />
+        >
+          Empresas
+        </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            zIndex: 999,
+            width: "100%",
+          }}
+        >
+          <Searchbar
+            elevation={4}
+            value={searchWord}
+            onChangeText={handleChangeSearchWord}
+            placeholderTextColor={COLORS.gray700}
+            inputStyle={{ fontFamily: FONT.regular, fontSize: SIZES.small }}
+            placeholder="Buscar empresas"
+            mode="bar"
+            style={{
+              backgroundColor: COLORS.white,
+              flex: 1,
+              borderTopLeftRadius: 20,
+              borderBottomLeftRadius: 20,
+              borderTopRightRadius: 0,
+              borderBottomRightRadius: 0,
+              height: 50,
+              alignItems: "center",
+            }}
+          />
+          <CitySelectorCompanyForCompanies
+            refetch={refetch}
+            setPage={setPage}
+            setIsCityOpen={setIsCityOpen}
+            isCityOpen={isCityOpen}
+            setData={setData}
+          />
+        </View>
       </View>
 
       <View style={{ flex: 1, flexDirection: "column", marginTop: 10 }}>
-        {!loadingFeatured && (
-
-            <Animated.View style={{ height: containerHeight, backgroundColor: COLORS.white }}>
-              <Text style={{paddingLeft:15,fontFamily:FONT.regular,fontSize:SIZES.small,color:COLORS.gray600}}>Destacados</Text>              
-              <FlatList
-                style={{
-                  flex: 1,
-                  marginVertical: 10,
-                }}
-                contentContainerStyle={{ height: 180 }}
-                data={dataFeaturedCompanies?.Employers?.docs}
-                horizontal={true}
-                keyExtractor={(item, index) => item.id.toString()}
-                showsHorizontalScrollIndicator={false}
-                renderItem={({ item }) => (
-                  <FeaturedCompanyCardUserScreen screen={"CompanyProfileCompanyScreen"}  companyData={item} />
-                )}
-              />
-
-           
-            </Animated.View>
-            
+        {!loadingFeatured && shuffledData.length > 0 && (
+          <Animated.View
+            style={{ height: containerHeight, backgroundColor: COLORS.white }}
+          >
+            <Text
+              style={{
+                paddingLeft: 15,
+                fontFamily: FONT.regular,
+                fontSize: SIZES.small,
+                color: COLORS.gray600,
+              }}
+            >
+              Destacados
+            </Text>
+            <FlatList
+              style={{
+                flex: 1,
+                marginVertical: 10,
+              }}
+              contentContainerStyle={{ height: 180 }}
+              data={shuffledData}
+              horizontal={true}
+              keyExtractor={(item, index) => item.id.toString()}
+              showsHorizontalScrollIndicator={false}
+              renderItem={({ item }) => (
+                <FeaturedCompanyCardUserScreen
+                  screen={"CompanyProfileCompanyScreen"}
+                  companyData={item}
+                />
+              )}
+            />
+          </Animated.View>
         )}
 
         <View style={{ flex: 1 }}>
@@ -248,7 +284,6 @@ export const AllCompaniesCompanyScreen = ({ navigation }) => {
           )}
 
           <Animated.FlatList
-
             contentContainerStyle={{ paddingBottom: 100 }}
             style={{ flex: 1 }}
             data={data}
@@ -258,7 +293,10 @@ export const AllCompaniesCompanyScreen = ({ navigation }) => {
             keyExtractor={(item, index) => item.id.toString()}
             showsHorizontalScrollIndicator={true}
             renderItem={({ item }) => (
-              <CompanyCardUserScreenjsx screen={"CompanyProfileCompanyScreen"}  companyData={item} />
+              <CompanyCardUserScreenjsx
+                screen={"CompanyProfileCompanyScreen"}
+                companyData={item}
+              />
             )}
             onEndReached={fetchData} // Trigger fetching more data when reaching the end
             onEndReachedThreshold={0.6} // Adjust the threshold as needed

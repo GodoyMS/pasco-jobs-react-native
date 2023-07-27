@@ -23,11 +23,13 @@ import { setCompany } from "@features/user/companySlice";
 import { backendURL } from "@config/config";
 import { clearUser } from "@features/user/userSlice";
 import { clearUserAds } from "@features/user/userAdsSlice";
+import { Checkbox } from "react-native-paper";
 export const LoginCompanyScreen = ({ navigation }) => {
   const [email, setEmail] = useState({ value: "", error: "" });
   const [password, setPassword] = useState({ value: "", error: "" });
   const[isLoading,setIsLoading]=useState(false)
   const [error, setError] = useState(false);
+  const [visiblePass, setVisiblePass] = useState(false);
 
   const dispatch=useDispatch();
 
@@ -148,8 +150,30 @@ export const LoginCompanyScreen = ({ navigation }) => {
           onChangeText={(text) => setPassword({ value: text, error: "" })}
           error={!!password.error}
           errorText={password.error}
-          secureTextEntry
+          secureTextEntry={!visiblePass}
         />
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "flex-start",
+            width: "100%",
+            columnGap: 4,
+            alignItems:"center",
+            marginBottom:20
+          }}
+        >
+          <Checkbox
+            color={COLORS.tertiary}
+            theme={"light"}
+            status={visiblePass ? "checked" : "unchecked"}
+            onPress={() => {
+              setVisiblePass(!visiblePass);
+            }}
+          />
+          <Text style={{fontFamily:FONT.regular,fontSize:SIZES.xSmall}}>{visiblePass ? "Ocultar contraseña": "Mostrar contraseña"}</Text>
+        </View>
+        
+        
         <View style={styles.forgotPassword}>
           <TouchableOpacity
             onPress={() => navigation.navigate("ResetPasswordCompanyScreen")}

@@ -8,6 +8,7 @@ import UpdatePasswordUser from "@components/globals/UpdatePasswordUser";
 import { useSelector } from "react-redux";
 import UpdateEmailUser from "@components/globals/UpdateEmailUser";
 import DeleteAccountUser from "@components/globals/DeleteAccountUser";
+import { StatusBar } from "expo-status-bar";
 
 const AccountManagerUser = ({navigation}) => {
   const[visiblePassword,setVisiblePassword]=useState(false)
@@ -23,6 +24,7 @@ const AccountManagerUser = ({navigation}) => {
   return (
 
     <PaperProvider>
+      <StatusBar/>
 
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
 

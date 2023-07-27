@@ -20,8 +20,8 @@ import otros from "@assets/categoriesIcons/otrosicon.png"
 import agricultura from "@assets/categoriesIcons/agriculturaicon.png"
 import computacion from "@assets/categoriesIcons/computacionicon.png"
 import locationMap from "@assets/icons/locationmap.png"
-
-
+import cooking from "@assets/categoriesIcons/cooking.png"
+import shop from "@assets/categoriesIcons/shop.png"
 
 
 export default {
@@ -46,5 +46,7 @@ export default {
   salud,
   otros,
   agricultura,
-  computacion
+  computacion,
+  cooking,
+  shop
 };

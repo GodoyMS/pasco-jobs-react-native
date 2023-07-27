@@ -22,8 +22,8 @@ const CitySelectorUserAdsUserAdsScreen = ({
     <View
       style={{
         backgroundColor: COLORS.white,
-        borderTopRightRadius: 20,
-        borderBottomRightRadius: 20,
+        borderTopRightRadius:20,
+        borderBottomRightRadius: isCityOpen ? 0:20,
         width: 120,
         height: 50,
         elevation: 4,
@@ -64,6 +64,8 @@ const CitySelectorUserAdsUserAdsScreen = ({
             borderBottomRightRadius: 10,
             padding: 5,
             zIndex: 100,
+            elevation:4,
+            width:"100%"
           }}
         >
           <TouchableOpacity
@@ -121,12 +123,12 @@ const CitySelectorUserAdsUserAdsScreen = ({
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => {
+            onPress={!userAdsLocationForAds ? ()=>void(null) : () => {
               setIsCityOpen(false);
               setData([]);
               setPage(1);
               dispatch(cleanUserAdsLocationForAds());
-            }}
+            } }
             style={{ paddingVertical: 15 }}
           >
             <Text

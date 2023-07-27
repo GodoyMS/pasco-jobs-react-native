@@ -8,6 +8,7 @@ import post4 from "@assets/images/information/privacy.png";
 import post3 from "@assets/images/company/defaultprofilecompany-min.png"
 import post5 from "@assets/images/information/goal.png"
 import { COLORS, FONT, SIZES } from "@constants/theme";
+import { StatusBar } from "expo-status-bar";
 const InformationUserScreeen = () => {
     const posts = [
         {
@@ -39,6 +40,7 @@ const InformationUserScreeen = () => {
       ];
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
+      <StatusBar/>
 
         <View style={{marginHorizontal:10,flex:1}}>
         <Text style={{color:COLORS.indigo800,fontFamily:FONT.bold,fontSize:SIZES.xLarge,marginTop:100,marginBottom:20,marginHorizontal:10}}>Información general de la aplicación</Text>

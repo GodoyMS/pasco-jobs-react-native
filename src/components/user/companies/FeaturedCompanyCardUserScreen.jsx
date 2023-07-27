@@ -17,7 +17,6 @@ const FeaturedCompanyCardUserScreen = React.memo(({ companyData,screen }) => {
     });
   };
 
-  console.log(companyData);
 
   return (
     <>

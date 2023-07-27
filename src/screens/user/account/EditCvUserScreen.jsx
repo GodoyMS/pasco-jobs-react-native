@@ -5,7 +5,6 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Share,
 } from "react-native";
 import React from "react";
 import * as DocumentPicker from "expo-document-picker";
@@ -15,16 +14,15 @@ import { StorageAccessFramework } from "expo-file-system";
 import { useDispatch, useSelector } from "react-redux";
 import { COLORS, SIZES, FONT } from "@constants/theme";
 
-import TextInput from "@components/login/TextInput";
 import { useState } from "react";
 import { useEffect } from "react";
-import Button from "@components/login/Button";
 import axios from "axios";
 import { backendURL } from "@config/config";
 import { setOnlyUserInfo } from "@features/user/userSlice";
 import { Icon } from "@rneui/themed";
 import SaveButton from "@components/buttons/SaveButton";
 import FormLoader from "@components/loaders/FormLoader";
+import { StatusBar } from "expo-status-bar";
 
 const EditCvUserScreen = () => {
   const userInfo = useSelector((state) => state.user.infoUser);
@@ -177,6 +175,7 @@ const EditCvUserScreen = () => {
         justifyContent: "space-between",
       }}
     >
+      <StatusBar/>
       <ScrollView style={{ marginTop: 90 }}>
         <FormLoader isLoading={isLoading} message={"Actualizando CV"} />
         {userInfo && (

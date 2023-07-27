@@ -27,6 +27,7 @@ import CompanyScreenProfileContactFab from "@components/fab/CompanyScreenProfile
 
 import woman from "@assets/images/manwoman/womanFlatIllustration.jpg";
 import man from "@assets/images/manwoman/manFlatIllustration.jpg";
+import { StatusBar } from "expo-status-bar";
 
 const ApplicantProfileScreenGlobal = (props) => {
   const [profileVisible, setProfileVisible] = useState(false);
@@ -87,6 +88,7 @@ const ApplicantProfileScreenGlobal = (props) => {
   return (
     <PaperProvider>
       <SafeAreaView style={{ flex: 1 }}>
+        <StatusBar/>
         <Portal>
           <Modal
             style={{ backgroundColor: COLORS.black }}

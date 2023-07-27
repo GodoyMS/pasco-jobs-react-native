@@ -1,12 +1,11 @@
      import { StyleSheet, Text, View, ActivityIndicator } from "react-native";
-import React, { Component, useEffect,useState } from "react";
-import { TouchableOpacity } from "react-native";
+import React, {useState } from "react";
+
 import stylesFavJobs from "@components/user/favJobs/stylesFavJobs";
 import { COLORS, SIZES, FONT } from "@constants/theme";
 import { FavJobCard } from "@components/user/favJobs/FavJobCard";
 import { FlatList } from "react-native";
-import axios from "axios";
-import { backendURL } from "@config/config";
+
 import { SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
 import { StatusBar } from "expo-status-bar";
@@ -44,6 +43,7 @@ export const FavoritesUserScreen = () => {
       docs{
         job{
           title
+          expired
           id
           createdAt
           contract{
@@ -71,7 +71,7 @@ export const FavoritesUserScreen = () => {
   }
 `;
 const { error:errorGQL,loading, refetch,data } = useQuery(GET_COMPANY, {
-  variables: { userId: user?.id ? user?.id : "",page},
+  variables: { userId: user?.id ,page},
 
   fetchPolicy: "network-only",
 });
@@ -103,9 +103,9 @@ useLayoutEffect(
       </View>
     );
   }
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
+      <StatusBar/>
       <View style={stylesFavJobs.container}>
        
 
@@ -113,7 +113,7 @@ useLayoutEffect(
           <Text
             style={{
               paddingHorizontal: 20,
-              fontSize: SIZES.large,
+              fontSize: SIZES.medium,
               fontFamily: FONT.medium,
               color: COLORS.gray,
               marginBottom: 10,
@@ -123,12 +123,15 @@ useLayoutEffect(
           </Text>
         </View>
       </View>
-      {data && user && (
+      {data?.FavoriteJobs?.docs.length===0 && <View style={{marginVertical:30}}>
+        <Text style={{textAlign:"center",fontFamily:FONT.regular,fontSize:SIZES.small,color:COLORS.gray600}}>Aun no tienes trabajos guardados</Text>
+        </View>}
+      {data && data?.FavoriteJobs?.docs.length>0 && user && (
         <View style={{ flex: 1 }}>
           <FlatList
           contentContainerStyle={{paddingBottom:100}}
             style={{ flex: 1 }}
-            data={data?.FavoriteJobs?.docs ?data?.FavoriteJobs?.docs :[] }
+            data={data?.FavoriteJobs?.docs }
             showsVerticalScrollIndicator={true}
             onEndReachedThreshold={0.6}
             keyExtractor={(item) => String(item.id)}

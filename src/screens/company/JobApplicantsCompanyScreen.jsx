@@ -1,25 +1,17 @@
-import { FlatList, ScrollView } from "react-native";
 import { SafeAreaView, StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { backendURL } from "@config/config";
-import { COLORS, SIZES, FONT } from "@constants/theme";
-import stylesSmallSpecifics from "@components/user/jobdetails/smallSpecifics/smallSpecifics.style";
-import Company from "@components/user/jobdetails/company/Company";
-import Tabs from "@components/user/jobdetails/tabs/Tabs";
-import About from "@components/user/jobdetails/about/About";
-import Specifics from "@components/user/jobdetails/specifics/Specifics";
-import Footer from "@components/user/jobdetails/footer/Footer";
-import { Image } from "react-native";
-import { ActivityIndicator } from "react-native";
-import icons from "@constants/icons";
-import { gql, useQuery } from "@apollo/client";
-import ApplicantCardJobCompany from "@components/company/publishedJobs/ApplicantCardJobCompany";
+import React, {  useState } from "react";
 
-import { Button, Dialog, Portal, Provider } from "react-native-paper";
+import { COLORS, SIZES, FONT } from "@constants/theme";
+
+
+
+import { Button, Dialog, PaperProvider, Portal, Provider } from "react-native-paper";
 import PdfRender from "@components/company/publishedJobs/PdfRender";
-import { Icon } from "@rneui/themed";
-import { TouchableOpacity } from "react-native";
+import FinalistApplications from "./jobApplicants/FinalistApplications";
+import AllApplicationsSingleJob from "./jobApplicants/AllApplicationsSingleJob";
+import { Tab } from "@rneui/themed";
+import { StatusBar } from "expo-status-bar";
+
 const JobApplicantsCompanyScreen = (props) => {
   const hideDialog = () => setVisible(false);
   const {
@@ -27,60 +19,32 @@ const JobApplicantsCompanyScreen = (props) => {
     route: { params },
   } = props;
 
-  const GET_USERS = gql`
-    query GET_APPLICANTS_JOB_COMPANY($jobId: String!) {
-      Applications(where: { job: { equals: $jobId } }) {
-        docs {
-          applicant {
-            position
-            age
-            sex
-            cv
-            profile
-            province
-            district
-            id
-            name
-            description
-          }
-          createdAt
-          id
-          finalist
-        }
+  
+ 
 
-        totalDocs
-        hasNextPage
-        hasPrevPage
-        page
-      }
-    }
-  `;
   const [visible, setVisible] = React.useState(false);
   const [currentPDFURL, setCurrentPDFURL] = useState("");
-  const [applitionDocs, setApplicationDocs] = useState([]);
-  const [isfetched, setIsfetched] = useState(false);
+  
   const [tab, setTab] = useState("all");
-  const [finalistApplications, setFinalistApplications] = useState([]);
-  const { loading, error, data, refetch } = useQuery(GET_USERS, {
-    variables: { jobId: params.itemId },
-    onCompleted: (data) => {
-      setFinalistApplications(
-        data?.Applications?.docs
-          .filter((obj) => obj.finalist === "yes")
-          .map((e) => e.id)
-      );
-    },
-    fetchPolicy: "cache-and-network",
-  });
+  const [index, setIndex] = useState(0);
+
+
+
+
+
+
+
 
   const openPDF = (pdfurl) => {
     setVisible(true);
     setCurrentPDFURL(pdfurl);
   };
+  console.log(index)
 
   return (
-    <Provider>
+    <PaperProvider>
       <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite }}>
+        <StatusBar/>
         <Portal>
           <Dialog visible={visible} onDismiss={hideDialog}>
             <Dialog.Content
@@ -96,13 +60,7 @@ const JobApplicantsCompanyScreen = (props) => {
               >
                 Cerrar
               </Button>
-              <Button
-                mode="contained"
-                style={{ paddingHorizontal: 10 }}
-                onPress={() => console.log("Ok")}
-              >
-                Descargar
-              </Button>
+            
             </Dialog.Actions>
           </Dialog>
         </Portal>
@@ -118,258 +76,149 @@ const JobApplicantsCompanyScreen = (props) => {
           >
             Postulantes
           </Text>
-          {
-            (data?.Applications?.docs && data?.Applications?.docs.length > 0) &&(
-              <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "center",
-              columnGap: 10,
-              marginBottom: 5,
-            }}
-          >
-            <TouchableOpacity
-              onPress={() => setTab("all")}
+          {/* <View
               style={{
                 flexDirection: "row",
                 justifyContent: "center",
-                alignItems: "center",
-                paddingHorizontal: 10,
-                paddingVertical: 5,
-                borderRadius: 5,
-                backgroundColor: tab === "all" ? COLORS.white : COLORS.primary,
-                borderBottomColor:
-                  tab === "all" ? COLORS.tertiary : COLORS.primary,
-                borderBottomWidth: tab === "all" ? 1 : 0,
+                columnGap: 10,
+                marginBottom: 5,
               }}
             >
-              <Icon
-                color={tab === "all" ? COLORS.black : COLORS.gray700}
-                name="list"
-                type="feather"
-              />
-              <Text
+              <TouchableOpacity
+                onPress={() =>{ setTab("all")}}
                 style={{
-                  fontFamily: FONT.medium,
-                  color: tab === "all" ? COLORS.black : COLORS.gray700,
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  paddingHorizontal: 10,
+                  paddingVertical: 5,
+                  borderRadius: 5,
+                  backgroundColor:
+                    tab === "all" ? COLORS.white : COLORS.primary,
+                  borderBottomColor:
+                    tab === "all" ? COLORS.tertiary : COLORS.primary,
+                  borderBottomWidth: tab === "all" ? 1 : 0,
                 }}
               >
-                Todos
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setTab("finalists")}
-              style={{
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-                paddingHorizontal: 10,
-                paddingVertical: 5,
-                borderRadius: 5,
-                backgroundColor:
-                  tab === "finalists" ? COLORS.white : COLORS.primary,
-                borderBottomColor:
-                  tab === "finalists" ? COLORS.tertiary : COLORS.primary,
-                borderBottomWidth: tab === "finalists" ? 1 : 0,
-              }}
-            >
-              <Icon
-                color={tab === "finalists" ? COLORS.black : COLORS.gray700}
-                name="users"
-                type="font-awesome-5"
-              />
-              <Text
-                style={{
-                  fontFamily: FONT.medium,
-                  color: tab === "finalists" ? COLORS.black : COLORS.gray700,
-                }}
-              >
-                Finalistas
-              </Text>
-            </TouchableOpacity>
-          </View>
-            )
-          }
-          {tab === "all" && (
-            <>
-              {!loading &&
-                data &&
-                data.Applications?.docs &&
-                data.Applications?.docs.length > 0 && (
-                  <View style={{ display: "flex", flexDirection: "column" }}>
-                    <FlatList
-                      data={[...data.Applications.docs].sort(
-                        (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
-                      )}
-                      contentContainerStyle={{ paddingBottom: 300 }}
-                      horizontal={false}
-                      showsVerticalScrollIndicator={false}
-                      onEndReachedThreshold={0.1}
-                      keyExtractor={(item) => String(item.id)}
-                      showsHorizontalScrollIndicator={true}
-                      renderItem={({ item }) => (
-                        <ApplicantCardJobCompany
-                          finalistApplications={finalistApplications}
-                          setFinalistApplications={setFinalistApplications}
-                          key={item.id}
-                          openPDF={openPDF}
-                          dataApplication={item}
-                        />
-                      )}
-                      ListFooterComponent={
-                        data.Applications.docs.length > 0 ? (
-                          <View
-                            style={{
-                              flex: 1,
-                              flexDirection: "row",
-                              justifyContent: "space-between",
-                              paddingHorizontal: 20,
-                              alignItems: "center",
-                            }}
-                          >
-                      
-                          </View>
-                        ) : (
-                          <View
-                            style={{
-                              flex: 1,
-                              flexDirection: "row",
-                              justifyContent: "space-between",
-                              paddingHorizontal: 20,
-                            }}
-                          >
-                            <Text
-                              style={{
-                                marginTop: 50,
-                                fontFamily: FONT.medium,
-                                fontSize: SIZES.small,
-                                color: COLORS.gray600,
-                              }}
-                            >
-                              No se encontraron resultados
-                            </Text>
-                          </View>
-                        )
-
-                        // <ActivityIndicator
-                        //   size="large"
-                        //   style={styles.spinner}
-                        //   color="#AEAEAE"
-                        // />
-                      }
-                    />
-                  </View>
-                )}
-            </>
-          )}
-          {/***FINALIST */}
-          {tab === "finalists" && (
-            <>
-              {!loading &&
-                data &&
-                data.Applications?.docs &&
-                data.Applications?.docs.length > 0 && (
-                  <View style={{ display: "flex", flexDirection: "column" }}>
-                    <FlatList
-                      data={data.Applications.docs.filter((obj) =>
-                        finalistApplications.includes(obj.id)
-                      )}
-                      contentContainerStyle={{ paddingBottom: 300 }}
-                      horizontal={false}
-                      showsVerticalScrollIndicator={false}
-                      onEndReachedThreshold={0.1}
-                      keyExtractor={(item) => String(item.id)}
-                      showsHorizontalScrollIndicator={true}
-                      renderItem={({ item }) => (
-                        <ApplicantCardJobCompany
-                          finalistApplications={finalistApplications}
-                          setFinalistApplications={setFinalistApplications}
-                          key={item.id}
-                          openPDF={openPDF}
-                          dataApplication={item}
-                        />
-                      )}
-                      ListFooterComponent={
-                        data.Applications.docs.length > 0 ? (
-                          <View
-                            style={{
-                              flex: 1,
-                              flexDirection: "row",
-                              justifyContent: "space-between",
-                              paddingHorizontal: 20,
-                              alignItems: "center",
-                            }}
-                          >
-                            {/* <Icon
-                      onPress={previousPage}
-                      size={40}
-                      name="chevron-left"
-                      type="material"
-                      color={COLORS.gray800}
-                    />
-                    <Text
-                      style={{
-                        fontFamily: FONT.medium,
-                        fontSize: SIZES.small,
-                        color: COLORS.gray600,
-                      }}
-                    >
-                      Pagina {dataApi.page} de {dataApi.totalPages}
-                    </Text>
-                    <Icon
-                      onPress={nextPage}
-                      size={40}
-                      name="chevron-right"
-                      type="material"
-                      color={COLORS.gray800}
-                    /> */}
-                          </View>
-                        ) : (
-                          <View
-                            style={{
-                              flex: 1,
-                              flexDirection: "row",
-                              justifyContent: "space-between",
-                              paddingHorizontal: 20,
-                            }}
-                          >
-                            <Text
-                              style={{
-                                marginTop: 50,
-                                fontFamily: FONT.medium,
-                                fontSize: SIZES.small,
-                                color: COLORS.gray600,
-                              }}
-                            >
-                              No se encontraron resultados
-                            </Text>
-                          </View>
-                        )
-
-                        // <ActivityIndicator
-                        //   size="large"
-                        //   style={styles.spinner}
-                        //   color="#AEAEAE"
-                        // />
-                      }
-                    />
-                  </View>
-                )}
-            </>
-          )}
-          {data &&
-            data.Applications?.docs &&
-            data.Applications?.docs.length === 0 && (
-              <View style={{ marginTop: 50 }}>
-                <Text style={{ textAlign: "center", fontFamily: FONT.medium }}>
-                  Sin postulantes
+                <Icon
+                  color={tab === "all" ? COLORS.black : COLORS.gray700}
+                  name="list"
+                  type="feather"
+                />
+                <Text
+                  style={{
+                    fontFamily: FONT.medium,
+                    color: tab === "all" ? COLORS.black : COLORS.gray700,
+                  }}
+                >
+                  Todos
                 </Text>
-              </View>
-            )}
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => setTab("finalists")}
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  paddingHorizontal: 10,
+                  paddingVertical: 5,
+                  borderRadius: 5,
+                  backgroundColor:
+                    tab === "finalists" ? COLORS.white : COLORS.primary,
+                  borderBottomColor:
+                    tab === "finalists" ? COLORS.tertiary : COLORS.primary,
+                  borderBottomWidth: tab === "finalists" ? 1 : 0,
+                }}
+              >
+                <Icon
+                  color={tab === "finalists" ? COLORS.black : COLORS.gray700}
+                  name="users"
+                  type="font-awesome-5"
+                />
+                <Text
+                  style={{
+                    fontFamily: FONT.medium,
+                    color: tab === "finalists" ? COLORS.black : COLORS.gray700,
+                  }}
+                >
+                  Finalistas
+                </Text>
+              </TouchableOpacity>
+            </View> */}
+            
+           <View>
+             <Tab
+              style={{ marginTop: 10}}
+              value={index}
+              onChange={(e) => setIndex(e)}
+              iconPosition="left"
+              
+              indicatorStyle={{
+                backgroundColor: COLORS.tertiary,
+                height: 3,
+              }}
+            >
+              <Tab.Item
+              style={{paddingHorizontal:20 }}
+                title="Todos"
+                titleStyle={(active) => {
+                  return {
+                    fontSize: 12,
+                    color: active ? COLORS.tertiary : COLORS.gray700,
+                    fontFamily: FONT.medium,
+                  };
+                }}
+                icon={(active) => {
+                  return {
+                    name: active ? "th-list": "list",
+                    type: "font-awesome-5",
+                    color: active ? COLORS.tertiary : COLORS.gray700,
+                    size: 20,
+                  };
+                }}
+              />
+              <Tab.Item
+                title="Finalistas"
+                titleStyle={(active) => {
+                  return {
+                    fontSize: 12,
+                    color: active ? COLORS.tertiary : COLORS.gray700,
+                    fontFamily: FONT.medium,
+                  };
+                }}
+                icon={(active) => {
+                  return {
+                    name: active ? "users" :"users",
+                    type: "font-awesome",
+                    color: active ? COLORS.tertiary : COLORS.gray700,
+                    size: 20,
+                  };
+                }}
+              />
+             
+            </Tab>
+           </View>
+
+            
+
+
+          {index === 0 && (
+            <>
+                        <AllApplicationsSingleJob jobId={params?.itemId}  openPDF={openPDF}/>
+
+            </>
+          )}
+          {index === 1 && (
+            <>
+                        <FinalistApplications jobId={params?.itemId}  openPDF={openPDF}/>
+
+            </>
+          )}
+          
         </View>
       </SafeAreaView>
-    </Provider>
+    </PaperProvider>
   );
 };
 

@@ -27,13 +27,15 @@ import { StorageAccessFramework } from "expo-file-system";
 import woman from "@assets/images/manwoman/womanFlatIllustration.jpg";
 import man from "@assets/images/manwoman/manFlatIllustration.jpg";
 
-const ApplicantCardJobCompany = ({ dataApplication, openPDF }) => {
+const ApplicantFinalistCardJobCompany = ({
+  dataApplication,
+  openPDF,
+  refetch,
+  finalistApplicationsArray,
+  setFinalistApplicationsArray,
+}) => {
   const [isLoadingMark, setIsLoadingMark] = useState(false);
-  const [isFinalist, setIsFinalist] = useState(false);
-
-  useEffect(() => {
-    setIsFinalist(dataApplication?.finalist === "yes");
-  }, []);
+  const [isFinalist, setIsFinalist] = useState(true);
 
   const [isPdfDownloaded, setIsPdfDownloaded] = useState(false);
   const navigation = useNavigation();
@@ -47,18 +49,6 @@ const ApplicantCardJobCompany = ({ dataApplication, openPDF }) => {
     });
   };
 
-  const markAsFinalist = async () => {
-    setIsLoadingMark(true);
-    await axios
-      .patch(`${backendURL}api/applications/${dataApplication.id}`, {
-        finalist: "yes",
-      })
-      .then(({ data }) => setIsFinalist(true))
-      .then(() => setIsLoadingMark(false))
-      .catch(() => console.log("error"))
-      .finally(() => setIsLoadingMark(false));
-  };
-
   const dismarkAsFinalist = async () => {
     setIsLoadingMark(true);
     await axios
@@ -66,8 +56,14 @@ const ApplicantCardJobCompany = ({ dataApplication, openPDF }) => {
         finalist: "no",
       })
       .then(({ data }) => setIsFinalist(false))
+      .then(() =>
+        setFinalistApplicationsArray(
+          finalistApplicationsArray.filter((obj) => obj !== dataApplication.id)
+        )
+      )
+      .then(()=>refetch())
       .then(() => setIsLoadingMark(false))
-      .catch(() => console.log("error"))
+      .catch(() => console.log("Error"))
       .finally(() => setIsLoadingMark(false));
   };
 
@@ -126,7 +122,7 @@ const ApplicantCardJobCompany = ({ dataApplication, openPDF }) => {
 
   return (
     <>
-      {dataApplication?.applicant && (
+      {dataApplication?.applicant  && (
         <View
           style={{
             width: "100%",
@@ -140,7 +136,6 @@ const ApplicantCardJobCompany = ({ dataApplication, openPDF }) => {
             shadowColor: COLORS.black,
           }}
         >
-          <View></View>
           <View
             style={{
               flexDirection: "row",
@@ -244,85 +239,43 @@ const ApplicantCardJobCompany = ({ dataApplication, openPDF }) => {
             }}
           >
             <View style={{ flex: 1, flexDirection: "column", rowGap: 5 }}>
-              {!isFinalist ? (
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  disabled={isLoadingMark}
-                  onPress={markAsFinalist}
-                  style={{
-                    backgroundColor: COLORS.primary,
-                    borderRadius: 10,
-                    padding: 10,
-                    flexDirection: "row",
-                    columnGap: 5,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                  mode="contained"
-                >
-                  {isLoadingMark ? (
-                    <ActivityIndicator />
-                  ) : (
-                    <>
-                      <Icon
-                        name="long-arrow-alt-up"
-                        color={COLORS.indigo800}
-                        type="font-awesome-5"
-                      />
-                      <Text
-                        style={{
-                          fontFamily: FONT.bold,
-                          color: COLORS.indigo800,
-                          textAlign: "center",
-                          fontSize: SIZES.small,
-                        }}
-                      >
-                        Marcar como finalista
-                      </Text>
-                    </>
-                  )}
-                </TouchableOpacity>
-              ) : (
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  disabled={isLoadingMark}
-
-                  onPress={dismarkAsFinalist}
-                  style={{
-                    backgroundColor: COLORS.green50,
-                    borderRadius: 10,
-                    padding: 10,
-                    flexDirection: "row",
-                    columnGap: 8,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                  mode="contained"
-                >
-                  {isLoadingMark ? (
-                    <ActivityIndicator />
-                  ) : (
-                    <>
-                      <Icon
-                        name="checkcircle"
-                        size={20}
-                        color={COLORS.green800}
-                        type="antdesign"
-                      />
-                      <Text
-                        style={{
-                          fontFamily: FONT.bold,
-                          color: COLORS.green700,
-                          textAlign: "center",
-                          fontSize: SIZES.small,
-                        }}
-                      >
-                        Finalista
-                      </Text>
-                    </>
-                  )}
-                </TouchableOpacity>
-              )}
+              <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={dismarkAsFinalist}
+                style={{
+                  backgroundColor: COLORS.green50,
+                  borderRadius: 10,
+                  padding: 10,
+                  flexDirection: "row",
+                  columnGap: 8,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                mode="contained"
+              >
+                {isLoadingMark ? (
+                  <ActivityIndicator />
+                ) : (
+                  <>
+                    <Icon
+                      name="checkcircle"
+                      size={20}
+                      color={COLORS.green800}
+                      type="antdesign"
+                    />
+                    <Text
+                      style={{
+                        fontFamily: FONT.bold,
+                        color: COLORS.green700,
+                        textAlign: "center",
+                        fontSize: SIZES.small,
+                      }}
+                    >
+                      Finalista
+                    </Text>
+                  </>
+                )}
+              </TouchableOpacity>
 
               <TouchableOpacity
                 activeOpacity={0.7}
@@ -474,4 +427,4 @@ const ApplicantCardJobCompany = ({ dataApplication, openPDF }) => {
   );
 };
 
-export default ApplicantCardJobCompany;
+export default ApplicantFinalistCardJobCompany;

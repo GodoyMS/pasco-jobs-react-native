@@ -6,7 +6,12 @@ import {
   ActivityIndicator,
 } from "react-native";
 import React, { useState } from "react";
-import { Portal, Button as ButtonModal, Modal } from "react-native-paper";
+import {
+  Portal,
+  Button as ButtonModal,
+  Modal,
+  Checkbox,
+} from "react-native-paper";
 import TextInput from "@components/login/TextInput";
 import Button from "@components/login/Button";
 import axios from "axios";
@@ -52,6 +57,11 @@ const FormRegistrationUserStep = ({ step, setStep, navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [visibleModal, setVisibleModal] = useState(false);
+  const [visiblePass, setVisiblePass] = useState(false);
+
+
+  const[isCvError,setIsCvError]=useState(false)
+  const[isImageError,setIsImageError]=useState(false)
 
   const hideModal = () => {
     setVisibleModal(false);
@@ -59,6 +69,17 @@ const FormRegistrationUserStep = ({ step, setStep, navigation }) => {
   };
 
   const onSignUpPressed = async () => {
+    setIsCvError("")
+    setIsImageError("")
+
+    const imgError=(profileImageBase64 && !profileImageLink) ? "Guarda tu imagen de perfil" : ""
+    const cvError=(cvDocumentBase64 && !cvDocumentLink) ? "Guarda tu cv" : ""
+
+    if(imgError || cvError ){
+      setIsImageError(imgError)
+      setIsCvError(cvError)
+      return;
+    }
     setIsLoading(true);
     await axios
       .post(`${backendURL}api/applicants`, {
@@ -201,7 +222,8 @@ const FormRegistrationUserStep = ({ step, setStep, navigation }) => {
             onChangeText={(text) => setPassword({ value: text, error: "" })}
             error={!!password.error}
             errorText={password.error}
-            secureTextEntry
+            secureTextEntry={!visiblePass}
+
           />
           <TextInput
             label="Confirmar contraseña"
@@ -212,8 +234,30 @@ const FormRegistrationUserStep = ({ step, setStep, navigation }) => {
             }
             error={!!confirmPassword.error}
             errorText={confirmPassword.error}
-            secureTextEntry
+            secureTextEntry={!visiblePass}
           />
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "flex-start",
+              width: "100%",
+              columnGap: 4,
+              alignItems: "center",
+              marginBottom: 20,
+            }}
+          >
+            <Checkbox
+              color={COLORS.tertiary}
+              theme={"light"}
+              status={visiblePass ? "checked" : "unchecked"}
+              onPress={() => {
+                setVisiblePass(!visiblePass);
+              }}
+            />
+            <Text style={{ fontFamily: FONT.regular, fontSize: SIZES.xSmall }}>
+              {visiblePass ? "Ocultar contraseña" : "Mostrar contraseña"}
+            </Text>
+          </View>
         </>
       )}
 
@@ -252,9 +296,14 @@ const FormRegistrationUserStep = ({ step, setStep, navigation }) => {
             cvDocumentLink={cvDocumentLink}
             setCvDocumentLink={setCvDocumentLink}
             sex={sex}
+            isLoading={isLoading}
             name={name}
             description={description}
             position={position}
+            isCvError={isCvError}
+            setIsCvError={setIsCvError}
+            isImageError={isImageError}
+            setIsImageError={setIsImageError}
           />
         </>
       )}
@@ -276,7 +325,6 @@ const FormRegistrationUserStep = ({ step, setStep, navigation }) => {
                 paddingVertical: 10,
                 borderRadius: 10,
                 columnGap: 10,
-                backgroundColor: COLORS.gray700,
                 flex: 1,
                 maxWidth: 200,
                 justifyContent: "center",
@@ -284,12 +332,12 @@ const FormRegistrationUserStep = ({ step, setStep, navigation }) => {
                 alignItems: "center",
               }}
               underlayColor={COLORS.gray800}
-              activeOpacity={0.9}
+              activeOpacity={0.5}
               onPress={() => setStep(step - 1)}
             >
-              <Icon name="arrow-back" color={COLORS.white} type="ionsicon" />
+              <Icon name="arrow-back" color={COLORS.gray800} type="ionsicon" />
 
-              <Text style={{ color: COLORS.white }}>Atras</Text>
+              <Text style={{ color: COLORS.gray700 }}>Atras</Text>
             </TouchableOpacity>
           )}
 
@@ -301,18 +349,17 @@ const FormRegistrationUserStep = ({ step, setStep, navigation }) => {
                 borderRadius: 10,
                 maxWidth: 200,
                 columnGap: 10,
-                backgroundColor: COLORS.gray700,
                 flex: 1,
                 justifyContent: "center",
                 flexDirection: "row",
                 alignItems: "center",
               }}
               underlayColor={COLORS.gray800}
-              activeOpacity={0.9}
+              activeOpacity={0.5}
               onPress={handleNextStep}
             >
-              <Text style={{ color: COLORS.white }}>Siguiente</Text>
-              <Icon name="arrow-forward" color={COLORS.white} type="ionsicon" />
+              <Text style={{ color: COLORS.gray700 }}>Siguiente</Text>
+              <Icon name="arrow-forward" color={COLORS.gray700} type="ionsicon" />
             </TouchableOpacity>
           )}
         </View>
@@ -321,18 +368,36 @@ const FormRegistrationUserStep = ({ step, setStep, navigation }) => {
       {step === 3 && (
         <>
           <Button
-          disabled={isLoading}
+            disabled={isLoading}
             mode="contained"
             onPress={onSignUpPressed}
             style={{ marginTop: 20, fontFamily: FONT.medium }}
           >
             Registrarse
           </Button>
+          {isImageError && <Text
+                style={{
+                  marginBottom: 10,
+                  fontFamily: FONT.medium,
+                  color: COLORS.red600,
+                }}
+              >
+               {isImageError}
+              </Text> }
+              {isCvError && <Text
+                style={{
+                  marginBottom: 10,
+                  fontFamily: FONT.medium,
+                  color: COLORS.red600,
+                }}
+              >
+               {isCvError}
+              </Text> }
           <View style={styles.row}>
             <Text style={{ fontFamily: FONT.regular }}>
               ¿Ya tienes una cuenta?{" "}
             </Text>
-            <TouchableOpacity  onPress={() => navigation.replace("LoginScreen")}>
+            <TouchableOpacity onPress={() => navigation.replace("LoginScreen")}>
               <Text style={styles.link}>Iniciar sesión</Text>
             </TouchableOpacity>
           </View>

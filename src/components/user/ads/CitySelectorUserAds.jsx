@@ -26,7 +26,7 @@ const CitySelectorUserAds = ({
       style={{
         backgroundColor: COLORS.white,
         borderTopRightRadius: 20,
-        borderBottomRightRadius: 20,
+        borderBottomRightRadius: isCityOpen ? 0 : 20,
         width: 120,
         height: 50,
         elevation: 4,
@@ -43,6 +43,7 @@ const CitySelectorUserAds = ({
           columnGap: 4,
           paddingLeft: 5,
           paddingRight: 10,
+          
         }}
       >
         <Image style={{ width: 20, height: 20 }} source={icons.location} />
@@ -67,6 +68,8 @@ const CitySelectorUserAds = ({
             borderBottomRightRadius: 10,
             padding: 5,
             zIndex: 100,
+            width:"100%",
+          elevation:9
           }}
         >
           <TouchableOpacity
@@ -106,7 +109,7 @@ const CitySelectorUserAds = ({
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => {
+            onPress={!userLocationForAds ?()=>void(null) :  () => {
               setIsCityOpen(false);
               setData([]);
               setPage(1);
@@ -124,7 +127,7 @@ const CitySelectorUserAds = ({
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => {
+            onPress={!userLocationForAds ? ()=>setIsCityOpen(false) : () => {
               setIsCityOpen(false);
               setData([]);
               setPage(1);

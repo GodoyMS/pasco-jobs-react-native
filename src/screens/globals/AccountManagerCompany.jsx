@@ -8,6 +8,7 @@ import UpdatePasswordCompany from "@components/globals/UpdatePasswordCompany";
 import UpdateEmailCompany from "@components/globals/UpdateEmailCompany";
 import DeleteAccountCompany from "@components/globals/DeleteAccountCompany";
 import { SafeAreaView } from "react-native";
+import { StatusBar } from "expo-status-bar";
 
 const AccountManagerCompany = ({navigation}) => {
   const[visiblePassword,setVisiblePassword]=useState(false)
@@ -22,6 +23,7 @@ const AccountManagerCompany = ({navigation}) => {
     <PaperProvider>
 
     <SafeAreaView style={{ flex: 1}}>
+      <StatusBar/>
 
      
 

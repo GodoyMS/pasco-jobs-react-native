@@ -24,7 +24,7 @@ const CitySelectorUserCompanies = ({
       style={{
         backgroundColor: COLORS.white,
         borderTopRightRadius: 20,
-        borderBottomRightRadius: 20,
+        borderBottomRightRadius: isCityOpen ? 0: 20,
         width: 120,
         height: 50,
         elevation: 4,
@@ -65,6 +65,8 @@ const CitySelectorUserCompanies = ({
             borderBottomRightRadius: 10,
             padding: 5,
             zIndex: 900,
+            width:"100%",
+            elevation:9
           }}
         >
           <TouchableOpacity
@@ -122,7 +124,7 @@ const CitySelectorUserCompanies = ({
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => {
+            onPress={!userLocationForCompanies ? ()=>setIsCityOpen(false):() => {
               setIsCityOpen(false);
               setData([]);
               setPage(1);

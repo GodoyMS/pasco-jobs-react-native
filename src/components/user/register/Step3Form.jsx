@@ -6,6 +6,7 @@ import {
   Text,
   TouchableHighlight,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 
@@ -17,6 +18,8 @@ import { backendURL } from "@config/config";
 import axios from "axios";
 import man from "@assets/images/manwoman/man.jpg";
 import woman from "@assets/images/manwoman/woman.webp";
+import manworker from "@assets/user/manworker.png";
+import womanworker from "@assets/user/womanworker.png";
 import { COLORS, FONT, SIZES } from "@constants/theme";
 import { Icon } from "@rneui/themed";
 
@@ -33,8 +36,16 @@ export default function Step3Form({
   setProfileImageLink,
   cvDocumentLink,
   setCvDocumentLink,
+  isCvError,
+  isImageError,
+  setIsCvError,
+  setIsImageError,
+  isLoading
 }) {
   const [cvName, setCvName] = useState("");
+  const [isCvUploading, setIsCvUploading] = useState(false);
+  const [isImageUploading, setIsImageUploading] = useState(false);
+
 
   //SELECT IMAGE
   const handleImagePicker = async () => {
@@ -67,29 +78,33 @@ export default function Step3Form({
     }
   };
   const handleImageUpload = async () => {
+    setIsImageUploading(true);
     await axios
       .post(`${backendURL}api/profilesupload/upload`, {
         base64: `data:image/png;base64,${profileImageBase64}`,
         name: name.value,
       })
       .then(({ data }) => setProfileImageLink(data.url))
-      .catch((e) => console.log(e));
+      .then(() => setIsImageUploading(false))
+      .catch((e) => console.log(e))
+      .finally(() => setIsImageUploading(false));
   };
-
 
   //SELECT PDF
 
-
   const handleCVUpload = async () => {
+    setIsCvUploading(true);
     await axios
       .post(`${backendURL}api/cvuploads/upload`, {
         base64: `${cvDocumentBase64}`,
         name: `${name.value}-cv`,
       })
       .then(({ data }) => setCvDocumentLink(data.url))
-      .catch((e) => console.log(e));
+      .then(() => setIsCvUploading(false))
+      
+      .catch((e) => console.log(e))
+      .finally(() => setIsCvUploading(false));
   };
-
 
   const handleFileSelection = async () => {
     try {
@@ -138,33 +153,45 @@ export default function Step3Form({
     });
   };
 
-
   return (
-    <View>
+    <View style={{ width: "100%" }}>
+      <Text
+        style={{
+          marginBottom: 20,
+          fontFamily: FONT.medium,
+          fontSize: SIZES.medium,
+        }}
+      >
+        Imágen de perfil{" "}
+        <Text style={{ fontFamily: FONT.regular, fontSize: SIZES.small }}>
+          (opcional)
+        </Text>
+      </Text>
       <View
         style={{
           display: "flex",
           flexDirection: "row",
+          justifyContent: "center",
           width: "100%",
           columnGap: 20,
         }}
       >
         {sex && !profileImageBase64 && (
           <Image
-            borderRadius={50}
+            borderRadius={1000}
             resizeMode="cover"
-            source={sex.value === "Hombre" ? man : woman}
-            style={{ width: 150, height: 200 }}
+            source={sex.value === "Hombre" ? manworker : womanworker}
+            style={{ width: 150, height: 150 }}
           />
         )}
         {profileImageBase64 && (
           <Image
-            borderRadius={150}
+            borderRadius={1000}
             source={{ uri: `data:image/jpeg;base64,${profileImageBase64}` }}
             style={{ width: 150, height: 150 }}
           />
         )}
-        <View style={{ flex: 1 }}>
+        {/* <View style={{ flex: 1 }}>
           <View style={{ flexDirection: "column", flex: 1, rowGap: 0 }}>
             <Text
               style={{
@@ -197,13 +224,13 @@ export default function Step3Form({
               <Text style={{ fontSize: 20, color: COLORS.indigo800 }}>"</Text>
             </Text>
           </View>
-        </View>
+        </View> */}
       </View>
 
       <View
         style={{
           display: "flex",
-          flexDirection: "row",
+          flexDirection: "column",
           width: "100%",
           columnGap: 20,
           marginTop: 20,
@@ -214,9 +241,9 @@ export default function Step3Form({
         {!profileImageLink && (
           <TouchableOpacity
             style={{
-              paddingVertical: 20,
-              borderRadius: 15,
-              width: 150,
+              paddingVertical: 12,
+              borderRadius: 8,
+              width: "100%",
               backgroundColor: COLORS.indigo700,
               flexDirection: "row",
               paddingHorizontal: 10,
@@ -226,21 +253,27 @@ export default function Step3Form({
             }}
             onPress={profileImageBase64 ? handleImageUpload : handleImagePicker}
           >
-            <Text
-              style={{
-                textAlign: "center",
-                width: "auto",
-                color: COLORS.white,
-                fontFamily: FONT.medium,
-              }}
-            >
-              {profileImageBase64 ? "Guardar" : "Subir Imagen"}
-            </Text>
-            <Icon
-              name={profileImageBase64 ? "save" : "upload"}
-              type="feather"
-              color={COLORS.white}
-            />
+            {isImageUploading ? (
+              <ActivityIndicator color={COLORS.white} />
+            ) : (
+              <>
+                <Text
+                  style={{
+                    textAlign: "center",
+                    width: "auto",
+                    color: COLORS.white,
+                    fontFamily: FONT.medium,
+                  }}
+                >
+                  {profileImageBase64 ? "Guardar" : "Subir Imagen"}
+                </Text>
+                <Icon
+                  name={profileImageBase64 ? "save" : "upload"}
+                  type="feather"
+                  color={COLORS.white}
+                />
+              </>
+            )}
           </TouchableOpacity>
         )}
         {profileImageLink && (
@@ -249,7 +282,6 @@ export default function Step3Form({
               paddingVertical: 20,
               borderRadius: 15,
               width: 150,
-              backgroundColor: COLORS.green300,
               flexDirection: "row",
               paddingHorizontal: 10,
               justifyContent: "center",
@@ -262,31 +294,26 @@ export default function Step3Form({
               style={{
                 textAlign: "center",
                 width: "auto",
-                color: COLORS.white,
-                fontFamily: FONT.medium,
+                color: COLORS.green400,
+                fontFamily: FONT.regular,
               }}
             >
-             Perfil guardado
+              Perfil guardado
             </Text>
-            <Icon name={"checkcircle"} type="antdesign" color={COLORS.white} />
+            <Icon
+              name={"checkcircle"}
+              type="antdesign"
+              color={COLORS.green300}
+            />
           </View>
         )}
 
         {!profileImageBase64 && (
-          <View style={{ flex: 1 }}>
-            <Text
-              style={{
-                fontFamily: FONT.medium,
-                fontSize: SIZES.large,
-                color: COLORS.gray800,
-              }}
-            >
-              Imagen de perfil
-            </Text>
+          <View>
             <Text
               style={{
                 fontFamily: FONT.regular,
-                fontSize: SIZES.medium,
+                fontSize: SIZES.small,
                 color: COLORS.gray700,
                 marginTop: 10,
               }}
@@ -298,27 +325,53 @@ export default function Step3Form({
         )}
       </View>
 
-      
+      <View style={{ marginTop: 60 }}>
+        <Text
+          style={{
+            marginBottom: 20,
+            fontFamily: FONT.medium,
+            fontSize: SIZES.medium,
+            color: COLORS.gray800,
+          }}
+        >
+          Curriculum vitae{" "}
+          <Text style={{ fontFamily: FONT.regular, fontSize: SIZES.small }}>
+            {" "}
+            (opcional)
+          </Text>
+        </Text>
+      </View>
 
+      {cvDocumentBase64 && (
+        <View
+          style={{
+            marginTop: 10,
+            width: "100%",
+            borderRadius: 5,
+            backgroundColor: COLORS.gray50,
+            paddingVertical: 10,
+          }}
+        >
+          <Text style={{ textAlign: "center" }}>{cvName}</Text>
+        </View>
+      )}
       <View
         style={{
           display: "flex",
           flexDirection: "row",
           width: "100%",
           columnGap: 20,
-          marginTop: 80,
+          marginTop: 5,
           alignItems: "center",
           justifyContent: "center",
         }}
       >
-
-     {cvDocumentLink && (
+        {cvDocumentLink && (
           <View
             style={{
               paddingVertical: 20,
               borderRadius: 15,
               width: 150,
-              backgroundColor: COLORS.green300,
               flexDirection: "row",
               paddingHorizontal: 10,
               justifyContent: "center",
@@ -331,22 +384,21 @@ export default function Step3Form({
               style={{
                 textAlign: "center",
                 width: "auto",
-                color: COLORS.white,
-                fontFamily: FONT.medium,
+                color: COLORS.green400,
+                fontFamily: FONT.regular,
               }}
             >
               CV guardado
             </Text>
-            <Icon name={"checkcircle"} type="antdesign" color={COLORS.white} />
-
+            <Icon name={"checkcircle"} type="antdesign" color={COLORS.green400} />
           </View>
         )}
         {!cvDocumentLink && (
           <TouchableOpacity
             style={{
-              paddingVertical: 20,
-              borderRadius: 15,
-              width: 150,
+              paddingVertical: 12,
+              borderRadius: 8,
+              width: "100%",
               backgroundColor: COLORS.indigo700,
               flexDirection: "row",
               paddingHorizontal: 10,
@@ -354,63 +406,33 @@ export default function Step3Form({
               columnGap: 10,
               alignItems: "center",
             }}
-            onPress={cvDocumentBase64 ? handleCVUpload : handleFileSelection}          >
-            <Text
-              style={{
-                textAlign: "center",
-                width: "auto",
-                color: COLORS.white,
-                fontFamily: FONT.medium,
-              }}
-            >
-              {cvDocumentBase64 ? "Guardar" : "Subir CV"}
-            </Text>
-            <Icon
-              name={cvDocumentBase64 ? "save" : "upload"}
-              type="feather"
-              color={COLORS.white}
-            />
+            onPress={cvDocumentBase64 ? handleCVUpload : handleFileSelection}
+          >
+            {isCvUploading ? (
+              <ActivityIndicator />
+            ) : (
+              <>
+                <Text
+                  style={{
+                    textAlign: "center",
+                    width: "auto",
+                    color: COLORS.white,
+                    fontFamily: FONT.medium,
+                  }}
+                >
+                  {cvDocumentBase64 ? "Guardar" : "Subir CV"}
+                </Text>
+                <Icon
+                  name={cvDocumentBase64 ? "save" : "upload"}
+                  type="feather"
+                  color={COLORS.white}
+                />
+              </>
+            )}
           </TouchableOpacity>
         )}
-        
+      </View>
 
-        {!cvDocumentBase64 && (
-          <View style={{ flex: 1 }}>
-            <Text
-              style={{
-                fontFamily: FONT.medium,
-                fontSize: SIZES.large,
-                color: COLORS.gray800,
-              }}
-            >
-              Curriculum vitae
-              <Text
-                style={{
-                  fontFamily: FONT.medium,
-                  fontSize: SIZES.medium,
-                  color: COLORS.gray800,
-                }}
-              >
-                (opcional)
-              </Text>
-            </Text>
-            <Text
-              style={{
-                fontFamily: FONT.regular,
-                fontSize: SIZES.medium,
-                color: COLORS.gray700,
-                marginTop: 10,
-              }}
-            >
-              Con un cv digital te ayuderemos a postular facilmente a las
-              ofertas de trabajo
-            </Text>
-          </View>
-        )}
-      </View>
-      <View style={{ marginTop: 10 }}>
-        <Text style={{textAlign:"center"}} >{cvName}</Text>
-      </View>
       {/* <Button title="Upload Image" onPress={handleImageUpload} /> */}
     </View>
   );

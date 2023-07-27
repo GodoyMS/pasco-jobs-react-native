@@ -1,4 +1,4 @@
-import React,{useEffect} from "react";
+import React from "react";
 import { Text, Platform, KeyboardAvoidingView, SafeAreaView, ScrollView } from "react-native";
 import {actions, RichEditor, RichToolbar} from "react-native-pell-rich-editor";
 
@@ -8,6 +8,7 @@ import {  useState } from "react";
 import { FONT, SIZES } from "@constants/theme";
 
 import { SelectList } from 'react-native-dropdown-select-list'
+import { StatusBar } from "expo-status-bar";
 
 const handleHead2 = ({tintColor}) => <Text style={{color: tintColor,fontSize:SIZES.large,fontFamily:FONT.medium}}>H1</Text>
 
@@ -35,6 +36,7 @@ const ApplicantsViewCompanyScreen = () => {
   };
 	return (
     <SafeAreaView>
+      <StatusBar/>
       <ScrollView style={{marginTop:100}}>
 
       <SelectList 

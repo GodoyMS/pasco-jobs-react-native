@@ -7,6 +7,7 @@ import axios from "axios";
 import { backendURL } from "@config/config";
 import { emailValidator } from "@helpers/emailValidator";
 import FormLoader from "@components/loaders/FormLoader";
+import { StatusBar } from "expo-status-bar";
 
 const ReportAProblem = () => {
   const [email, setEmail] = useState({ value: "", error: "" });
@@ -46,6 +47,7 @@ const ReportAProblem = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
+      <StatusBar/>
       <View style={{ marginHorizontal: 10, flex: 1, marginTop: 80 }}>
         <Text
           style={{

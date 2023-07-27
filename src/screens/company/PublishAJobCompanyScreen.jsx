@@ -1,40 +1,31 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   Text,
-  Platform,
-  KeyboardAvoidingView,
+
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
   Image,
 } from "react-native";
 import { Button } from "react-native-paper";
-import {
-  actions,
-  RichEditor,
-  RichToolbar,
-} from "react-native-pell-rich-editor";
+
 import { StyleSheet, View } from "react-native";
 import { useWindowDimensions } from "react-native";
-import RenderHtml from "react-native-render-html";
 import { useState } from "react";
 import { COLORS, FONT, SIZES } from "@constants/theme";
-import TextInput from "@components/login/TextInput";
 
-import { SelectList } from "react-native-dropdown-select-list";
 import axios from "axios";
 import { backendURL } from "@config/config";
-import SubtitlePublishAJob from "@components/company/publishAJob/SubtitlePublishAJob";
 import StepHeaderJobForm from "@components/company/publishAJob/StepHeaderJobForm";
 import StepForm1JobForm from "@components/company/publishAJob/StepForm1JobForm";
 import StepForm3JobForm from "@components/company/publishAJob/StepForm3JobForm";
 import StepForm2JobForm from "@components/company/publishAJob/StepForm2JobForm";
 import { Icon } from "@rneui/themed";
-import { jobTitleValidaotr } from "@helpers/company/jobTitleValidator";
-import { jobSelectOptionValidator } from "@helpers/company/jobSelectOptionValidator";
+
 import { useSelector } from "react-redux";
 import FormLoader from "@components/loaders/FormLoader";
 import emptyjobsImage from "@assets/images/jobs/emptyjobs-min.png";
+import { StatusBar } from "expo-status-bar";
 
 const PublishAJobCompanyScreen = () => {
   const infoCompany = useSelector((state) => state.company.infoCompany);
@@ -67,7 +58,6 @@ const PublishAJobCompanyScreen = () => {
   const [salary, setSalary] = useState({ value: "", error: "" });
 
   const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
   const [isSuccess, setIsSucces] = useState(false);
 
   const resetAllValues = () => {
@@ -175,6 +165,7 @@ const PublishAJobCompanyScreen = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
+      <StatusBar/>
       <View style={{ marginTop: 30 }}>
         <View
           style={{

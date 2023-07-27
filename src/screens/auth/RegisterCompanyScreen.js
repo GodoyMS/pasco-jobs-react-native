@@ -33,6 +33,7 @@ import {
   Text as TextModal,
   Button as ButtonModal,
   PaperProvider,
+  Checkbox,
 } from "react-native-paper";
 import loginBackground from "@assets/images/loginbg.png";
 import { Image } from "react-native";
@@ -61,6 +62,12 @@ export const RegisterCompanyScreen = ({ navigation }) => {
   //PROFILE IMAGE
   const [profileImageLink, setProfileImageLink] = useState("");
   const [profileImageBase64, setProfileImageBase64] = useState("");
+
+  //SHOW PASS
+  const [visiblePass, setVisiblePass] = useState(false);
+
+
+  const[isImageSavedToSubmitError,setIsImageSavedToSubmitError]=useState("")
 
   const handleImagePicker = async () => {
     try {
@@ -106,8 +113,6 @@ export const RegisterCompanyScreen = ({ navigation }) => {
     navigation.navigate("LoginCompanyScreen");
   };
 
-  console.log(profileImageLink);
-
   const onSignUpPressed = async () => {
     const nameError = nameValidator(name.value);
     const emailError = emailValidator(email.value);
@@ -118,6 +123,8 @@ export const RegisterCompanyScreen = ({ navigation }) => {
     const headingError = heading.value ? "" : "Escribe el rubro de tu empresa";
     const provinceError = province ? "" : "Selecciona una provincia";
     const districtError = district ? "" : "Selecciona un distrito";
+    const imageSavedToSubmitError=(profileImageBase64&& !profileImageLink) ? "Guarda tu imágen"  : ""
+
 
     if (
       emailError ||
@@ -126,7 +133,8 @@ export const RegisterCompanyScreen = ({ navigation }) => {
       descriptionError ||
       headingError ||
       provinceError ||
-      districtError
+      districtError ||
+      imageSavedToSubmitError
     ) {
       setName({ ...name, error: nameError });
       setEmail({ ...email, error: emailError });
@@ -135,6 +143,8 @@ export const RegisterCompanyScreen = ({ navigation }) => {
       setHeading({ ...heading, error: headingError });
       setDistrictError(districtError);
       setProvinceError(provinceError);
+      setIsImageSavedToSubmitError(imageSavedToSubmitError)
+
       return;
     }
     setIsLoading(true);
@@ -252,8 +262,32 @@ export const RegisterCompanyScreen = ({ navigation }) => {
               onChangeText={(text) => setPassword({ value: text, error: "" })}
               error={!!password.error}
               errorText={password.error}
-              secureTextEntry
+              secureTextEntry={!visiblePass}
             />
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "flex-start",
+                width: "100%",
+                columnGap: 4,
+                alignItems: "center",
+                marginBottom: 20,
+              }}
+            >
+              <Checkbox
+                color={COLORS.tertiary}
+                theme={"light"}
+                status={visiblePass ? "checked" : "unchecked"}
+                onPress={() => {
+                  setVisiblePass(!visiblePass);
+                }}
+              />
+              <Text
+                style={{ fontFamily: FONT.regular, fontSize: SIZES.xSmall }}
+              >
+                {visiblePass ? "Ocultar contraseña" : "Mostrar contraseña"}
+              </Text>
+            </View>
           </View>
 
           <View
@@ -325,34 +359,42 @@ export const RegisterCompanyScreen = ({ navigation }) => {
 
             <View style={{ marginTop: 10 }}>
               {!profileImageBase64 && (
-                <Image
-                  borderRadius={50}
-                  resizeMode="cover"
-                  source={{
-                    uri: "https://cdn.midjourney.com/d1f125dd-114f-41e9-ba7c-bc261f56d222/0_1.png",
-                  }}
-                  style={{
-                    width: "100%",
-                    height: "auto",
-                    borderRadius: 10,
-                    aspectRatio: "1/1",
-                  }}
-                />
+                <View
+                  style={{ flexDirection: "row", justifyContent: "center" }}
+                >
+                  <Image
+                    borderRadius={50}
+                    resizeMode="cover"
+                    source={{
+                      uri: "https://cdn.midjourney.com/d1f125dd-114f-41e9-ba7c-bc261f56d222/0_1.png",
+                    }}
+                    style={{
+                      width: "50%",
+                      height: "auto",
+                      borderRadius: 1000,
+                      aspectRatio: "1/1",
+                    }}
+                  />
+                </View>
               )}
               {profileImageBase64 && (
-                <Image
-                  borderRadius={150}
-                  resizeMode="cover"
-                  source={{
-                    uri: `data:image/jpeg;base64,${profileImageBase64}`,
-                  }}
-                  style={{
-                    width: "100%",
-                    height: "auto",
-                    borderRadius: 10,
-                    aspectRatio: "1/1",
-                  }}
-                />
+                <View
+                  style={{ flexDirection: "row", justifyContent: "center" }}
+                >
+                  <Image
+                    borderRadius={150}
+                    resizeMode="cover"
+                    source={{
+                      uri: `data:image/jpeg;base64,${profileImageBase64}`,
+                    }}
+                    style={{
+                      width: "50%",
+                      height: "auto",
+                      borderRadius: 1000,
+                      aspectRatio: "1/1",
+                    }}
+                  />
+                </View>
               )}
 
               <View
@@ -367,38 +409,58 @@ export const RegisterCompanyScreen = ({ navigation }) => {
                 }}
               >
                 {!profileImageLink && (
-                  <TouchableOpacity
-                    style={{
-                      paddingVertical: 20,
-                      borderRadius: 15,
-                      width: 150,
-                      backgroundColor: COLORS.indigo700,
-                      flexDirection: "row",
-                      paddingHorizontal: 10,
-                      justifyContent: "center",
-                      columnGap: 10,
-                      alignItems: "center",
-                    }}
-                    onPress={
-                      profileImageBase64 ? handleImageUpload : handleImagePicker
-                    }
-                  >
-                    <Text
+                  <View style={{ flexDirection: "column", rowGap: 10,width:"100%" }}>
+                    <TouchableOpacity
                       style={{
-                        textAlign: "center",
-                        width: "auto",
-                        color: COLORS.white,
-                        fontFamily: FONT.medium,
+                        paddingVertical: 10,
+                        borderRadius: 15,
+                        width: "100%",
+                        backgroundColor: COLORS.indigo700,
+                        flexDirection: "row",
+                        paddingHorizontal: 10,
+                        justifyContent: "center",
+                        columnGap: 10,
+                        alignItems: "center",
                       }}
+                      onPress={
+                        profileImageBase64
+                          ? handleImageUpload
+                          : handleImagePicker
+                      }
                     >
-                      {profileImageBase64 ? "Guardar imagen" : "Subir Imagen"}
-                    </Text>
-                    <Icon
-                      name={profileImageBase64 ? "save" : "upload"}
-                      type="feather"
-                      color={COLORS.white}
-                    />
-                  </TouchableOpacity>
+                      <Text
+                        style={{
+                          textAlign: "center",
+                          width: "auto",
+                          color: COLORS.white,
+                          fontFamily: FONT.medium,
+                        }}
+                      >
+                        {profileImageBase64 ? "Guardar imagen" : "Subir Imagen"}
+                      </Text>
+                      <Icon
+                        name={profileImageBase64 ? "save" : "upload"}
+                        type="feather"
+                        color={COLORS.white}
+                      />
+                    </TouchableOpacity>
+                    {!profileImageBase64 && (
+                      <View>
+                        <Text
+                          style={{
+                            fontFamily: FONT.regular,
+                            fontSize: SIZES.small,
+                            color: COLORS.gray700,
+                            marginTop: 5,
+                            textAlign: "justify",
+                          }}
+                        >
+                          Una imágen de perfil brindara mas confianza a las
+                          personas
+                        </Text>
+                      </View>
+                    )}
+                  </View>
                 )}
                 {profileImageLink && (
                   <View
@@ -430,22 +492,6 @@ export const RegisterCompanyScreen = ({ navigation }) => {
                       type="antdesign"
                       color={COLORS.white}
                     />
-                  </View>
-                )}
-
-                {!profileImageBase64 && (
-                  <View style={{ flex: 1 }}>
-                    <Text
-                      style={{
-                        fontFamily: FONT.regular,
-                        fontSize: SIZES.medium,
-                        color: COLORS.gray700,
-                        marginTop: 10,
-                        textAlign: "justify",
-                      }}
-                    >
-                      Una imágen de perfil brindara mas confianza a las personas
-                    </Text>
                   </View>
                 )}
               </View>
@@ -558,6 +604,16 @@ export const RegisterCompanyScreen = ({ navigation }) => {
             >
               Registrarse
             </Button>
+
+            {isImageSavedToSubmitError && <Text
+                style={{
+                  marginBottom: 10,
+                  fontFamily: FONT.medium,
+                  color: COLORS.red600,
+                }}
+              >
+               {isImageSavedToSubmitError}
+              </Text> }
             {(email.error ||
               password.error ||
               name.error ||

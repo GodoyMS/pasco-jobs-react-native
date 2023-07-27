@@ -40,6 +40,7 @@ import {
 
 import ScreenLoader from "@components/loaders/ScreenLoader";
 import { SelectList } from "react-native-dropdown-select-list";
+import { StatusBar } from "expo-status-bar";
 
 export const HomeUserScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -299,20 +300,34 @@ export const HomeUserScreen = ({ navigation }) => {
     },
     {
       id: 8,
+      name: "Restaurantes",
+      value: "Restaurantes",
+      icon: icons.cooking,
+      color: "",
+    },
+    {
+      id: 9,
+      name: "Tiendas",
+      value: "Tiendas",
+      icon: icons.shop,
+      color: "",
+    },
+    {
+      id: 10,
       name: "Psicología",
       value: "Psicologia",
       icon: icons.psicologia,
       color: "",
     },
     {
-      id: 9,
+      id: 11,
       name: "Agricultura y Ganadería",
-      value: "Agricultura y Ganadería",
+      value: "Agricultura",
       icon: icons.agricultura,
       color: "",
     },
 
-    { id: 10, name: "Otros", value: "Otros", icon: icons.otros, color: "" },
+    { id: 12, name: "Otros", value: "Otros", icon: icons.otros, color: "" },
   ];
   const [activeCategory, setActiveCategory] = useState(null);
   const [isCityOpen, setIsCityOpen] = useState(false);
@@ -505,6 +520,7 @@ export const HomeUserScreen = ({ navigation }) => {
       </Portal>
 
       <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
+        <StatusBar/>
         <View>
           <View
             style={{
@@ -545,7 +561,7 @@ export const HomeUserScreen = ({ navigation }) => {
               style={{
                 backgroundColor: COLORS.white,
                 borderTopRightRadius: 20,
-                borderBottomRightRadius: 20,
+                borderBottomRightRadius: isCityOpen ? 0: 20,
                 width: 120,
                 height: 50,
                 elevation: 4,
@@ -587,6 +603,8 @@ export const HomeUserScreen = ({ navigation }) => {
                     borderBottomLeftRadius: 20,
                     borderBottomRightRadius: 20,
                     padding: 5,
+                    width:"100%",
+                    elevation:4
                   }}
                 >
                   <TouchableOpacity
@@ -661,24 +679,7 @@ export const HomeUserScreen = ({ navigation }) => {
               )}
             </TouchableOpacity>
 
-            {/* {Platform.OS === "android" && (
-          <TextInput
-            value={searchWord}
-            onChangeText={handleSearchWord}
-            style={stylesHome.inputSearch}
-            placeholder="Buscar puestos de trabajo"
-            placeholderTextColor={COLORS.gray}
-          />
-        )}
-        {Platform.OS === "ios" && (
-          <TextInput
-            value={searchWord}
-            onChangeText={handleSearchWord}
-            style={stylesHome.inputSearch}
-            placeholder="Buscar puestos de trabajo"
-            placeholderTextColor={COLORS.gray}
-          />
-        )} */}
+      
           </View>
 
           <Animated.View style={{ height: containerHeight }}>
@@ -692,8 +693,9 @@ export const HomeUserScreen = ({ navigation }) => {
             >
               <Icon
                 color={COLORS.secondary}
-                name="arrow-long-right"
-                type="entypo"
+                name="long-arrow-right"
+                type="font-awesome"
+                size={20}
               />
             </View>
 
@@ -766,48 +768,10 @@ export const HomeUserScreen = ({ navigation }) => {
                         {item.name}
                       </Text>
                     </View>
-                    {/* <View
-                  style={{
-                    flexDirection: "row",
-                    columnGap: 5,
-                    
-                    alignItems: "center",
-                    justifyContent: "center",
-                    borderColor: "black",
-                    borderRadius: 20,
-                    paddingHorizontal: 10,
-                    paddingVertical: 10,
-                    marginRight: 10,
-                    backgroundColor:
-                      userFavCategory === item.value
-                        ? COLORS.indigo500
-                        : COLORS.white,
-                  }}
-                >
-                  <Image style={{ width: 20, height: 20 }} source={item.icon} />
-                  <Text
-                    style={{
-                      fontFamily: FONT.medium,
-                      fontSize: SIZES.small,
-                      color:
-                        userFavCategory === item.value
-                          ? COLORS.white
-                          : COLORS.black,
-                    }}
-                  >
-                    {item.name}
-                  </Text>
-                </View> */}
+            
                   </TouchableOpacity>
                 )}
               />
-
-              {/* <View style={stylesHome.header}>
-              <Text style={stylesHome.headerTitle}>Nearby jobs sdasd</Text>
-              <TouchableOpacity>
-                <Text style={stylesHome.headerBtn}>Show all</Text>
-              </TouchableOpacity>
-            </View> */}
 
               <View
                 style={{
@@ -954,13 +918,13 @@ export const HomeUserScreen = ({ navigation }) => {
                         alignItems: "center",
                       }}
                     >
-                      <Icon
+                     {dataApi?.hasPrevPage &&  <Icon
                         onPress={previousPage}
                         size={40}
                         name="chevron-left"
                         type="material"
                         color={COLORS.gray800}
-                      />
+                      />}
                       <Text
                         style={{
                           fontFamily: FONT.medium,
@@ -970,13 +934,13 @@ export const HomeUserScreen = ({ navigation }) => {
                       >
                         Pagina {dataApi.page} de {dataApi.totalPages}
                       </Text>
-                      <Icon
+                     {dataApi?.hasNextPage &&  <Icon
                         onPress={nextPage}
                         size={40}
                         name="chevron-right"
                         type="material"
                         color={COLORS.gray800}
-                      />
+                      />}
                     </View>
                   ) : (
                     <View

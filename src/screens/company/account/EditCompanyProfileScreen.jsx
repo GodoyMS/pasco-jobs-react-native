@@ -3,7 +3,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 import React from "react";
@@ -15,9 +14,9 @@ import { useEffect } from "react";
 import axios from "axios";
 import { backendURL } from "@config/config";
 import FormLoader from "@components/loaders/FormLoader";
-import { Icon } from "@rneui/themed";
 import SaveButton from "@components/buttons/SaveButton";
 import { setOnlyCompanyInfo } from "@features/user/companySlice";
+import { StatusBar } from "expo-status-bar";
 
 const EditCompanyProfileScreen = () => {
   const userInfo = useSelector((state) => state.company.infoCompany);
@@ -84,6 +83,7 @@ const EditCompanyProfileScreen = () => {
         justifyContent: "space-between",
       }}
     >
+      <StatusBar/>
       <ScrollView style={{ marginTop: 90 }}>
         {userInfo && (
           <View style={{ marginHorizontal: 30 }}>

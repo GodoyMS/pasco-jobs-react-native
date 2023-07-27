@@ -22,6 +22,7 @@ import CitySelectorUserAds from "@components/user/ads/CitySelectorUserAds";
 import axios from "axios";
 import { backendURL } from "@config/config";
 import { SelectList } from "react-native-dropdown-select-list";
+import { StatusBar } from "expo-status-bar";
 
 export const AdsUserScreen = ({ navigation }) => {
   // const infoUser = useSelector((state) => state.user.infoUser);
@@ -202,6 +203,7 @@ export const AdsUserScreen = ({ navigation }) => {
           </Modal>
         </Portal>
         <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
+          <StatusBar/>
       <View style={{ marginTop: 35 }}>
         {/* <View style={{ marginTop: SIZES.medium, gap: SIZES.small }}>
           <Text

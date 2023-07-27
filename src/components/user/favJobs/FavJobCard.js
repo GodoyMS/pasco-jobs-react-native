@@ -55,8 +55,16 @@ export const FavJobCard = ({ dataFavJob, userId }) => {
   };
 
   return (
-    <TouchableOpacity activeOpacity={0.7} style={styles.cardJob}>
-      <View style={stylesFavJobs.cardJob}>
+    <>
+    {dataFavJob?.job && (
+      <TouchableOpacity  onPress={navigateToDetails} activeOpacity={0.7} style={styles.cardJob}>
+      <View style={{ paddingHorizontal: 20,
+    paddingVertical: 20,
+    borderRadius: 5,
+    marginVertical: 1,
+    elevation:4,
+    marginHorizontal: 20,
+    backgroundColor: dataFavJob?.job?.expired ==="yes" ?COLORS.gray200 :COLORS.white }}>
         <View style={stylesFavJobs.containerOneCardJob}>
           <View style={stylesFavJobs.containerOneCardJobView2}>
             <Text style={stylesFavJobs.containerOneCardJobView2Text1}>
@@ -142,19 +150,21 @@ export const FavJobCard = ({ dataFavJob, userId }) => {
 
         <View style={stylesFavJobs.containerThreeCardJob}>
           <Text style={stylesFavJobs.containerThreeCardDate}>
-            <AgeDateFormat createdAt={dataFavJob.job.createdAt} />
+            <AgeDateFormat createdAt={dataFavJob?.job?.createdAt} />
           </Text>
-          <TouchableOpacity
-            onPress={navigateToDetails}
+          {dataFavJob?.job?.expired==="yes"?<Text style={{fontFamily:FONT.regular,color:COLORS.tertiary }}>Vencido</Text> : <TouchableOpacity
+            
             style={stylesFavJobs.containerThreeButtonApply}
           >
             <Text style={stylesFavJobs.containerThreeButtonApplyText}>
               Postular{" "}
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity>}
         </View>
       </View>
     </TouchableOpacity>
+    )}
+    </>
   );
 };
 export default FavJobCard;

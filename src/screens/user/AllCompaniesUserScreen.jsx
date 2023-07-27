@@ -1,29 +1,37 @@
 import { Text, StyleSheet, View, Animated } from "react-native";
-import React, { Component, useRef } from "react";
+import React, {  useRef } from "react";
 import { SafeAreaView } from "react-native";
-import { TouchableOpacity } from "react-native";
 import { FlatList } from "react-native";
 import { COLORS, FONT, SIZES } from "@constants/theme";
 import { gql, useQuery } from "@apollo/client";
 import { useSelector } from "react-redux";
-import ApplicationJobCard from "@components/user/applicationJobs/ApplicationJobCard";
 import { useState } from "react";
-import { useFocusEffect } from "@react-navigation/native";
-import { useCallback } from "react";
+
 import CompanyCardUserScreenjsx from "@components/user/companies/CompanyCardUserScreen";
 import { ActivityIndicator } from "react-native";
 import { useEffect } from "react";
-import { Skeleton } from "@rneui/themed";
-import FormLoader from "@components/loaders/FormLoader";
+
 import ScreenLoader from "@components/loaders/ScreenLoader";
 import { Searchbar } from "react-native-paper";
 import CitySelectorUserCompanies from "@components/user/companies/CitySelectorUserCompanies";
 import FeaturedCompanyCardUserScreen from "@components/user/companies/FeaturedCompanyCardUserScreen";
+import { StatusBar } from "expo-status-bar";
 
+
+function shuffleArray(array) {
+  const shuffledArray = [...array];
+  for (let i = shuffledArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+  }
+  return shuffledArray;
+}
 export const AllCompaniesUserScreen = ({ navigation }) => {
   const userLocationForCompanies = useSelector(
     (state) => state.user.userLocationForCompanies
   );
+  const [shuffledData, setShuffledData] = useState([]);
+
   const [data, setData] = useState([]); // Array to store the fetched data
   const [page, setPage] = useState(1); // Current page number
   const [isLoading, setIsLoading] = useState(false);
@@ -78,7 +86,7 @@ export const AllCompaniesUserScreen = ({ navigation }) => {
         }
 
         page: $page
-        limit: 8
+        limit: 15
         sort: "createdAt"
       ) {
         totalDocs
@@ -103,7 +111,7 @@ export const AllCompaniesUserScreen = ({ navigation }) => {
     query GET_ALL_FEATURED_COMPANIES_USER_SCREEN {
       Employers(
         where: { featured: { equals: "yes" } }
-        limit: 15
+        limit: 20
         sort: "createdAt"
       ) {
         totalDocs
@@ -125,7 +133,11 @@ export const AllCompaniesUserScreen = ({ navigation }) => {
   `;
   const { loading: loadingFeatured, data: dataFeaturedCompanies } = useQuery(
     GET_ALL_FEATURED_COMPANIES_USER_SCREEN,
-    { fetchPolicy: "cache-and-network" }
+    {
+      fetchPolicy: "cache-and-network",
+      onCompleted: (data) =>
+        setShuffledData(shuffleArray(data?.Employers?.docs)),
+    }
   );
 
   const {
@@ -175,6 +187,7 @@ export const AllCompaniesUserScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
+      <StatusBar/>
       <View style={{ marginHorizontal: 20,zIndex:200 }}>
         <View
           style={{
@@ -214,7 +227,7 @@ export const AllCompaniesUserScreen = ({ navigation }) => {
       </View>
 
       <View style={{ flex: 1, flexDirection: "column", marginTop: 10 }}>
-        {!loadingFeatured && (
+        {!loadingFeatured &&shuffledData.length > 0 &&  (
           <Animated.View
             style={{ height: containerHeight, backgroundColor: COLORS.white }}
           >
@@ -235,7 +248,7 @@ export const AllCompaniesUserScreen = ({ navigation }) => {
                 marginVertical: 5,
               }}
               contentContainerStyle={{ height: 180 }}
-              data={dataFeaturedCompanies?.Employers?.docs}
+              data={shuffledData}
               horizontal={true}
               keyExtractor={(item, index) => item.id.toString()}
               showsHorizontalScrollIndicator={false}

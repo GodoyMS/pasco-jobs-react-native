@@ -14,10 +14,12 @@ import { Icon } from "@rneui/themed";
 import { ScrollView } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { Linking } from "react-native";
+import { StatusBar } from "expo-status-bar";
 
 const ContactPascoJobsScreen = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      <StatusBar/>
       <ScrollView style={{ flex: 1, marginTop: 80 }}>
         <View
           style={{
@@ -80,11 +82,11 @@ const ContactPascoJobsScreen = () => {
               }}
             >
               Pasco Jobs es la aplicación ideal para conectar de manera sencilla
-              a empresas con talentos.{"\n"}Con una interfaz intuitiva,
+              a empresas con talentos en la región Pasco.{"\n"}Con una interfaz intuitiva,
               brindamos un proceso de postulación sin complicaciones para los
               candidatos y un reclutamiento fácil para las empresas
               contratantes. Oficialmente le decimos adiós a los anuncios de
-              empleo en papel, brindando una alternativa digital, innovadora y
+              empleo en papel. Brindamos una alternativa digital, innovadora y
               benéfica para toda la región.
               {"\n \n"}
               Asimismo, se ha desarollado un sistema donde las personas

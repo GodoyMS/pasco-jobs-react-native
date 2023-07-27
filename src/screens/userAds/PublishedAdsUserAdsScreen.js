@@ -16,6 +16,7 @@ import { useState } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback } from "react";
 import { Icon } from "@rneui/themed";
+import { StatusBar } from "expo-status-bar";
 
 const PublishedAdsUserAdsScreen = () => {
   const userAds = useSelector((state) => state.userads.infoUserAds);
@@ -23,7 +24,7 @@ const PublishedAdsUserAdsScreen = () => {
   const [dataAds, setDataAds] = useState([]);
   const GET_USERS = gql`
     query GET_ADS_BY_USER_AD($useradsId: String!, $page: Int!) {
-      Ads(where: { author: { equals: $useradsId } }, page: $page, limit: 4) {
+      Ads(where: { author: { equals: $useradsId } }, page: $page, limit: 10) {
         totalDocs
         hasPrevPage
         hasNextPage
@@ -64,12 +65,13 @@ const PublishedAdsUserAdsScreen = () => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ marginTop: 50, marginHorizontal: 20 }}>
+      <StatusBar/>
+      <View style={{ marginTop: 35, marginHorizontal: 20 }}>
         <Text
           style={{
             fontFamily: FONT.bold,
             color: COLORS.gray800,
-            fontSize: SIZES.xLarge,
+            fontSize: SIZES.medium,
             marginBottom: 10,
           }}
         >

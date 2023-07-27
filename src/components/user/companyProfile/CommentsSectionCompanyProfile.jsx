@@ -93,8 +93,8 @@ const CommentsSectionCompanyProfile = ({ idCompany }) => {
 
   return (
     <View style={{ flex: 1, marginHorizontal: 10 }}>
-      <Text style={{ paddingVertical: 10 }}>
-        ({data?.CompanyComments?.totalDocs} comentarios)
+      <Text style={{ paddingVertical: 10,fontFamily:FONT.regular,fontSize:SIZES.small }}>
+        ({dataComments?.CompanyComments?.totalDocs ? dataComments?.CompanyComments?.totalDocs : 0  } comentarios)
       </Text>
       <FlatList
         showsVerticalScrollIndicator={false}

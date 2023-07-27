@@ -123,7 +123,7 @@ const ApplicationJobCard = ({
       </Portal>
    
    
-    <TouchableOpacity
+   {(dataJob?.author && dataJob?.job?.title) && ( <TouchableOpacity
       style={{
         width: "100%",
         paddingHorizontal: 0,
@@ -164,7 +164,7 @@ const ApplicationJobCard = ({
               source={
                 dataJob.author?.profile
                   ? {
-                      uri: dataJob.author?.profile,
+                      uri: dataJob?.author?.profile,
                     }
                   : companyDefaultProfile
               }
@@ -196,7 +196,7 @@ const ApplicationJobCard = ({
                   flexDirection: "row",
                 }}
               >
-                <AgeDateFormat createdAt={dataJob.job.createdAt} />
+                <AgeDateFormat createdAt={dataJob?.job?.createdAt} />
               </Text>
             </View>
           </View>
@@ -219,7 +219,7 @@ const ApplicationJobCard = ({
               flexDirection: "row",
             }}
           >
-            {dataJob.job.title}
+            {dataJob?.job?.title}
           </Text>
         </View>
 
@@ -315,7 +315,7 @@ const ApplicationJobCard = ({
           }}
         >
 
-          {dataJob.job.expired === "no" ? (
+          {dataJob?.job?.expired === "no" ? (
             dataJob.finalist === "no" ? (
                 <View style={{backgroundColor:COLORS.blue100,paddingHorizontal:10,paddingVertical:5,borderRadius:10}}>
                   <Text style={{fontFamily:FONT.medium,fontSize:SIZES.small,color:COLORS.blue800}} >En curso</Text>
@@ -366,7 +366,7 @@ const ApplicationJobCard = ({
           </TouchableOpacity>
         </View>
       </View>
-    </TouchableOpacity>
+    </TouchableOpacity>)}
     </>
 
   );

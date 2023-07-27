@@ -16,7 +16,7 @@ import "moment/locale/es"; // Import the Spanish locale
 import companyDefaultProfile from "@assets/images/company/defaultprofilecompany-min.png";
 import AgeDateFormat from "@components/dates/AgeDateFormat";
 
-const JobCard = React.memo ( ({ dataJob, userId }) => {
+const JobCard = React.memo(({ dataJob, userId }) => {
   const favJobsRedux = useSelector((state) => state.user.favUserJobs);
   const [isAddedToFav, setIsAddedToFav] = useState(false);
   const dispatch = useDispatch();
@@ -51,15 +51,25 @@ const JobCard = React.memo ( ({ dataJob, userId }) => {
       .catch((e) => console.log(e))
       .finally(() => setIsSaveLoading(false));
   };
-
+  // ,
   return (
     <TouchableOpacity
       activeOpacity={0.7}
-    
       style={styles.cardJob}
       onPress={navigateToDetails}
     >
-      <View style={stylesHome.cardJob}>
+      <View
+        style={{
+          paddingHorizontal: 20,
+          paddingVertical: 20,
+          borderRadius: 10,
+          marginVertical: 5,
+          marginHorizontal: 0,
+          backgroundColor:
+            dataJob?.expired === "yes" ? COLORS.gray200 : COLORS.white,
+          elevation: 3,
+        }}
+      >
         <View style={stylesHome.containerOneCardJob}>
           {showMessage && (
             <Text style={styles.message}>Añadido a favoritos</Text>
@@ -91,9 +101,6 @@ const JobCard = React.memo ( ({ dataJob, userId }) => {
             )}
           </View>
         </View>
-
-        {/* */}
-
         <View
           style={{
             paddingHorizontal: 0,
@@ -101,7 +108,6 @@ const JobCard = React.memo ( ({ dataJob, userId }) => {
             borderRadius: 5,
             marginVertical: 1,
             marginHorizontal: 0,
-            backgroundColor: COLORS.white,
           }}
         >
           <View
@@ -156,7 +162,7 @@ const JobCard = React.memo ( ({ dataJob, userId }) => {
         <View style={{ marginTop: 20 }}>
           <View style={stylesHome.containerOneCardJobView2}>
             <Text style={stylesHome.containerOneCardJobView2Text1}>
-              {dataJob.title}
+              {dataJob.title} 
             </Text>
           </View>
         </View>
@@ -201,6 +207,7 @@ const JobCard = React.memo ( ({ dataJob, userId }) => {
                   key={item.id}
                   style={{
                     backgroundColor: COLORS.lightWhite,
+                    elevation:2,
                     textAlign: "center",
                     paddingHorizontal: 5,
                     paddingVertical: 4,
@@ -225,9 +232,12 @@ const JobCard = React.memo ( ({ dataJob, userId }) => {
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
+            flexWrap:"wrap",
+            rowGap:5,
+            columnGap:5
           }}
         >
-          <View style={{ flexDirection: "row" }}>
+          <View style={{ flexDirection: "row", }}>
             <Image source={icons.location} style={{ width: 15, height: 15 }} />
             <Text
               style={{
@@ -236,24 +246,29 @@ const JobCard = React.memo ( ({ dataJob, userId }) => {
                 color: COLORS.gray600,
               }}
             >
-              {dataJob.province}- {dataJob.district}
+              {dataJob.province}- {dataJob.district} 
             </Text>
           </View>
 
-          <TouchableOpacity
-            onPress={navigateToDetails}
-            style={stylesHome.containerThreeButtonApply}
-          >
-            <Text style={stylesHome.containerThreeButtonApplyText}>
-              Postular
+          {dataJob?.expired === "yes" ? (
+            <Text style={{ fontFamily: FONT.regular, color: COLORS.tertiary }}>
+              Finalizado
             </Text>
-          </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={navigateToDetails}
+              style={stylesHome.containerThreeButtonApply}
+            >
+              <Text style={stylesHome.containerThreeButtonApplyText}>
+                Postular
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </TouchableOpacity>
   );
-}
-);
+});
 export default JobCard;
 const styles = StyleSheet.create({
   cardJob: {

@@ -27,6 +27,7 @@ import woman from "@assets/images/manwoman/womanFlatIllustration.jpg";
 import man from "@assets/images/manwoman/manFlatIllustration.jpg";
 import PdfRender from "@components/company/publishedJobs/PdfRender";
 import ApplicantFabCompanyApplications from "@components/fab/ApplicantFabCompanyApplications";
+import { StatusBar } from "expo-status-bar";
 const ApplicantProfileCompanyScreen = (props) => {
   const [profileVisible, setProfileVisible] = useState(false);
   const [cvVisible, setCvVisible] = useState(false);
@@ -77,6 +78,7 @@ const ApplicantProfileCompanyScreen = (props) => {
   return (
     <PaperProvider>
       <SafeAreaView style={{ flex: 1 }}>
+        <StatusBar/>
         <Portal>
           <Modal
             style={{ backgroundColor: COLORS.black }}

@@ -24,6 +24,7 @@ const Footer = ({
   isAddedToFav,
   showMessage,
   idApplicant,
+  expired,
   dataApplicants,
   setCurrentApplicants,
   idJob,
@@ -257,7 +258,7 @@ const Footer = ({
           </TouchableOpacity>
         )}
 
-        {isApplyButtonMounted && (
+        {isApplyButtonMounted && expired==="no" && (
           <>
             {isApplied ? (
               <TouchableOpacity
@@ -296,6 +297,16 @@ const Footer = ({
             )}
           </>
         )}
+
+               {expired ==="yes" && <View style={{ flex: 1,
+                  paddingVertical: 10,
+                  flexDirection: "row",
+                  height: "100%",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  columnGap: 10,
+                  marginLeft: SIZES.medium,
+                  borderRadius: SIZES.medium,}}><Text style={{fontFamily:FONT.medium,color:COLORS.tertiary,fontSize:SIZES.medium}}>Vencido</Text></View>}
       </View>
     </>
   );

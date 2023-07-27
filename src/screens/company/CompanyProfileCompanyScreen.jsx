@@ -3,7 +3,6 @@ import {
   Dimensions,
   Image,
   SafeAreaView,
-  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -17,21 +16,18 @@ import { useState } from "react";
 import { COLORS, FONT, SIZES } from "@constants/theme";
 import { gql, useQuery } from "@apollo/client";
 import companyDefaultProfile from "@assets/images/company/defaultprofilecompany-min.png";
-import { Button, Modal, PaperProvider, Portal } from "react-native-paper";
+import {  Modal, PaperProvider, Portal } from "react-native-paper";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Icon } from "@rneui/themed";
 import { Linking } from "react-native";
 import CommentsSectionCompanyProfile from "@components/user/companyProfile/CommentsSectionCompanyProfile";
-import SubmitCommentCompanyProfile from "@components/user/companyProfile/SubmitCommentCompanyProfile";
-import { useSelector } from "react-redux";
-import JobsSectionCompanyProfile from "@components/user/companyProfile/JobsSectionCompanyProfile";
+
 import CompanyScreenProfileContactFab from "@components/fab/CompanyScreenProfileContactFab";
 import ScreenLoader from "@components/loaders/ScreenLoader";
-
+import { StatusBar } from "expo-status-bar";
 const CompanyProfileCompanyScreen = (props) => {
   const [profileVisible, setProfileVisible] = useState(false);
-  const [tab, setTab] = useState("company");
-  const [isCommentActive, setIsCommentActive] = useState(false);
+  const [tab, setTab] = useState(0);
   const {
     navigation,
     route: { params },
@@ -80,6 +76,7 @@ const CompanyProfileCompanyScreen = (props) => {
   return (
     <PaperProvider>
       <SafeAreaView style={{ flex: 1 }}>
+        <StatusBar/>
        
         <Portal>
           <Modal
@@ -231,6 +228,8 @@ const CompanyProfileCompanyScreen = (props) => {
               />
              
             </Tab>
+
+            
 
             <TabView value={tab} onChange={setTab} animationType="spring">
               <TabView.Item style={{ width: "100%" }}>

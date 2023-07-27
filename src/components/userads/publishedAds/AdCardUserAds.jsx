@@ -191,9 +191,9 @@ const AdCardUserAds = ({  refetch, dataAds, setDataAds,userAds,page }) => {
         </View>
         <View style={{ marginTop: 10 }}>
           <View style={styles.container}>
-            <Text>{dataAds?.title} </Text>
+            <Text style={{color:COLORS.gray900,fontFamily:FONT.medium,fontSize:SIZES.medium,marginBottom:7}}>{dataAds?.title} </Text>
             <RenderHTML
-              tagsStyles={{ div: { textAlign: "justify" } }}
+              tagsStyles={{ div: { textAlign: "justify",fontSize:SIZES.small,fontFamily:FONT.regular,color:COLORS.gray700},p:{ textAlign: "justify",fontSize:SIZES.small,fontFamily:FONT.regular,color:COLORS.gray700} }}
               contentWidth={width}
               source={{ html: contentToShow }}
             />

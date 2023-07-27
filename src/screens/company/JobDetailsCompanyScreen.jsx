@@ -9,10 +9,10 @@ import Company from "@components/company/publishedJobs/Company";
 import Tabs from "@components/user/jobdetails/tabs/Tabs";
 import About from "@components/user/jobdetails/about/About";
 import Specifics from "@components/user/jobdetails/specifics/Specifics";
-import Footer from "@components/user/jobdetails/footer/Footer";
 import { Image } from "react-native";
 import { ActivityIndicator } from "react-native";
 import icons from "@constants/icons";
+import { StatusBar } from "expo-status-bar";
 
 const JobDetailsCompanyScreen = (props) => {
   const {
@@ -121,6 +121,7 @@ const JobDetailsCompanyScreen = (props) => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite }}>
+    <StatusBar/>
       <ScrollView
         style={{ marginTop: 40 }}
         showsVerticalScrollIndicator={true}

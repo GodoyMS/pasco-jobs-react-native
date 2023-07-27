@@ -44,7 +44,8 @@ const navigateToDetails = (idJob) => {
   return (
     <View style={{ flex: 1}}>
       <View style={{marginHorizontal:10}}>
-      <Text style={{ paddingVertical: 10 }}>({data?.Jobs?.totalDocs} ofertas)</Text>
+      <Text style={{ paddingVertical: 10,fontFamily:FONT.regular,fontSize:SIZES.small }}>
+({data?.Jobs?.totalDocs} ofertas)</Text>
       <FlatList
         showsVerticalScrollIndicator={false}
         data={data ? data.Jobs.docs : []}

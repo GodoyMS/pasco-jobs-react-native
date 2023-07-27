@@ -5,7 +5,7 @@
     "icon": "./assets/main/icon.png",
     
     "primaryColor": "#FFFFFF",
-    "version": "2.2.0",     
+    "version": "2.3.0",     
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "splash": {

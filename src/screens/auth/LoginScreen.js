@@ -1,18 +1,14 @@
 import React, { useState } from "react";
-import Background from "@components/login/Background";
 import {
   SafeAreaView,
   Text,
   View,
-  ImageBackground,
-  KeyboardAvoidingView,
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
 import Button from "@components/login/Button";
 import { emailValidator } from "@helpers/emailValidator";
 import { passwordValidator } from "@helpers/passwordValidator";
-import loginBackground from "@assets/images/loginbg3.jpg";
 import axios from "axios";
 import TextInput from "@components/login/TextInput";
 import { StyleSheet } from "react-native";
@@ -20,9 +16,9 @@ import { COLORS, FONT, SIZES } from "@constants/theme";
 import { useDispatch, useSelector } from "react-redux";
 import { addAllFavoriteJobs, setUser } from "@features/user/userSlice";
 import { backendURL } from "@config/config";
-import loginImage from "@assets/images/GodoyMS_a_job_agency_company_in_building_process_in_the_middle__cbe54923-f429-4ab7-9a9e-fa51da4d2c8d.jpg";
 import { clearCompany } from "@features/user/companySlice";
 import { clearUserAds } from "@features/user/userAdsSlice";
+import { Checkbox } from "react-native-paper";
 export const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState({ value: "", error: "" });
   const [password, setPassword] = useState({ value: "", error: "" });
@@ -30,7 +26,9 @@ export const LoginScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(false);
   const [visibleModal, setVisibleModal] = useState(null);
-  const[currentUserId,setCurrentUserId]=useState("")
+  const [visiblePass, setVisiblePass] = useState(false);
+
+  const [currentUserId, setCurrentUserId] = useState("");
   const dispatch = useDispatch();
   // const favJobsIdRedux = useSelector((state) => state.user.favUserJobs);
 
@@ -44,20 +42,22 @@ export const LoginScreen = ({ navigation }) => {
       return;
     }
 
-    setIsLoading(true)
-    setError(false)
+    setIsLoading(true);
+    setError(false);
     const currentJobsId = [];
 
     await axios
-      .post(
-        `${backendURL}api/applicants/login`,
-        {
-          email: email.value,
-          password: password.value,
-        },
-      )
+      .post(`${backendURL}api/applicants/login`, {
+        email: email.value,
+        password: password.value,
+      })
 
-      .then(({ data }) => {dispatch(setUser(data));dispatch(clearCompany());setCurrentUserId(data.user.id);dispatch(clearUserAds())})
+      .then(({ data }) => {
+        dispatch(setUser(data));
+        dispatch(clearCompany());
+        setCurrentUserId(data.user.id);
+        dispatch(clearUserAds());
+      })
       .then(() => setIsLoggedIn(true))
       .then(() => setIsLoading(false))
       .then(() => {
@@ -65,7 +65,9 @@ export const LoginScreen = ({ navigation }) => {
       })
       .then(() => {
         axios
-          .get(`${backendURL}api/favoriteJobs?where[user][equals]=${currentUserId}`)
+          .get(
+            `${backendURL}api/favoriteJobs?where[user][equals]=${currentUserId}`
+          )
           .then(({ data }) => {
             console.log(data.docs);
             data.docs.map((e) => currentJobsId.push(e.job.id));
@@ -81,9 +83,7 @@ export const LoginScreen = ({ navigation }) => {
   };
   return (
     <SafeAreaView style={{ flex: 1, rowGap: 15 }}>
-      <View style={{ height: 200, zIndex: 50, flexDirection: "column" }}>
-          
-      </View>
+      <View style={{ height: 200, zIndex: 50, flexDirection: "column" }}></View>
       <View
         style={{
           flexDirection: "column",
@@ -96,7 +96,7 @@ export const LoginScreen = ({ navigation }) => {
         }}
       >
         <View>
-        <Text
+          <Text
             style={{
               textAlign: "center",
               fontFamily: FONT.regular,
@@ -138,8 +138,29 @@ export const LoginScreen = ({ navigation }) => {
           onChangeText={(text) => setPassword({ value: text, error: "" })}
           error={!!password.error}
           errorText={password.error}
-          secureTextEntry
+          secureTextEntry={!visiblePass}
         />
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "flex-start",
+            width: "100%",
+            columnGap: 4,
+            alignItems:"center",
+            marginBottom:20
+          }}
+        >
+          <Checkbox
+            color={COLORS.tertiary}
+            theme={"light"}
+            status={visiblePass ? "checked" : "unchecked"}
+            onPress={() => {
+              setVisiblePass(!visiblePass);
+            }}
+          />
+          <Text style={{fontFamily:FONT.regular,fontSize:SIZES.xSmall}}>{visiblePass ? "Ocultar contraseña": "Mostrar contraseña"}</Text>
+        </View>
+
         <View style={styles.forgotPassword}>
           <TouchableOpacity
             onPress={() => navigation.navigate("ResetPasswordUserScreen")}
@@ -147,18 +168,30 @@ export const LoginScreen = ({ navigation }) => {
             <Text style={styles.forgot}>¿Olvidaste tu contraseña?</Text>
           </TouchableOpacity>
         </View>
-        <View>
-          {isLoading && <ActivityIndicator/>}
-        </View>
+        <View>{isLoading && <ActivityIndicator />}</View>
         <Button
           disabled={isLoading}
-          style={{ fontFamily: FONT.medium,backgroundColor:isLoading ? COLORS.indigo300: COLORS.tertiary}}
+          style={{
+            fontFamily: FONT.medium,
+            backgroundColor: isLoading ? COLORS.indigo300 : COLORS.tertiary,
+          }}
           mode="contained"
           onPress={onLoginPressed}
         >
           Entrar
         </Button>
-        {error && <Text style={{fontFamily:FONT.medium,color:COLORS.red700,fontSize:SIZES.small,textAlign:"center"}}>Contraseña o correo incorrecto</Text>}
+        {error && (
+          <Text
+            style={{
+              fontFamily: FONT.medium,
+              color: COLORS.red700,
+              fontSize: SIZES.small,
+              textAlign: "center",
+            }}
+          >
+            Contraseña o correo incorrecto
+          </Text>
+        )}
         <View style={styles.row}>
           <Text style={{ fontFamily: FONT.regular }}>
             ¿No tienes una cuenta aun?{" "}

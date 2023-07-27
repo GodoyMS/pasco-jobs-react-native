@@ -1,5 +1,5 @@
 import { Text, StyleSheet, View, Animated } from "react-native";
-import React, {  useRef } from "react";
+import React, { useRef } from "react";
 import { SafeAreaView } from "react-native";
 import { FlatList } from "react-native";
 import { COLORS, FONT, SIZES } from "@constants/theme";
@@ -7,15 +7,14 @@ import { gql, useQuery } from "@apollo/client";
 import { useSelector } from "react-redux";
 import { useState } from "react";
 
-import CompanyCardUserScreenjsx from "@components/user/companies/CompanyCardUserScreen";
 import { ActivityIndicator } from "react-native";
 import { useEffect } from "react";
 import ScreenLoader from "@components/loaders/ScreenLoader";
 import { Searchbar } from "react-native-paper";
-import CitySelectorUserCompanies from "@components/user/companies/CitySelectorUserCompanies";
-import FeaturedCompanyCardUserScreen from "@components/user/companies/FeaturedCompanyCardUserScreen";
+
 import ProfessionalCardCompanyScreen from "@components/company/professionals/ProfessionalCardCompanyScreen";
 import CitySelectorApplicantsCompanyScreen from "@components/company/professionals/CitySelectorApplicantsCompanyScreen";
+import { StatusBar } from "expo-status-bar";
 
 export const AllApplicantsCompanyScreen = ({ navigation }) => {
   const companyLocationForApplicants = useSelector(
@@ -59,7 +58,6 @@ export const AllApplicantsCompanyScreen = ({ navigation }) => {
     }
   );
 
-
   const GET_ALL_APPLICANTS_COMPANY_SCREEN = gql`
     query GET_ALL_APPLICANTS_COMPANY_SCREEN(
       $searchWord: String!
@@ -67,18 +65,17 @@ export const AllApplicantsCompanyScreen = ({ navigation }) => {
       $province: String!
     ) {
       Applicants(
-        where:{
-          OR:[{ name: { like: $searchWord } } 
-            {description:{like:$searchWord}} 
-            {position:{like:$searchWord}} 
-
+        where: {
+          OR: [
+            { name: { like: $searchWord } }
+            { description: { like: $searchWord } }
+            { position: { like: $searchWord } }
           ]
-          AND:[{province: { like: $province }}]  
-        }  
-        
-       
+          AND: [{ province: { like: $province } }]
+        }
+
         page: $page
-        limit: 4
+        limit: 20
         sort: "createdAt"
       ) {
         totalDocs
@@ -138,7 +135,9 @@ export const AllApplicantsCompanyScreen = ({ navigation }) => {
     variables: {
       page,
       searchWord,
-      province: companyLocationForApplicants ? companyLocationForApplicants : "",
+      province: companyLocationForApplicants
+        ? companyLocationForApplicants
+        : "",
     },
     fetchPolicy: "network-only",
   });
@@ -176,41 +175,45 @@ export const AllApplicantsCompanyScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
-      <View
-        style={{
-          marginTop: 30,
-          flexDirection: "row",
-          zIndex: 999,
-          backgroundColor: COLORS.white,
-          width: "100%",
-        }}
-      >
-        <Searchbar
-          elevation={4}
-          value={searchWord}
-          onChangeText={handleChangeSearchWord}
-          placeholderTextColor={COLORS.gray700}
-          inputStyle={{ fontFamily: FONT.regular, fontSize: SIZES.small }}
-          placeholder="Buscar profesionales"
-          mode="bar"
+      <StatusBar/>
+      <View style={{ marginHorizontal: 20, zIndex: 999,marginTop:50 }}>
+        <Text style={{ fontFamily: FONT.medium, textAlign: "center",marginBottom:5,color:COLORS.tertiary }}>
+          Profesionales
+        </Text>
+        <View
           style={{
-            backgroundColor: COLORS.white,
-            flex: 1,
-            borderTopLeftRadius: 0,
-            borderBottomLeftRadius: 0,
-            borderTopRightRadius: 0,
-            borderBottomRightRadius: 0,
-            height: 60,
-            alignItems: "center",
+            flexDirection: "row",
+            zIndex: 999,
+            width: "100%",
           }}
-        />
-        <CitySelectorApplicantsCompanyScreen
-          refetch={refetch}
-          setPage={setPage}
-          setIsCityOpen={setIsCityOpen}
-          isCityOpen={isCityOpen}
-          setData={setData}
-        />
+        >
+          <Searchbar
+            elevation={4}
+            value={searchWord}
+            onChangeText={handleChangeSearchWord}
+            placeholderTextColor={COLORS.gray700}
+            inputStyle={{ fontFamily: FONT.regular, fontSize: SIZES.small }}
+            placeholder="Buscar profesionales"
+            mode="bar"
+            style={{
+              backgroundColor: COLORS.white,
+              flex: 1,
+              borderTopLeftRadius: 20,
+              borderBottomLeftRadius: 20,
+              borderTopRightRadius: 0,
+              borderBottomRightRadius: 0,
+              height: 50,
+              alignItems: "center",
+            }}
+          />
+          <CitySelectorApplicantsCompanyScreen
+            refetch={refetch}
+            setPage={setPage}
+            setIsCityOpen={setIsCityOpen}
+            isCityOpen={isCityOpen}
+            setData={setData}
+          />
+        </View>
       </View>
 
       <View style={{ flex: 1, flexDirection: "column", marginTop: 10 }}>
@@ -250,7 +253,6 @@ export const AllApplicantsCompanyScreen = ({ navigation }) => {
           )}
 
           <FlatList
-
             contentContainerStyle={{ paddingBottom: 100 }}
             style={{ flex: 1 }}
             data={data}
@@ -259,7 +261,7 @@ export const AllApplicantsCompanyScreen = ({ navigation }) => {
             keyExtractor={(item, index) => item.id.toString()}
             showsHorizontalScrollIndicator={true}
             renderItem={({ item }) => (
-              <ProfessionalCardCompanyScreen   companyData={item} />
+              <ProfessionalCardCompanyScreen companyData={item} />
             )}
             onEndReached={fetchData} // Trigger fetching more data when reaching the end
             onEndReachedThreshold={0.6} // Adjust the threshold as needed

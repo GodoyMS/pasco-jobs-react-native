@@ -1,8 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   Text,
-  Platform,
-  KeyboardAvoidingView,
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
@@ -12,12 +10,10 @@ import {
 import { Button } from "react-native-paper";
 import {
   actions,
-  RichEditor,
   RichToolbar,
 } from "react-native-pell-rich-editor";
 import { StyleSheet, View } from "react-native";
-import { useWindowDimensions } from "react-native";
-import RenderHtml from "react-native-render-html";
+
 import { useState } from "react";
 import { COLORS, FONT, SIZES } from "@constants/theme";
 import TextInput from "@components/login/TextInput";
@@ -36,6 +32,7 @@ import provincesDistricts from "@data/data.json";
 import Step2FormPublishAd from "@components/userads/publishAd/Step2FormPublishAd";
 import * as ImagePicker from "expo-image-picker";
 import { useRef } from "react";
+import { StatusBar } from "expo-status-bar";
 
 const PublishAnAdUserAdsScreen = () => {
   const richText = useRef();
@@ -188,6 +185,7 @@ const PublishAnAdUserAdsScreen = () => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
+      <StatusBar/>
       <View>
         <View
           style={{

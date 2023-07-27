@@ -1,16 +1,13 @@
 import {
   Text,
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  RefreshControl,
+  View
 } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native";
 import { FlatList } from "react-native";
 import { COLORS, FONT, SIZES } from "@constants/theme";
 import { gql, useQuery } from "@apollo/client";
-import { useDispatch, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 import { useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { useEffect } from "react";
@@ -18,11 +15,11 @@ import AdCardUserScreen from "@components/user/ads/AdCardUserScreen";
 import ScreenLoader from "@components/loaders/ScreenLoader";
 import { Button, Modal, PaperProvider, Portal, Searchbar } from "react-native-paper";
 
-import CitySelectorUserAds from "@components/user/ads/CitySelectorUserAds";
 import CitySelectorUserAdsUserAdsScreen from "@components/userads/Ads/CitySelectorUserAdsUserAdsScreen";
 import axios from "axios";
 import { SelectList } from "react-native-dropdown-select-list";
 import { backendURL } from "@config/config";
+import { StatusBar } from "expo-status-bar";
 
 export const AllAdsUserAdsScreen = ({ navigation }) => {
   // const infoUser = useSelector((state) => state.user.infoUser);
@@ -63,7 +60,7 @@ export const AllAdsUserAdsScreen = ({ navigation }) => {
       Ads(
         where: { title: { like: $searchWord }, province: { like: $province } }
         page: $page
-        limit: 10
+        limit: 15
         sort: "-createdAt"
       ) {
         totalDocs
@@ -123,7 +120,7 @@ export const AllAdsUserAdsScreen = ({ navigation }) => {
       page,
       province: userLocationForAds ? userLocationForAds : "",
     },
-    fetchPolicy: "network-only",
+    fetchPolicy: "cache-and-network",
   });
 
   useEffect(() => {
@@ -143,7 +140,7 @@ export const AllAdsUserAdsScreen = ({ navigation }) => {
     return isLoading && !refreshing ? <ActivityIndicator /> : null;
   };
 
-  useEffect(() => {
+  useEffect(() => { 
     if (!loading) {
       setIsLoading(false);
     }
@@ -203,23 +200,9 @@ export const AllAdsUserAdsScreen = ({ navigation }) => {
         </Portal>
 
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
-      <View style={{ marginTop: 30 }}>
-        {/* <View style={{ marginTop: SIZES.medium, gap: SIZES.small }}>
-            <Text
-              style={{
-                paddingHorizontal: 20,
-                fontSize: SIZES.medium,
-                fontFamily: FONT.medium,
-                color: COLORS.gray800,
-                marginBottom: 10,
-              }}
-            >
-              Anuncios
-            </Text>
-          </View> */}
-      </View>
+      <StatusBar/>
+      <View style={{ marginHorizontal: 20, zIndex: 200, paddingBottom: 5,marginTop:68 }}>
 
-      <View style={{ marginHorizontal: 20, zIndex: 200, paddingBottom: 5 }}>
         <View style={{ flexDirection: "row", width: "100%" }}>
           <Searchbar
             elevation={4}
@@ -251,10 +234,10 @@ export const AllAdsUserAdsScreen = ({ navigation }) => {
       </View>
 
       <View style={{ flex: 1 }}>
-        {loading && !refreshing && page === 1 && (
+        {loading  && page === 1 && (
           <ScreenLoader loading={loading} />
         )}
-        {!loading && !refreshing && data.length === 0 && (
+        {!loading && data.length === 0 && (
           <Text
             style={{
               marginTop: 50,
