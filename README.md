@@ -1,7 +1,15 @@
 # Pasco Jobs - React Native
 
-<div align="center">
-  <img src="https://via.placeholder.com/300x600/4285F4/FFFFFF?text=Pasco+Jobs+App" alt="Pasco Jobs Mobile App Preview" />
+<div style="display: flex; flex-wrap: wrap; gap: 10px;">
+  <img src="preview/2.webp" alt="Screenshot 1" width="30%" />
+  <img src="preview/3.webp" alt="Screenshot 2" width="30%" />
+  <img src="preview/4.webp" alt="Screenshot 3" width="30%" />
+
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 10px;">
+  <img src="preview/5.webp" alt="Screenshot 1" width="30%" />
+  <img src="preview/6.webp" alt="Screenshot 2" width="30%" />
+
 </div>
 
 ## 📱 Overview
