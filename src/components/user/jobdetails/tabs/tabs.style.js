@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
     paddingVertical: SIZES.medium,
     paddingHorizontal: SIZES.xLarge,
     backgroundColor: name === activeTab ? COLORS.forth : "#F3F4F8",
-    borderRadius: SIZES.medium,
+    borderRadius: 8,
     marginLeft: 2,
     ...SHADOWS.medium,
     shadowColor: COLORS.white,
@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
   btnText: (name, activeTab) => ({
     fontFamily: "DMMedium",
     fontSize: SIZES.small,
-    color: name === activeTab ? COLORS.textIndigo : "#AAA9B8",
+    color: name === activeTab ? COLORS.textIndigo :COLORS.gray600,
   }),
 });
 

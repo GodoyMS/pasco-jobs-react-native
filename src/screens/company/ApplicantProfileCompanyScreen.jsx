@@ -213,7 +213,7 @@ const ApplicantProfileCompanyScreen = (props) => {
                 alignItems: "center",
                 marginTop: 40,
                 width: "100%",
-                marginHorizontal: 20,
+                paddingHorizontal: 20,
               }}
             >
               <Text

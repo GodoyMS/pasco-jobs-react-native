@@ -117,7 +117,7 @@ const CompanyProfileCompanyScreen = (props) => {
           <View style={{ flex: 1, marginTop: 70 }}>
          
 
-            <View style={{ flexDirection: "row", marginHorizontal: 15 }}>
+            <View style={{ flexDirection: "row", marginHorizontal: 15,columnGap:20  }}>
               <View style={{ flexDirection: "row", justifyContent: "flex-start" }}>
                 <TouchableOpacity onPress={() => setProfileVisible(true)}>
                   <Image
@@ -149,18 +149,20 @@ const CompanyProfileCompanyScreen = (props) => {
                     fontFamily: FONT.medium,
                     color: COLORS.gray900,
                     fontSize: SIZES.large,
-                    textAlign: "center",
+                    textAlign: "justify",
+                  
                   }}
                 >
-                  {data?.Employer?.name}
+                  {data?.Employer?.name} 
                 </Text>
                 <View
                   style={{
                     flexDirection: "row",
                     alignItems: "center",
-                    justifyContent: "center",
+                    justifyContent: "flex-start",
                     marginTop: 10,
-                    paddingLeft: 20,
+                    paddingLeft: 0,
+                    width:"100%"
                   }}
                 >
                   <Icon size={20} name="location" type="evilicon" />
@@ -169,7 +171,7 @@ const CompanyProfileCompanyScreen = (props) => {
                       fontFamily: FONT.medium,
                       color: COLORS.gray600,
                       fontSize: SIZES.small,
-                      textAlign: "center",
+                      textAlign: "justify",
                     }}
                   >
                     {data?.Employer?.province}-{data?.Employer?.district}

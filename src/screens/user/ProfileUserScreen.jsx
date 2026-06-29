@@ -322,7 +322,7 @@ export const ProfileUserScreen = ({ navigation }) => {
                         marginTop: 10,
                       }}
                     >
-                      Editar perfil
+                      Editar perfil y contacto
                     </Text>
                   </View>
                   <View>

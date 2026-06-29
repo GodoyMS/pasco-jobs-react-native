@@ -61,10 +61,10 @@ const Company = ({
               alignItems: "center",
             }}
           >
-            <Text style={{ fontFamily: FONT.regular, fontSize: SIZES.small }}>
+            <Text style={{ fontFamily: FONT.regular, fontSize: SIZES.small,color:COLORS.gray700 }}>
               {province} / {district}
             </Text>
-            <Icon name="location-pin" type="entypo" />
+            <Icon color={COLORS.gray700} name="location-pin" type="entypo" />
           </View>
         </View>
 
@@ -115,7 +115,7 @@ const Company = ({
             }}
           >
             <View>
-              <Text style={{ fontFamily: FONT.bold, fontSize: SIZES.large }}>
+              <Text style={{ fontFamily: FONT.medium, fontSize: SIZES.medium,marginBottom:5,color:COLORS.gray800}}>
                 {companyName}
               </Text>
               <Text

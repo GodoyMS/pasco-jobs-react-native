@@ -57,7 +57,7 @@ const CompanyProfileUserScreen = (props) => {
       }
     }
   `;
-  const { error, data,loading } = useQuery(GET_COMPANY, {
+  const { error, data, loading } = useQuery(GET_COMPANY, {
     variables: { employerId: params?.itemId ? params?.itemId : "" },
 
     fetchPolicy: "cache-and-network",
@@ -77,12 +77,11 @@ const CompanyProfileUserScreen = (props) => {
       .catch((error) => console.log("An error occurred", error));
   };
 
-  if (loading)
-    return <ScreenLoader loading={loading}/>
+  if (loading) return <ScreenLoader loading={loading} />;
   return (
     <PaperProvider>
       <SafeAreaView style={{ flex: 1 }}>
-        <StatusBar/>
+        <StatusBar />
         <SubmitCommentCompanyProfile
           active={isCommentActive}
           idCompany={params.itemId}
@@ -125,8 +124,15 @@ const CompanyProfileUserScreen = (props) => {
             Esta empresa no se encuentra disponible{" "}
           </Text>
         ) : (
-          <View style={{ flex: 1, marginTop: 70 }}>
-            <View style={{ flexDirection: "row", justifyContent: "flex-end",marginHorizontal:20,marginBottom:15 }}>
+          <View style={{ flex: 1, marginTop: 35 }}>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "flex-end",
+                marginHorizontal: 20,
+                marginBottom: 15,
+              }}
+            >
               <Button
                 onPress={() => setIsCommentActive(true)}
                 mode="contained"
@@ -145,8 +151,16 @@ const CompanyProfileUserScreen = (props) => {
               </Button>
             </View>
 
-            <View style={{ flexDirection: "row", marginHorizontal: 15 }}>
-              <View style={{ flexDirection: "row", justifyContent: "flex-start" }}>
+            <View
+              style={{
+                flexDirection: "row",
+                marginHorizontal: 15,
+                columnGap: 20,
+              }}
+            >
+              <View
+                style={{ flexDirection: "row", justifyContent: "flex-start" }}
+              >
                 <TouchableOpacity onPress={() => setProfileVisible(true)}>
                   <Image
                     source={
@@ -177,7 +191,7 @@ const CompanyProfileUserScreen = (props) => {
                     fontFamily: FONT.medium,
                     color: COLORS.gray900,
                     fontSize: SIZES.large,
-                    textAlign: "center",
+                    textAlign: "justify",
                   }}
                 >
                   {data?.Employer?.name}
@@ -186,9 +200,10 @@ const CompanyProfileUserScreen = (props) => {
                   style={{
                     flexDirection: "row",
                     alignItems: "center",
-                    justifyContent: "center",
+                    justifyContent: "flex-start",
                     marginTop: 10,
-                    paddingLeft: 20,
+                    paddingLeft: 0,
+                    width: "100%",
                   }}
                 >
                   <Icon size={20} name="location" type="evilicon" />
@@ -197,7 +212,7 @@ const CompanyProfileUserScreen = (props) => {
                       fontFamily: FONT.medium,
                       color: COLORS.gray600,
                       fontSize: SIZES.small,
-                      textAlign: "center",
+                      textAlign: "justify",
                     }}
                   >
                     {data?.Employer?.province}-{data?.Employer?.district}
@@ -207,18 +222,17 @@ const CompanyProfileUserScreen = (props) => {
             </View>
 
             <Tab
-              style={{ marginTop: 10}}
+              style={{ marginTop: 10 }}
               value={tab}
               onChange={(e) => setTab(e)}
               iconPosition="left"
-              
               indicatorStyle={{
                 backgroundColor: COLORS.tertiary,
                 height: 3,
               }}
             >
               <Tab.Item
-              style={{paddingHorizontal:20 }}
+                style={{ paddingHorizontal: 20 }}
                 title="La empresa"
                 titleStyle={(active) => {
                   return {
@@ -229,7 +243,7 @@ const CompanyProfileUserScreen = (props) => {
                 }}
                 icon={(active) => {
                   return {
-                    name: active ? "building": "building-o",
+                    name: active ? "building" : "building-o",
                     type: "font-awesome",
                     color: active ? COLORS.tertiary : COLORS.gray700,
                     size: 20,
@@ -247,7 +261,7 @@ const CompanyProfileUserScreen = (props) => {
                 }}
                 icon={(active) => {
                   return {
-                    name: active ? "comments" :"comments-o",
+                    name: active ? "comments" : "comments-o",
                     type: "font-awesome",
                     color: active ? COLORS.tertiary : COLORS.gray700,
                     size: 20,
@@ -265,7 +279,7 @@ const CompanyProfileUserScreen = (props) => {
                 }}
                 icon={(active) => {
                   return {
-                    name: active ? "work":"work-outline",
+                    name: active ? "work" : "work-outline",
                     type: "material",
                     color: active ? COLORS.tertiary : COLORS.gray700,
                     size: 20,
@@ -343,49 +357,53 @@ const CompanyProfileUserScreen = (props) => {
                             width: "100%",
                           }}
                         >
-                          <View
-                            style={{
-                              flexDirection: "row",
-                              width: "100%",
-                              alignItems: "center",
-                              columnGap: 5,
-                            }}
-                          >
-                            <Icon size={15} name="phone" type="material" />
-                            <Text
+                          {data?.Employer?.phone && (
+                            <View
                               style={{
-                                fontFamily: FONT.regular,
-                                fontSize: SIZES.small,
+                                flexDirection: "row",
+                                width: "100%",
+                                alignItems: "center",
+                                columnGap: 5,
                               }}
                             >
-                              {" "}
-                              {data?.Employer?.phone}
-                            </Text>
-                          </View>
+                              <Icon size={15} name="phone" type="material" />
+                              <Text
+                                style={{
+                                  fontFamily: FONT.regular,
+                                  fontSize: SIZES.small,
+                                }}
+                              >
+                                {" "}
+                                {data?.Employer?.phone}
+                              </Text>
+                            </View>
+                          )}
 
-                          <View
-                            style={{
-                              flexDirection: "row",
-                              width: "100%",
-                              alignItems: "center",
-                              columnGap: 5,
-                            }}
-                          >
-                            <Image
-                              source={whatsapp}
-                              style={{ width: 15, height: 15 }}
-                            />
-                            <Text
+                          {data?.Employer?.whatsapp && (
+                            <View
                               style={{
-                                fontFamily: FONT.regular,
-                                fontSize: SIZES.small,
+                                flexDirection: "row",
+                                width: "100%",
+                                alignItems: "center",
+                                columnGap: 5,
                               }}
                             >
-                              {" "}
-                              {data?.Employer?.whatsapp}
-                            </Text>
-                          </View>
-                          <View
+                              <Image
+                                source={whatsapp}
+                                style={{ width: 15, height: 15 }}
+                              />
+                              <Text
+                                style={{
+                                  fontFamily: FONT.regular,
+                                  fontSize: SIZES.small,
+                                }}
+                              >
+                                {" "}
+                                {data?.Employer?.whatsapp}
+                              </Text>
+                            </View>
+                          )}
+                          {data?.Employer?.contactEmail && <View
                             style={{
                               flexDirection: "row",
                               width: "100%",
@@ -406,7 +424,7 @@ const CompanyProfileUserScreen = (props) => {
                               {" "}
                               {data?.Employer?.contactEmail}
                             </Text>
-                          </View>
+                          </View>}
                         </View>
                       </View>
                     </>

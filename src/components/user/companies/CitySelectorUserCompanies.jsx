@@ -61,8 +61,8 @@ const CitySelectorUserCompanies = ({
             position: "absolute",
             top: 56,
             backgroundColor: COLORS.white,
-            borderBottomLeftRadius: 10,
-            borderBottomRightRadius: 10,
+            borderBottomLeftRadius: 5,
+            borderBottomRightRadius: 5,
             padding: 5,
             zIndex: 900,
             width:"100%",
@@ -70,12 +70,14 @@ const CitySelectorUserCompanies = ({
           }}
         >
           <TouchableOpacity
-            onPress={() => {
+            
+            onPress={userLocationForCompanies==="Pasco" ? ()=>setIsCityOpen(false):() => {
               setIsCityOpen(false);
               setData([]);
               setPage(1);
               dispatch(setUserLocationForCompanies("Pasco"));
             }}
+           
             style={{ paddingVertical: 15 }}
           >
             <Text
@@ -88,7 +90,7 @@ const CitySelectorUserCompanies = ({
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => {
+             onPress={userLocationForCompanies==="Oxapampa" ? ()=>setIsCityOpen(false):() => {
               setIsCityOpen(false);
               setData([]);
               setPage(1);
@@ -106,7 +108,7 @@ const CitySelectorUserCompanies = ({
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => {
+             onPress={userLocationForCompanies==="Daniel Alcides Carrión" ? ()=>setIsCityOpen(false):() => {
               setIsCityOpen(false);
               setData([]);
               setPage(1);

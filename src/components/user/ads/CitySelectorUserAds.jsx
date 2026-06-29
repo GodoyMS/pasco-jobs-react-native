@@ -22,31 +22,32 @@ const CitySelectorUserAds = ({
   const dispatch = useDispatch();
 
   return (
-    <View
-      style={{
-        backgroundColor: COLORS.white,
-        borderTopRightRadius: 20,
-        borderBottomRightRadius: isCityOpen ? 0 : 20,
-        width: 120,
-        height: 50,
-        elevation: 4,
-      }}
+    <TouchableOpacity
+    onPress={() => setIsCityOpen(!isCityOpen)}
+    activeOpacity={0.7}
+    style={{
+      backgroundColor: COLORS.white,
+      borderTopRightRadius: 20,
+      borderBottomRightRadius: isCityOpen ? 0 : 20,
+      width: 120,
+      height: 50,
+      elevation: 4,
+      flexDirection: "column",
+      justifyContent: "center",
+    }}
     >
-      <TouchableOpacity
-        onPress={() => setIsCityOpen(!isCityOpen)}
-        style={{
-          display: "flex",
-          height: "100%",
-          alignItems: "center",
-          justifyContent: "center",
-          flexDirection: "column",
-          columnGap: 4,
-          paddingLeft: 5,
-          paddingRight: 10,
-          
-        }}
+      <View
+          style={{
+            flexDirection: "row",
+            columnGap: 10,
+            flexWrap: "wrap",
+            height: "auto",
+            alignItems: "center",
+            justifyContent: "center",
+            paddingLeft: 3,
+            paddingRight: 3,
+          }}
       >
-        <Image style={{ width: 20, height: 20 }} source={icons.location} />
         <Text
           style={{
             fontFamily: FONT.regular,
@@ -57,7 +58,9 @@ const CitySelectorUserAds = ({
         >
           {userLocationForAds ? userLocationForAds : "Ciudad"}
         </Text>
-      </TouchableOpacity>
+        <Image style={{ width: 20, height: 20 }} source={icons.location} />
+
+      </View>
       {isCityOpen && (
         <View
           style={{
@@ -73,7 +76,7 @@ const CitySelectorUserAds = ({
           }}
         >
           <TouchableOpacity
-            onPress={() => {
+            onPress={userLocationForAds==="Pasco" ? ()=>setIsCityOpen(false): () => {
               setIsCityOpen(false);
               setData([]);
               setPage(1);
@@ -91,7 +94,7 @@ const CitySelectorUserAds = ({
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => {
+            onPress={userLocationForAds==="Oxapampa" ? ()=>setIsCityOpen(false): () => {
               setIsCityOpen(false);
               setData([]);
               setPage(1);
@@ -109,7 +112,7 @@ const CitySelectorUserAds = ({
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={!userLocationForAds ?()=>void(null) :  () => {
+            onPress={userLocationForAds==="Daniel Alcides Carrión" ? ()=>setIsCityOpen(false): () => {
               setIsCityOpen(false);
               setData([]);
               setPage(1);
@@ -146,7 +149,7 @@ const CitySelectorUserAds = ({
           </TouchableOpacity>
         </View>
       )}
-    </View>
+    </TouchableOpacity>
   );
 };
 

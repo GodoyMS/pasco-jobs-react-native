@@ -24,6 +24,8 @@ const Step2Form = ({
   setProvinceError,
   province,
   setProvince,
+  phone,
+  setPhone,
   sex,
   setSex,
 }) => {
@@ -31,8 +33,6 @@ const Step2Form = ({
   // const [selectedDistrict, setSelectedDistrict] = useState(null);
   // const [valueProvince, setValueProvince] = useState(null);
   // const [valueDistrict, setValueDistric] = useState(null);
-
-
 
   // const handleObjectChange = (value) => {
   //   const selected = provinces.find((obj) => obj.name === value);
@@ -192,7 +192,7 @@ const Step2Form = ({
         onChangeText={(text) => setPosition({ value: text, error: "" })}
         error={!!position.error}
         errorText={position.error}
-        autoCapitalize="none"
+        autoCapitalize="sentences"
         textContentType="jobTitle"
         keyboardType="default"
       />
@@ -207,7 +207,7 @@ const Step2Form = ({
         onChangeText={(text) => setDescription({ value: text, error: "" })}
         error={!!description.error}
         errorText={description.error}
-        autoCapitalize="none"
+        autoCapitalize="sentences"
         keyboardType="default"
       />
       <TextInput
@@ -219,6 +219,16 @@ const Step2Form = ({
         onChangeText={(text) => setAge({ value: text, error: "" })}
         error={!!age.error}
         errorText={age.error}
+        autoCapitalize="none"
+      />
+
+      <TextInput
+        keyboardType="numeric"
+        label="Numero de contacto "
+        returnKeyType="next"
+        placeholder=""
+        value={phone}
+        onChangeText={(text) => setPhone(text)}
         autoCapitalize="none"
       />
       <View

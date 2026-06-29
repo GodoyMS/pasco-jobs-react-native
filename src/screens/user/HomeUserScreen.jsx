@@ -41,6 +41,7 @@ import {
 import ScreenLoader from "@components/loaders/ScreenLoader";
 import { SelectList } from "react-native-dropdown-select-list";
 import { StatusBar } from "expo-status-bar";
+import CitySelectorHomeJobs from "@components/user/home/CitySelectorHomeJobs";
 
 export const HomeUserScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -158,23 +159,23 @@ export const HomeUserScreen = ({ navigation }) => {
     setValueWorkShift(null);
   };
 
-  useEffect(() => {
-    const checkTokenExpiration = async () => {
-      const remainingTimeExpToken = tokenExpTime * 1000 - Date.now();
+  // useEffect(() => {
+  //   const checkTokenExpiration = async () => {
+  //     const remainingTimeExpToken = tokenExpTime * 1000 - Date.now();
 
-      if (remainingTimeExpToken <= 0) {
-        try {
-          dispatch(clearUser());
-          navigation.popToTop();
-        } catch (error) {
-          navigation.popToTop();
-        }
-      }
-    };
-    checkTokenExpiration(); // Check the token expiration on component mount
-    const interval = setInterval(checkTokenExpiration, 1000); // Check token expiration periodically (e.g., every minute)
-    return () => clearInterval(interval); //
-  }, [tokenExpTime]);
+  //     if (remainingTimeExpToken <= 0) {
+  //       try {
+  //         dispatch(clearUser());
+  //         navigation.popToTop();
+  //       } catch (error) {
+  //         navigation.popToTop();
+  //       }
+  //     }
+  //   };
+  //   checkTokenExpiration(); // Check the token expiration on component mount
+  //   const interval = setInterval(checkTokenExpiration, 1000); // Check token expiration periodically (e.g., every minute)
+  //   return () => clearInterval(interval); //
+  // }, [tokenExpTime]);
 
   const filterActions = [
     {
@@ -422,6 +423,7 @@ export const HomeUserScreen = ({ navigation }) => {
                 style={{ flex: 1,backgroundColor:COLORS.white }}
                 outlineColor={COLORS.tertiary}
                 textColor={COLORS.gray700}
+                activeOutlineColor={COLORS.tertiary}
               
                 keyboardType="numeric"
                 mode="outlined"
@@ -555,129 +557,9 @@ export const HomeUserScreen = ({ navigation }) => {
               placeholder="Buscar puestos de trabajo"
               placeholderTextColor={COLORS.gray}
             />
-            <TouchableOpacity
-                onPress={() => setIsCityOpen(!isCityOpen)}
-                activeOpacity={0.7}
-              style={{
-                backgroundColor: COLORS.white,
-                borderTopRightRadius: 20,
-                borderBottomRightRadius: isCityOpen ? 0: 20,
-                width: 120,
-                height: 50,
-                elevation: 4,
-              }}
-            >
-              <View
-                style={{
-                  display: "flex",
-                  height: "auto",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexDirection: "column",
-                  columnGap: 4,
-                  paddingLeft: 5,
-                  paddingRight: 10,
-                }}
-              >
-                <Text
-                  style={{
-                    fontFamily: FONT.regular,
-                    fontSize: SIZES.small,
-                    borderTopRightRadius: 20,
-                    color: COLORS.gray500,
-                  }}
-                >
-                  {userLocation ? userLocation : "Ciudad"}
-                </Text>
-                <Image
-                  style={{ width: 20, height: 20 }}
-                  source={icons.location}
-                />
-              </View>
-              {isCityOpen && (
-                <View
-                  style={{
-                    position: "absolute",
-                    top: 56,
-                    backgroundColor: COLORS.white,
-                    borderBottomLeftRadius: 20,
-                    borderBottomRightRadius: 20,
-                    padding: 5,
-                    width:"100%",
-                    elevation:4
-                  }}
-                >
-                  <TouchableOpacity
-                    onPress={() => {
-                      setIsCityOpen(false);
-                      dispatch(setUserLocation("Pasco"));
-                      setPage(1);
-                    }}
-                    style={{ paddingVertical: 15 }}
-                  >
-                    <Text
-                      style={{
-                        fontFamily: FONT.regular,
-                        fontSize: SIZES.small,
-                      }}
-                    >
-                      Pasco
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setIsCityOpen(false);
-                      dispatch(setUserLocation("Oxapampa"));
-                      setPage(1);
-                    }}
-                    style={{ paddingVertical: 15 }}
-                  >
-                    <Text
-                      style={{
-                        fontFamily: FONT.regular,
-                        fontSize: SIZES.small,
-                      }}
-                    >
-                      Oxapampa
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setIsCityOpen(false);
-                      setPage(1);
-                      dispatch(setUserLocation("Daniel Alcides Carrión"));
-                    }}
-                    style={{ paddingVertical: 15 }}
-                  >
-                    <Text
-                      style={{
-                        fontFamily: FONT.regular,
-                        fontSize: SIZES.small,
-                      }}
-                    >
-                      Daniel A. Carrión
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={() => {
-                      setIsCityOpen(false);
-                      dispatch(cleanUserLocation());
-                      setPage(1);
-                    }}
-                    style={{ paddingVertical: 15 }}
-                  >
-                    <Text
-                      style={{
-                        fontFamily: FONT.regular,
-                        fontSize: SIZES.small,
-                      }}
-                    >
-                      Todas las ciudades
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-            </TouchableOpacity>
+            <CitySelectorHomeJobs  setPage={setPage}
+            setIsCityOpen={setIsCityOpen}
+            isCityOpen={isCityOpen}/>
 
       
           </View>

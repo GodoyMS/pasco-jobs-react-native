@@ -4,6 +4,8 @@ import {
   View,
   TouchableOpacity,
   RefreshControl,
+  Image,
+  Dimensions,
 } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native";
@@ -17,6 +19,7 @@ import { useEffect } from "react";
 import AdCardUserScreen from "@components/user/ads/AdCardUserScreen";
 import ScreenLoader from "@components/loaders/ScreenLoader";
 import { Button, Modal, PaperProvider, Portal, Searchbar } from "react-native-paper";
+import defaultAdUser from "@assets/userads/userdefault.png";
 
 import CitySelectorUserAds from "@components/user/ads/CitySelectorUserAds";
 import axios from "axios";
@@ -38,6 +41,11 @@ export const AdsUserScreen = ({ navigation }) => {
   const [isCityOpen, setIsCityOpen] = useState(false);
   const[currentAdId,setCurrentAdId]=useState("")
   const[reportReason,setReportReason]=useState("")
+  
+  const[currentImage,setCurrentImage]=useState("")
+  const[profileVisible,setProfileVisible]=useState("")
+
+  
   const [isSendingReportLoading, setIsSendindReportLoading] = useState(false);
   const [isReportSucces, setIsReportSuccess] = useState(false);
   const[isReportActive,setIsReportActive]=useState(false)
@@ -202,6 +210,38 @@ export const AdsUserScreen = ({ navigation }) => {
             
           </Modal>
         </Portal>
+
+        {/*VIEW PROFILE */}
+        <Portal>
+          <Modal
+            style={{ backgroundColor: COLORS.black }}
+            visible={profileVisible}
+            onDismiss={() => setProfileVisible(false)}
+          >
+            <Image
+              source={
+                currentImage
+                  ? {
+                      uri: currentImage,
+                    }
+                  : defaultAdUser
+              }
+              style={{
+                width: Dimensions.get("window").width,
+                height: "auto",
+                aspectRatio: "1/1",
+
+                resizeMode: "cover",
+                borderRadius: 0,
+              }}
+            />
+          </Modal>
+        </Portal>
+
+
+
+
+
         <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
           <StatusBar/>
       <View style={{ marginTop: 35 }}>
@@ -273,7 +313,7 @@ export const AdsUserScreen = ({ navigation }) => {
           showsVerticalScrollIndicator={false}
           keyExtractor={(item, index) => item.id.toString()}
           showsHorizontalScrollIndicator={false}
-          renderItem={({ item }) => <AdCardUserScreen setCurrentAdId={setCurrentAdId} setIsReportActive={setIsReportActive}  dataAds={item} />}
+          renderItem={({ item }) => <AdCardUserScreen setCurrentImage={setCurrentImage} setProfileVisible={setProfileVisible} setCurrentAdId={setCurrentAdId} setIsReportActive={setIsReportActive}  dataAds={item} />}
           onEndReached={fetchData} // Trigger fetching more data when reaching the end
           onEndReachedThreshold={0.6} // Adjust the threshold as needed
           ListFooterComponent={renderFooter}

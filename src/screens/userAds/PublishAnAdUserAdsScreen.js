@@ -8,10 +8,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Button } from "react-native-paper";
-import {
-  actions,
-  RichToolbar,
-} from "react-native-pell-rich-editor";
+import { actions, RichToolbar } from "react-native-pell-rich-editor";
 import { StyleSheet, View } from "react-native";
 
 import { useState } from "react";
@@ -33,16 +30,18 @@ import Step2FormPublishAd from "@components/userads/publishAd/Step2FormPublishAd
 import * as ImagePicker from "expo-image-picker";
 import { useRef } from "react";
 import { StatusBar } from "expo-status-bar";
+import { useNavigation } from "@react-navigation/native";
+import { gql, useQuery } from "@apollo/client";
 
 const PublishAnAdUserAdsScreen = () => {
   const richText = useRef();
-  const userads = useSelector((state) => state.userads.infoUserAds);
+  const infoUserAds = useSelector((state) => state.userads.infoUserAds);
 
   const [stepForm, setStepForm] = useState(1);
 
   const [title, setTitle] = useState({ value: "", error: "" });
   const [description, setDescription] = useState({
-    value: "<p>Escribe una descripción de tu anuncio</p>",
+    value: "",
     error: "",
   });
 
@@ -68,6 +67,7 @@ const PublishAnAdUserAdsScreen = () => {
     setAspectRatio(width / height);
   };
 
+  const navigation = useNavigation();
   const resetAllValues = () => {
     setTitle({ value: "", error: "" });
     setDescription({ value: "", error: "" });
@@ -125,7 +125,7 @@ const PublishAnAdUserAdsScreen = () => {
     await axios
       .post(`${backendURL}api/ads`, {
         title: title.value,
-        author: userads.id,
+        author: infoUserAds?.id,
         description: description.value,
         province: province.toString(),
         district: district.toString(),
@@ -183,16 +183,29 @@ const PublishAnAdUserAdsScreen = () => {
       .finally(() => setIsUploadingImageLoading(false));
   };
 
+  const GET_ALL_APPLICANTS_COMPANY_SCREEN = gql`
+    query GET_ALL_APPLICANTS_COMPANY_SCREEN {
+      Applicants {
+        totalDocs
+      }
+    }
+  `;
+
+  const { data: dataApplicants } = useQuery(
+    GET_ALL_APPLICANTS_COMPANY_SCREEN,
+    {}
+  );
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
-      <StatusBar/>
+      <StatusBar />
       <View>
         <View
           style={{
             marginTop: 40,
           }}
         >
-          {userads && stepForm == 1 && (
+          {infoUserAds && stepForm == 1 && (
             <View
               style={{
                 height: "100%",
@@ -200,6 +213,33 @@ const PublishAnAdUserAdsScreen = () => {
                 justifyContent: "center",
               }}
             >
+              {dataApplicants && dataApplicants?.Applicants && (
+                <View
+                  style={{
+                    paddingHorizontal: 20,
+                    paddingBottom: 20,
+                    width: "100%",
+                    flexDirection:"row"
+                  }}
+                >
+                  <View>
+                    <Text
+                      style={{
+                        fontFamily: FONT.bold,
+                        fontSize: SIZES.small,
+                        color: COLORS.tertiary,
+                        backgroundColor: "#4338ca33",
+                        paddingHorizontal:10,
+                        paddingVertical:5,
+                        borderRadius:50
+                      }}
+                    >
+                      Usurios activos:
+                      {dataApplicants?.Applicants?.totalDocs + 100}
+                    </Text>
+                  </View>
+                </View>
+              )}
               <View
                 style={{ flexDirection: "column", justifyContent: "center" }}
               >
@@ -240,13 +280,88 @@ const PublishAnAdUserAdsScreen = () => {
                     placeholder="Escribe un  título breve y conciso"
                   />
                 </View>
-                <View style={{flexDirection:"row",justifyContent:"flex-end"}}>
-                  <View style={{width:"50%",marginRight:20}}>
-                  <Text style={{fontFamily:FONT.regular,fontSize:SIZES.xSmall,color:COLORS.tertiary,textAlign:"right",marginBottom:30}}><Text style={{fontFamily:FONT.medium}}>Tip: </Text>Coloca palabras clave para posicionarte en el motor de búsqueda de Pasco Jobs</Text>
-
-
+                <View
+                  style={{ flexDirection: "row", justifyContent: "flex-end" }}
+                >
+                  <View style={{ width: "50%", marginRight: 20 }}>
+                    <Text
+                      style={{
+                        fontFamily: FONT.regular,
+                        fontSize: SIZES.xSmall,
+                        color: COLORS.tertiary,
+                        textAlign: "right",
+                        marginBottom: 30,
+                      }}
+                    >
+                      <Text style={{ fontFamily: FONT.medium }}>Tip: </Text>
+                      Coloca palabras clave para posicionarte en el motor de
+                      búsqueda de Pasco Jobs
+                    </Text>
                   </View>
                 </View>
+
+                {infoUserAds && (
+                  <>
+                    {!infoUserAds?.phone ||
+                      (!infoUserAds?.whatsapp && (
+                        <View
+                          style={{
+                            flexDirection: "row",
+                            justifyContent: "center",
+                            paddingHorizontal: 10,
+                            columnGap: 20,
+                            paddingBottom: 30,
+                            width: "100%",
+                          }}
+                        >
+                          <View
+                            style={{
+                              backgroundColor: COLORS.red50,
+                              borderRadius: 50,
+
+                              padding: 5,
+                            }}
+                          >
+                            <Text
+                              style={{
+                                fontFamily: FONT.regular,
+                                fontSize: SIZES.xSmall,
+                                color: COLORS.red800,
+                                textAlign: "justify",
+                              }}
+                            >
+                              Tu información de contacto esta incompleto
+                            </Text>
+                          </View>
+
+                          <View>
+                            <TouchableOpacity
+                              onPress={() =>
+                                navigation.navigate(
+                                  "EditUserAdsAccountProfileScreen"
+                                )
+                              }
+                            >
+                              <Text
+                                style={{
+                                  fontFamily: FONT.regular,
+                                  fontSize: SIZES.xSmall,
+                                  color: COLORS.tertiary,
+                                  textAlign: "center",
+                                  textDecorationLine: "underline",
+                                  textDecorationColor: COLORS.blue700,
+                                }}
+                              >
+                                {" "}
+                                Actualizar
+                              </Text>
+                            </TouchableOpacity>
+                          </View>
+                        </View>
+                      ))}
+                  </>
+                )}
+
                 <View
                   style={{ flexDirection: "row", justifyContent: "center" }}
                 >
@@ -285,7 +400,7 @@ const PublishAnAdUserAdsScreen = () => {
             </View>
           )}
 
-          {userads && stepForm === 2 && (
+          {infoUserAds && stepForm === 2 && (
             <View style={{ marginTop: 50 }}>
               <RichToolbar
                 style={{ backgroundColor: COLORS.tertiary }}
@@ -302,7 +417,7 @@ const PublishAnAdUserAdsScreen = () => {
                   actions.insertOrderedList,
                 ]}
               />
-              <View >
+              <View>
                 <Step2FormPublishAd
                   richText={richText}
                   description={description}
@@ -392,7 +507,7 @@ const PublishAnAdUserAdsScreen = () => {
             </View>
           )}
 
-          {userads && stepForm === 3 && (
+          {infoUserAds && stepForm === 3 && (
             <ScrollView
               showsVerticalScrollIndicator={false}
               scrollEnabled={true}

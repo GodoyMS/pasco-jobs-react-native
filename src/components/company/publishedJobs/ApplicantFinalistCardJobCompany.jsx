@@ -20,7 +20,6 @@ import { backendURL } from "@config/config";
 import { useNavigation } from "@react-navigation/native";
 import { Buffer } from "buffer";
 
-import * as DocumentPicker from "expo-document-picker";
 import * as FileSystem from "expo-file-system";
 import { StorageAccessFramework } from "expo-file-system";
 

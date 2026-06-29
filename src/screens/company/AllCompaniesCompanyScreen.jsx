@@ -187,7 +187,7 @@ export const AllCompaniesCompanyScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
       <StatusBar/>
-      <View style={{ marginHorizontal: 20, zIndex: 999, marginTop: 50 }}>
+      <View style={{ marginHorizontal: 20, zIndex: 999, marginTop: 60 }}>
         <Text
           style={{
             fontFamily: FONT.medium,

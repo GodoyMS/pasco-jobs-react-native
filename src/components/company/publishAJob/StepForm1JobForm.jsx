@@ -32,7 +32,7 @@ const StepForm1JobForm = ({
   const [workExperiences, setWorkExperiences] = useState([]);
 
   useEffect(() => {
-    axios.get(`${backendURL}api/categories`).then(({ data }) =>
+    axios.get(`${backendURL}api/categories?limit=30`).then(({ data }) =>
       setCategories(
         data.docs.map((e) => {
           return { key: e.id, value: e.name };
@@ -100,8 +100,10 @@ const StepForm1JobForm = ({
         
         <View scrollEnabled={false} style={{ marginVertical: 10 }}>
           <SelectList
+            maxHeight={200}
             setSelected={(val) => setSelectedCategory(val)}
             data={categories}
+            notFoundText="No se encontro esta categoría"
             placeholder="Categoría"
             search={true}
             save="key"

@@ -1,19 +1,24 @@
-import {
-  Text,
-  View
-} from "react-native";
+import { Dimensions, Image, Text, View } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native";
 import { FlatList } from "react-native";
 import { COLORS, FONT, SIZES } from "@constants/theme";
 import { gql, useQuery } from "@apollo/client";
-import {  useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { useEffect } from "react";
 import AdCardUserScreen from "@components/user/ads/AdCardUserScreen";
 import ScreenLoader from "@components/loaders/ScreenLoader";
-import { Button, Modal, PaperProvider, Portal, Searchbar } from "react-native-paper";
+import defaultAdUser from "@assets/userads/userdefault.png";
+
+import {
+  Button,
+  Modal,
+  PaperProvider,
+  Portal,
+  Searchbar,
+} from "react-native-paper";
 
 import CitySelectorUserAdsUserAdsScreen from "@components/userads/Ads/CitySelectorUserAdsUserAdsScreen";
 import axios from "axios";
@@ -27,29 +32,32 @@ export const AllAdsUserAdsScreen = ({ navigation }) => {
     (state) => state.userads.userAdsLocationForAds
   );
 
-  const userAdsInfo=useSelector((state)=>state.userads.infoUserAds)
+  const userAdsInfo = useSelector((state) => state.userads.infoUserAds);
   const [data, setData] = useState([]); // Array to store the fetched data
   const [page, setPage] = useState(1); // Current page number
   const [isLoading, setIsLoading] = useState(false);
   const [searchWord, setSearchWord] = useState("");
   const [isCityOpen, setIsCityOpen] = useState(false);
-  const[currentAdId,setCurrentAdId]=useState("")
-  const[reportReason,setReportReason]=useState("")
+  const [currentAdId, setCurrentAdId] = useState("");
+  const [reportReason, setReportReason] = useState("");
   const [isSendingReportLoading, setIsSendindReportLoading] = useState(false);
   const [isReportSucces, setIsReportSuccess] = useState(false);
-  const[isReportActive,setIsReportActive]=useState(false)
+  const [isReportActive, setIsReportActive] = useState(false);
   const sendJobReport = async () => {
-    setIsSendindReportLoading(true)
-    await axios.post(`${backendURL}api/adsReportsByUserAds`, {
-      ad: currentAdId,
-      user: userAdsInfo?.id ? userAdsInfo?.id : "",
-      reason: reportReason,
-    })
-    .then(()=>setIsReportSuccess(true))
-    .catch(()=>void(null))
-    .finally(()=>setIsSendindReportLoading(false))
+    setIsSendindReportLoading(true);
+    await axios
+      .post(`${backendURL}api/adsReportsByUserAds`, {
+        ad: currentAdId,
+        user: userAdsInfo?.id ? userAdsInfo?.id : "",
+        reason: reportReason,
+      })
+      .then(() => setIsReportSuccess(true))
+      .catch(() => void null)
+      .finally(() => setIsSendindReportLoading(false));
   };
 
+  const [currentImage, setCurrentImage] = useState("");
+  const [profileVisible, setProfileVisible] = useState("");
 
   const GET_ALL_ADS_BY_USER = gql`
     query GET_ALL_ADS_USER_SCREEN(
@@ -140,7 +148,7 @@ export const AllAdsUserAdsScreen = ({ navigation }) => {
     return isLoading && !refreshing ? <ActivityIndicator /> : null;
   };
 
-  useEffect(() => { 
+  useEffect(() => {
     if (!loading) {
       setIsLoading(false);
     }
@@ -160,13 +168,60 @@ export const AllAdsUserAdsScreen = ({ navigation }) => {
 
   return (
     <PaperProvider>
+
+       {/*VIEW PROFILE */}
        <Portal>
           <Modal
-            visible={isReportActive}
-            onDismiss={() => {setIsReportSuccess(false);setIsReportActive(false)}}
+            style={{ backgroundColor: COLORS.black }}
+            visible={profileVisible}
+            onDismiss={() => setProfileVisible(false)}
           >
-            <View style={{backgroundColor:COLORS.white,marginHorizontal:20,paddingHorizontal:20,paddingVertical:40,borderRadius:10}}>
-            <Text style={{fontFamily:FONT.bold,fontSize:SIZES.large,color:COLORS.gray800,marginBottom:20}}>¿Porque deseas reportar este anuncio?</Text>
+            <Image
+              source={
+                currentImage
+                  ? {
+                      uri: currentImage,
+                    }
+                  : defaultAdUser
+              }
+              style={{
+                width: Dimensions.get("window").width,
+                height: "auto",
+                aspectRatio: "1/1",
+
+                resizeMode: "cover",
+                borderRadius: 0,
+              }}
+            />
+          </Modal>
+        </Portal>
+      <Portal>
+        <Modal
+          visible={isReportActive}
+          onDismiss={() => {
+            setIsReportSuccess(false);
+            setIsReportActive(false);
+          }}
+        >
+          <View
+            style={{
+              backgroundColor: COLORS.white,
+              marginHorizontal: 20,
+              paddingHorizontal: 20,
+              paddingVertical: 40,
+              borderRadius: 10,
+            }}
+          >
+            <Text
+              style={{
+                fontFamily: FONT.bold,
+                fontSize: SIZES.large,
+                color: COLORS.gray800,
+                marginBottom: 20,
+              }}
+            >
+              ¿Porque deseas reportar este anuncio?
+            </Text>
             <SelectList
               setSelected={(val) => setReportReason(val)}
               data={[
@@ -179,96 +234,131 @@ export const AllAdsUserAdsScreen = ({ navigation }) => {
                 { key: 4, value: "Solicitan dinero" },
                 {
                   key: 5,
-                  value: "Repiten el mismo anuncio"}
-              
-                  
-             
+                  value: "Repiten el mismo anuncio",
+                },
               ]}
               placeholder="Motivo de denuncia"
-              search={false}              
+              search={false}
               save="value"
             />
-            {isSendingReportLoading && <ActivityIndicator style={{marginTop:20}}/>}
-            <Button onPress={(isReportSucces || isSendingReportLoading ) ? ()=>void(null) :sendJobReport } style={{backgroundColor:isReportSucces? COLORS.green300: COLORS.tertiary,marginTop:20,borderRadius:10}} textColor="white" mode="elevated" >
-              { isReportSucces ? "Enviado enviado" : "Enviar"}
-              </Button>
-              {isReportSucces && <Text style={{fontFamily:FONT.regular,fontSize:SIZES.small,color:COLORS.gray900,textAlign:"center",marginTop:15}}>Gracias por ayudarnos a mejorar la plataforma</Text>}
+            {isSendingReportLoading && (
+              <ActivityIndicator style={{ marginTop: 20 }} />
+            )}
+            <Button
+              onPress={
+                isReportSucces || isSendingReportLoading
+                  ? () => void null
+                  : sendJobReport
+              }
+              style={{
+                backgroundColor: isReportSucces
+                  ? COLORS.green300
+                  : COLORS.tertiary,
+                marginTop: 20,
+                borderRadius: 10,
+              }}
+              textColor="white"
+              mode="elevated"
+            >
+              {isReportSucces ? "Enviado enviado" : "Enviar"}
+            </Button>
+            {isReportSucces && (
+              <Text
+                style={{
+                  fontFamily: FONT.regular,
+                  fontSize: SIZES.small,
+                  color: COLORS.gray900,
+                  textAlign: "center",
+                  marginTop: 15,
+                }}
+              >
+                Gracias por ayudarnos a mejorar la plataforma
+              </Text>
+            )}
+          </View>
+        </Modal>
+      </Portal>
 
-            </View>
-            
-          </Modal>
-        </Portal>
+      <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
+        <StatusBar />
+        <View
+          style={{
+            marginHorizontal: 20,
+            zIndex: 200,
+            paddingBottom: 5,
+            marginTop: 68,
+          }}
+        >
+          <View style={{ flexDirection: "row", width: "100%" }}>
+            <Searchbar
+              elevation={4}
+              value={searchWord}
+              onChangeText={handleChangeSearchWord}
+              placeholderTextColor={COLORS.gray700}
+              inputStyle={{ fontFamily: FONT.regular, fontSize: SIZES.small }}
+              placeholder="Buscar anuncios"
+              mode="bar"
+              style={{
+                backgroundColor: COLORS.white,
+                flex: 1,
+                borderTopLeftRadius: 20,
+                borderBottomLeftRadius: 20,
+                borderTopRightRadius: 0,
+                borderBottomRightRadius: 0,
+                height: 50,
+                alignItems: "center",
+              }}
+            />
+            <CitySelectorUserAdsUserAdsScreen
+              refetch={refetch}
+              setPage={setPage}
+              setIsCityOpen={setIsCityOpen}
+              isCityOpen={isCityOpen}
+              setData={setData}
+            />
+          </View>
+        </View>
 
-    <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.primary }}>
-      <StatusBar/>
-      <View style={{ marginHorizontal: 20, zIndex: 200, paddingBottom: 5,marginTop:68 }}>
-
-        <View style={{ flexDirection: "row", width: "100%" }}>
-          <Searchbar
-            elevation={4}
-            value={searchWord}
-            onChangeText={handleChangeSearchWord}
-            placeholderTextColor={COLORS.gray700}
-            inputStyle={{ fontFamily: FONT.regular, fontSize: SIZES.small }}
-            placeholder="Buscar anuncios"
-            mode="bar"
-            style={{
-              backgroundColor: COLORS.white,
-              flex: 1,
-              borderTopLeftRadius: 20,
-              borderBottomLeftRadius: 20,
-              borderTopRightRadius: 0,
-              borderBottomRightRadius: 0,
-              height: 50,
-              alignItems: "center",
-            }}
-          />
-          <CitySelectorUserAdsUserAdsScreen
-            refetch={refetch}
-            setPage={setPage}
-            setIsCityOpen={setIsCityOpen}
-            isCityOpen={isCityOpen}
-            setData={setData}
+        <View style={{ flex: 1 }}>
+          {loading && page === 1 && <ScreenLoader loading={loading} />}
+          {!loading && data.length === 0 && (
+            <Text
+              style={{
+                marginTop: 50,
+                textAlign: "center",
+                fontFamily: FONT.regular,
+              }}
+            >
+              No se encontraron resultados
+            </Text>
+          )}
+          <FlatList
+            // refreshControl={
+            //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            // }
+            contentContainerStyle={{ paddingBottom: 100 }}
+            style={{ flex: 1 }}
+            data={data}
+            showsVerticalScrollIndicator={false}
+            keyExtractor={(item, index) => item.id.toString()}
+            showsHorizontalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <AdCardUserScreen
+                setCurrentImage={setCurrentImage}
+                setProfileVisible={setProfileVisible}
+                setCurrentAdId={setCurrentAdId}
+                setIsReportActive={setIsReportActive}
+                dataAds={item}
+              />
+            )}
+            onEndReached={fetchData} // Trigger fetching more data when reaching the end
+            onEndReachedThreshold={0.6} // Adjust the threshold as needed
+            ListFooterComponent={renderFooter}
           />
         </View>
-      </View>
-
-      <View style={{ flex: 1 }}>
-        {loading  && page === 1 && (
-          <ScreenLoader loading={loading} />
-        )}
-        {!loading && data.length === 0 && (
-          <Text
-            style={{
-              marginTop: 50,
-              textAlign: "center",
-              fontFamily: FONT.regular,
-            }}
-          >
-            No se encontraron resultados
-          </Text>
-        )}
-        <FlatList
-          // refreshControl={
-          //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          // }
-          contentContainerStyle={{ paddingBottom: 100 }}
-          style={{ flex: 1 }}
-          data={data}
-          showsVerticalScrollIndicator={false}
-          keyExtractor={(item, index) => item.id.toString()}
-          showsHorizontalScrollIndicator={false}
-          renderItem={({ item }) => <AdCardUserScreen setCurrentAdId={setCurrentAdId} setIsReportActive={setIsReportActive} dataAds={item} />}
-          onEndReached={fetchData} // Trigger fetching more data when reaching the end
-          onEndReachedThreshold={0.6} // Adjust the threshold as needed
-          ListFooterComponent={renderFooter}
-        />
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
     </PaperProvider>
-
   );
 };
-
 
 export default AllAdsUserAdsScreen;

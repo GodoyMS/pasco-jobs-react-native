@@ -61,7 +61,8 @@ const JobCard = React.memo(({ dataJob, userId }) => {
       <View
         style={{
           paddingHorizontal: 20,
-          paddingVertical: 20,
+          paddingBottom: 8,
+          paddingTop:15,
           borderRadius: 10,
           marginVertical: 5,
           marginHorizontal: 0,
@@ -70,37 +71,6 @@ const JobCard = React.memo(({ dataJob, userId }) => {
           elevation: 3,
         }}
       >
-        <View style={stylesHome.containerOneCardJob}>
-          {showMessage && (
-            <Text style={styles.message}>Añadido a favoritos</Text>
-          )}
-
-          <View style={{ flexDirection: "row", columnGap: 10 }}>
-            {/* <TouchableOpacity>
-              <Icon name="flag" type="ionicons" color={COLORS.secondary} />
-            </TouchableOpacity> */}
-            {isAddedToFav ? (
-              <View>
-                <Icon name="favorite" type="material" color={COLORS.red600} />
-              </View>
-            ) : (
-              <TouchableOpacity
-                disabled={isSaveLoading}
-                onPress={handleAddFavoriteJob}
-              >
-                {isSaveLoading ? (
-                  <ActivityIndicator />
-                ) : (
-                  <Icon
-                    name="favorite-border"
-                    type="material"
-                    color={COLORS.secondary}
-                  />
-                )}
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
         <View
           style={{
             paddingHorizontal: 0,
@@ -159,10 +129,10 @@ const JobCard = React.memo(({ dataJob, userId }) => {
           </View>
         </View>
 
-        <View style={{ marginTop: 20 }}>
+        <View style={{ marginTop: 10 }}>
           <View style={stylesHome.containerOneCardJobView2}>
             <Text style={stylesHome.containerOneCardJobView2Text1}>
-              {dataJob.title} 
+              {dataJob.title}
             </Text>
           </View>
         </View>
@@ -180,46 +150,59 @@ const JobCard = React.memo(({ dataJob, userId }) => {
                 id: 0,
                 name: dataJob.contract.name,
                 value: dataJob.contract.name,
-                icon: 21,
+                iconName: "calendar",
+                iconType: "antdesign",
               },
               {
                 id: 1,
                 name: dataJob.workExperience.name,
                 value: dataJob.workExperience.name,
-                icon: 21,
+                iconName: "work-outline",
+                iconType: "material",
               },
               {
                 id: 2,
                 name: dataJob.workShift.name,
                 value: dataJob.workShift.name,
-                icon: 21,
+                iconName: "clockcircleo",
+                iconType: "antdesign",
               },
               {
                 id: 3,
                 name: `S/. ${dataJob.salary}`,
                 value: dataJob.salary,
-                icon: 123,
               },
             ].map((item) => {
               if (!item.value) return;
               return (
-                <Text
+                <View
                   key={item.id}
+                  
                   style={{
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    columnGap:5,
+                    alignItems: "center",
                     backgroundColor: COLORS.lightWhite,
-                    elevation:2,
-                    textAlign: "center",
+                    elevation: 4,
                     paddingHorizontal: 5,
                     paddingVertical: 4,
-                    borderRadius: 10,
-                    color: COLORS.black,
-                    fontSize: SIZES.small,
-                    alignItems: "center",
-                    fontFamily: FONT.regular,
+                    borderRadius: 3,
+
                   }}
                 >
-                  {item.name}
-                </Text>
+                  {item?.iconName && item?.iconType && <Icon size={10} name={item.iconName} type={item.iconType}/>}
+                  <Text
+                    style={{
+                      textAlign: "center",                   
+                      color: COLORS.black,
+                      fontSize: SIZES.xSmall,
+                      fontFamily: FONT.regular,
+                    }}
+                  >
+                    {item.name}
+                  </Text>
+                </View>
               );
             })}
           </View>
@@ -228,16 +211,16 @@ const JobCard = React.memo(({ dataJob, userId }) => {
         <View
           style={{
             width: "100%",
-            marginTop: 20,
+            marginTop: 10,
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
-            flexWrap:"wrap",
-            rowGap:5,
-            columnGap:5
+            flexWrap: "wrap",
+            rowGap: 5,
+            columnGap: 10,
           }}
         >
-          <View style={{ flexDirection: "row", }}>
+          <View style={{ flexDirection: "row" }}>
             <Image source={icons.location} style={{ width: 15, height: 15 }} />
             <Text
               style={{
@@ -246,7 +229,7 @@ const JobCard = React.memo(({ dataJob, userId }) => {
                 color: COLORS.gray600,
               }}
             >
-              {dataJob.province}- {dataJob.district} 
+              {dataJob.province}-{dataJob.district}
             </Text>
           </View>
 
@@ -255,14 +238,41 @@ const JobCard = React.memo(({ dataJob, userId }) => {
               Finalizado
             </Text>
           ) : (
-            <TouchableOpacity
-              onPress={navigateToDetails}
-              style={stylesHome.containerThreeButtonApply}
-            >
-              <Text style={stylesHome.containerThreeButtonApplyText}>
-                Postular
-              </Text>
-            </TouchableOpacity>
+            <View style={stylesHome.containerOneCardJob}>
+              {showMessage && (
+                <Text style={styles.message}>Añadido a favoritos</Text>
+              )}
+
+              <View style={{ flexDirection: "row", columnGap: 10 }}>
+                {/* <TouchableOpacity>
+                <Icon name="flag" type="ionicons" color={COLORS.secondary} />
+              </TouchableOpacity> */}
+                {isAddedToFav ? (
+                  <View>
+                    <Icon
+                      name="favorite"
+                      type="material"
+                      color={COLORS.red600}
+                    />
+                  </View>
+                ) : (
+                  <TouchableOpacity
+                    disabled={isSaveLoading}
+                    onPress={handleAddFavoriteJob}
+                  >
+                    {isSaveLoading ? (
+                      <ActivityIndicator />
+                    ) : (
+                      <Icon
+                        name="favorite-border"
+                        type="material"
+                        color={COLORS.secondary}
+                      />
+                    )}
+                  </TouchableOpacity>
+                )}
+              </View>
+            </View>
           )}
         </View>
       </View>
@@ -273,16 +283,16 @@ export default JobCard;
 const styles = StyleSheet.create({
   cardJob: {
     width: "100%",
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     backgroundColor: COLORS.primary,
     height: "auto",
-    marginVertical: 5,
+    marginVertical: 0,
   },
   message: {
     position: "absolute",
-    top: 20,
+    bottom: 20,
     right: 20,
-    zIndex: 500,
+    zIndex: 999,
     backgroundColor: "#333333",
     color: "#FFFFFF",
     width: 100,

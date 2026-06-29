@@ -62,6 +62,14 @@ export const ProfileCompanyScreen = ({ navigation }) => {
       onClick: "",
       route: "ContactPascoJobsScreen",
     },
+    {
+      id: 4,
+      name: "Soluciones para empresas",
+      iconName: "webpack",
+      iconType: "material-community",
+      onClick: "",
+      route: "ServiceForCompaniesCompanyScreen",
+    },
     // {
     //   id: 4,
     //   name: "Contactar desarrollador",

@@ -490,9 +490,6 @@ const StepForm3JobForm = ({
               paddingVertical: 10,
               borderRadius: 10,
               columnGap: 10,
-              backgroundColor: COLORS.gray100,
-              borderWidth:1,
-              borderColor:COLORS.gray400,
               flex: 1,
               maxWidth: 200,
               justifyContent: "center",
@@ -500,7 +497,7 @@ const StepForm3JobForm = ({
               alignItems: "center",
             }}
             underlayColor={COLORS.gray800}
-            activeOpacity={0.9}
+            activeOpacity={0.6}
             onPress={() => setStepForm(stepForm - 1)}
           >
             <Icon name="arrow-back" color={COLORS.gray800} type="ionsicon" />
@@ -514,9 +511,6 @@ const StepForm3JobForm = ({
               paddingVertical: 10,
               borderRadius: 10,
               columnGap: 10,
-              backgroundColor: COLORS.gray100,
-              borderWidth:1,
-              borderColor:COLORS.gray400,
               flex: 1,
               maxWidth: 200,
               justifyContent: "center",
@@ -524,7 +518,7 @@ const StepForm3JobForm = ({
               alignItems: "center",
             }}
             underlayColor={COLORS.gray800}
-            activeOpacity={0.9}
+            activeOpacity={0.6}
             onPress={handleNextPage}
           >
             <Text style={{ color: COLORS.gray800,fontFamily:FONT.medium }}>Siguiente</Text>

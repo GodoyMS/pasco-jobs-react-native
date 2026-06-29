@@ -69,7 +69,7 @@ const CitySelectorUserAdsUserAdsScreen = ({
           }}
         >
           <TouchableOpacity
-            onPress={() => {
+            onPress={userAdsLocationForAds ==="Pasco" ? ()=>setIsCityOpen(false):() => {
               setIsCityOpen(false);
               setData([]);
               setPage(1);
@@ -87,7 +87,7 @@ const CitySelectorUserAdsUserAdsScreen = ({
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => {
+             onPress={userAdsLocationForAds ==="Oxapampa" ? ()=>setIsCityOpen(false):() => {
               setIsCityOpen(false);
               setData([]);
               setPage(1);
@@ -105,7 +105,7 @@ const CitySelectorUserAdsUserAdsScreen = ({
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => {
+             onPress={userAdsLocationForAds ==="Daniel Alcides Carrión" ? ()=>setIsCityOpen(false):() => {
               setIsCityOpen(false);
               setData([]);
               setPage(1);

@@ -49,7 +49,7 @@ const JobDetailsCompanyScreen = (props) => {
         });
         
       }
-      if (data.responsabilites && data.responsabilites.length > 0) {
+      if (data.responsabilities && data.responsabilities.length > 0) {
         setTabsToRender((prevState) => {
           // Create a copy of the previous state array
           const updatedTabs = [...prevState];

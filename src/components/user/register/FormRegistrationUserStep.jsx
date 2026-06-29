@@ -45,6 +45,7 @@ const FormRegistrationUserStep = ({ step, setStep, navigation }) => {
   const [districtError, setDistrictError] = useState("");
 
   const [age, setAge] = useState({ value: "", error: "" });
+  const [phone,setPhone]=useState("")
   const [sex, setSex] = useState({ value: "Hombre", error: "" });
 
   const [profileImageLink, setProfileImageLink] = useState("");
@@ -92,6 +93,9 @@ const FormRegistrationUserStep = ({ step, setStep, navigation }) => {
         province: province,
         position: position.value,
         region: "Pasco",
+        phone,
+        whatsapp:phone,
+        contactEmail:email.value,
         sex: sex.value,
         profile: profileImageLink,
         cv: cvDocumentLink,
@@ -276,6 +280,8 @@ const FormRegistrationUserStep = ({ step, setStep, navigation }) => {
             provinceError={provinceError}
             setProvinceError={setProvinceError}
             setSex={setSex}
+            phone={phone}
+            setPhone={setPhone}
             province={province}
             setProvince={setProvince}
             district={district}

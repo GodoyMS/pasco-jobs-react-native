@@ -37,6 +37,7 @@ import EditUserAdsAccountProfileScreen from "@screens/userAds/account/EditUserAd
 import AccountManagerUserAds from "@screens/globals/AccountManagerUserAds";
 import FavoritesUserScreen from "@screens/user/FavoritesUserScreen";
 import ApplicantProfileScreenGlobal from "@screens/globals/ApplicantProfileScreenGlobal";
+import ServiceForCompaniesCompanyScreen from "@screens/company/account/ServiceForCompaniesCompanyScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -398,6 +399,17 @@ const RootNavigation = ({ navigation }) => {
           headerTitle: "",
         }}
         component={EditCompanyProfileScreen}
+      />
+           <Stack.Screen
+        name="ServiceForCompaniesCompanyScreen"
+        options={{
+          headerStyle: { backgroundColor: "transparent" },
+          headerShadowVisible: false,
+          headerBackVisible: true,
+          headerTransparent: true,
+          headerTitle: "",
+        }}
+        component={ServiceForCompaniesCompanyScreen}
       />
 
       <Stack.Screen

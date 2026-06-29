@@ -95,7 +95,7 @@ const stylesHome = StyleSheet.create({
     flex: 1,
     columnGap: 10,
     alignItems: "center",
-    marginTop: 20,
+    marginTop: 10,
   },
   containerTwoCardJobText: {
     backgroundColor: COLORS.lightWhite,

@@ -18,6 +18,7 @@ import {
 
 import FormRegistrationUserStep from "@components/user/register/FormRegistrationUserStep";
 import StepHeader from "@components/user/register/StepHeader";
+import { StatusBar } from "expo-status-bar";
 
 const Stack = createStackNavigator();
 
@@ -29,8 +30,9 @@ export const RegisterScreen = ({ navigation }) => {
     <>
       <PaperProvider>
         <ScrollView 
-          style={{ flex: 1, width: "100%", backgroundColor: COLORS.lightWhite }}
+          style={{ flex: 1, width: "100%", backgroundColor: COLORS.lightWhite}}
         >
+          <StatusBar backgroundColor={COLORS.lightWhite}/>
 
           <View
             style={{

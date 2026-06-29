@@ -62,13 +62,18 @@ export const RegisterUserAdsScreen = ({ navigation }) => {
   //PROFILE IMAGE
   const [profileImageLink, setProfileImageLink] = useState("");
   const [profileImageBase64, setProfileImageBase64] = useState("");
-  const[isImageUploading,setIsImageUploading]=useState(false)
+  const [isImageUploading, setIsImageUploading] = useState(false);
   //SHOW PASS
   const [visiblePass, setVisiblePass] = useState(false);
+  const[imageUploadingError,setImageUploadingError]=useState(false)
+
+  const[phone,setPhone]=useState("");
+  const[whatsapp,setWhatsapp]=useState("")
 
   //IMAGE SAVE ERROR
 
-  const[isImageSavedToSubmitError,setIsImageSavedToSubmitError]=useState("")
+  const [isImageSavedToSubmitError, setIsImageSavedToSubmitError] =
+    useState("");
 
   const handleImagePicker = async () => {
     try {
@@ -100,17 +105,17 @@ export const RegisterUserAdsScreen = ({ navigation }) => {
     }
   };
   const handleImageUpload = async () => {
-
-    setIsImageUploading(true)
+    setIsImageUploading(true);
+    setImageUploadingError(false)
     await axios
       .post(`${backendURL}api/profilesupload/upload`, {
         base64: `data:image/png;base64,${profileImageBase64}`,
         name: name.value,
       })
       .then(({ data }) => setProfileImageLink(data.url))
-      .then(()=>setIsImageUploading(false))
-      .catch((e) => console.log(e))
-      .finally(()=>setIsImageUploading(false))
+      .then(() => setIsImageUploading(false))
+      .catch((e) => {console.log(e);setImageUploadingError(true)})
+      .finally(() => setIsImageUploading(false));
   };
 
   const hideModal = () => {
@@ -127,7 +132,8 @@ export const RegisterUserAdsScreen = ({ navigation }) => {
       : "Realiza una descripción breve";
     const provinceError = province ? "" : "Selecciona una provincia";
     const districtError = district ? "" : "Selecciona un distrito";
-    const imageSavedToSubmitError=(profileImageBase64&& !profileImageLink) ? "Guarda tu imágen"  : ""
+    const imageSavedToSubmitError =
+      profileImageBase64 && !profileImageLink ? "Guarda tu imágen" : "";
 
     if (
       emailError ||
@@ -144,7 +150,7 @@ export const RegisterUserAdsScreen = ({ navigation }) => {
       setDescription({ ...description, error: descriptionError });
       setDistrictError(districtError);
       setProvinceError(provinceError);
-      setIsImageSavedToSubmitError(imageSavedToSubmitError)
+      setIsImageSavedToSubmitError(imageSavedToSubmitError);
       return;
     }
 
@@ -156,6 +162,8 @@ export const RegisterUserAdsScreen = ({ navigation }) => {
         region: "Pasco",
         province: province,
         district: district,
+        phone:phone,
+        whatsapp:whatsapp,
         description: description.value,
         profile: profileImageLink,
       })
@@ -349,38 +357,50 @@ export const RegisterUserAdsScreen = ({ navigation }) => {
             <View style={{ marginTop: 10 }}>
               {!profileImageBase64 && (
                 <View
-                  style={{ flexDirection: "row", justifyContent: "center" }}
+                  style={{ flexDirection: "row", justifyContent: "center",width:"100%" }}
                 >
-                  <Image
-                    borderRadius={50}
-                    resizeMode="cover"
-                    source={userDefault}
-                    style={{
-                      width: "50%",
-                      height: "auto",
-                      borderRadius: 1000,
-                      aspectRatio: "1/1",
-                    }}
-                  />
+                  <View style={{width:"100%",flexDirection:"row",justifyContent:"center"}}>
+                    <Image
+                      borderRadius={50}
+                      resizeMode="cover"
+                      source={userDefault}
+                      style={{
+                        width: "50%",
+                        height: "auto",
+                        borderRadius: 1000,
+                        aspectRatio: "1/1",
+                      }}
+                    />
+                  </View>
                 </View>
               )}
               {profileImageBase64 && (
                 <View
                   style={{ flexDirection: "row", justifyContent: "center" }}
                 >
-                  <Image
-                    borderRadius={150}
-                    resizeMode="cover"
-                    source={{
-                      uri: `data:image/jpeg;base64,${profileImageBase64}`,
-                    }}
-                    style={{
-                      width: "50%",
-                      height: "auto",
-                      borderRadius: 1000,
-                      aspectRatio: "1/1",
-                    }}
-                  />
+                  <View style={{ width: "100%",flexDirection:"row",justifyContent:"center" }}>
+                    {!profileImageLink && <View style={{ position: "absolute", top: 0, right: 0 }}>
+                      <Icon
+                      onPress={()=>{setProfileImageBase64("")}}
+                        name="closecircle"
+                        type="antdesign"
+                        color={COLORS.tertiary}
+                      />
+                    </View>}
+                    <Image
+                      borderRadius={150}
+                      resizeMode="cover"
+                      source={{
+                        uri: `data:image/jpeg;base64,${profileImageBase64}`,
+                      }}
+                      style={{
+                        width: "50%",
+                        height: "auto",
+                        borderRadius: 1000,
+                        aspectRatio: "1/1",
+                      }}
+                    />
+                  </View>
                 </View>
               )}
 
@@ -396,7 +416,7 @@ export const RegisterUserAdsScreen = ({ navigation }) => {
                 }}
               >
                 {!profileImageLink && (
-                  <View style={{width:"100%"}}>
+                  <View style={{ width: "100%" }}>
                     <TouchableOpacity
                       style={{
                         paddingVertical: 10,
@@ -425,14 +445,27 @@ export const RegisterUserAdsScreen = ({ navigation }) => {
                           fontFamily: FONT.medium,
                         }}
                       >
-                        {isImageUploading ? <ActivityIndicator color={"white"}/>   :  profileImageBase64 ? "Guardar imagen" : "Subir Imagen"}
+                        {isImageUploading ? (
+                          <ActivityIndicator color={"white"} />
+                        ) : profileImageBase64 ? (
+                          "Guardar imagen"
+                        ) : (
+                          "Subir Imagen"
+                        )}
                       </Text>
-                      {!isImageUploading && <Icon
-                        name={profileImageBase64 ? "save" : "upload"}
-                        type="feather"
-                        color={COLORS.white}
-                      />}
+                      {!isImageUploading && (
+                        <Icon
+                          name={profileImageBase64 ? "save" : "upload"}
+                          type="feather"
+                          size={15}
+                          color={COLORS.white}
+                        />
+                      )}
                     </TouchableOpacity>
+
+                    {imageUploadingError && <Text style={{textAlign:"center",width:"100%",fontFamily:FONT.regular,fontSize:SIZES.small,color:COLORS.red600}}>Imagen muy grande </Text>}
+
+                    
 
                     {!profileImageBase64 && (
                       <View>
@@ -452,7 +485,7 @@ export const RegisterUserAdsScreen = ({ navigation }) => {
                     )}
                   </View>
                 )}
-               
+
                 {profileImageLink && (
                   <View
                     style={{
@@ -484,7 +517,6 @@ export const RegisterUserAdsScreen = ({ navigation }) => {
                   </View>
                 )}
               </View>
-      
             </View>
           </View>
 
@@ -573,6 +605,46 @@ export const RegisterUserAdsScreen = ({ navigation }) => {
               </View>
             )}
           </View>
+          <View
+            style={{
+              flexDirection: "column",
+              maxWidth: 400,
+              justifyContent: "center",
+              padding: 20,
+              alignSelf: "center",
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
+           
+              <Text
+                style={{
+                  textAlign: "left",
+                  fontFamily: FONT.medium,
+                  fontSize: SIZES.large,
+                  fontWeight: "bold",
+                  color: COLORS.gray800,
+                  width: "100%",
+                }}
+              >
+                Contacto <Text style={{fontSize:SIZES.medium    }}>(opcional) </Text>
+              </Text>
+           
+            <TextInput
+              label="Telefóno (No incluyas codigo de país)"
+              returnKeyType="next"
+              keyboardType="numeric"
+              value={phone}
+              onChangeText={(text) => setPhone(text)}
+            />
+            <TextInput
+              label="Whatsapp (No incluyas codigo de país)"
+              keyboardType="numeric"
+              returnKeyType="next"
+              value={whatsapp}
+              onChangeText={(text) => setWhatsapp(text)}
+            />
+          </View>
 
           <View
             style={{
@@ -593,15 +665,17 @@ export const RegisterUserAdsScreen = ({ navigation }) => {
             >
               {isLoading ? "Registrando ..." : "Registrase"}
             </Button>
-            {isImageSavedToSubmitError && <Text
+            {isImageSavedToSubmitError && (
+              <Text
                 style={{
                   marginBottom: 10,
-                  fontFamily: FONT.medium,
+                  fontFamily: FONT.regular,
                   color: COLORS.red600,
                 }}
               >
-               {isImageSavedToSubmitError}
-              </Text> }
+                {isImageSavedToSubmitError}
+              </Text>
+            )}
             {(email.error ||
               password.error ||
               name.error ||
@@ -611,7 +685,7 @@ export const RegisterUserAdsScreen = ({ navigation }) => {
               <Text
                 style={{
                   marginBottom: 10,
-                  fontFamily: FONT.medium,
+                  fontFamily: FONT.regular,
                   color: COLORS.red600,
                 }}
               >
@@ -638,7 +712,7 @@ const styles = StyleSheet.create({
     fontFamily: FONT.medium,
   },
   buttonModalConfirmation: {
-    backgroundColor: COLORS.indigo400,
+    backgroundColor: COLORS.indigo600,
     paddingHorizontal: 10,
     paddingVertical: 3,
     borderRadius: 20,

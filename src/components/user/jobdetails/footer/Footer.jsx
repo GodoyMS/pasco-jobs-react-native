@@ -17,6 +17,8 @@ import { COLORS, FONT, SIZES } from "@constants/theme";
 import { Icon } from "@rneui/themed";
 import { gql, useQuery } from "@apollo/client";
 import { ScrollView } from "react-native";
+import { useSelector } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
 
 const Footer = ({
   handleAddFavorite,
@@ -30,6 +32,7 @@ const Footer = ({
   idJob,
   jobAuthor,
 }) => {
+  const infoUser = useSelector((state) => state.user.infoUser);
   const [isApplied, setIsApplied] = useState(false);
   const [isApplyButtonMounted, setIsApplyButtonMounted] = useState(true);
   const [isApplyingLoading, setIsApplyingLoading] = useState(false);
@@ -56,6 +59,12 @@ const Footer = ({
       text: "Los candidatos aceptan que la plataforma de empleo puede recopilar y procesar sus datos personales de acuerdo con la política de privacidad de la plataforma.",
     },
   ];
+
+  const navigation=useNavigation();
+
+  const navigateToDetails = () => {
+    navigation.navigate("EditUserProfileScreen");
+  };
 
   const { data } = useQuery(GET_APPLICANTS, {
     variables: { jobId: idJob, applicantId: idApplicant },
@@ -115,90 +124,143 @@ const Footer = ({
               backgroundColor: "#FFF",
             }}
           >
-            <Text style={{ fontFamily: FONT.bold, color: COLORS.gray800 }}>
-              Al postular a un trabajo aceptas lo siguiente:
-            </Text>
-
-            <View>
-              {applicationsTerms.map((e) => (
-                <View
-                  key={e.id}
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "flex-start",
-                    alignItems: "center",
-                    marginTop: 10,
-                    columnGap: 10,
-                    paddingRight: 5,
-                  }}
-                >
-                  <View
-                    style={{
-                      backgroundColor: COLORS.gray700,
-                      width: 5,
-                      height: 5,
-                      borderRadius: 5,
-                    }}
-                  ></View>
-                  <Text
-                    style={{
-                      fontFamily: FONT.regular,
-                      color: COLORS.gray800,
-                      fontSize: SIZES.small,
-                      textAlign: "justify",
-                    }}
-                  >
-                    {e.text}
-                  </Text>
-                </View>
-              ))}
-            </View>
-
-            <View style={{ marginTop: 20 }}>
-              <TouchableOpacity
-                onPress={() => setIsAboutToApply(false)}
-                activeOpacity={0.7}
-                style={{
-                  backgroundColor: COLORS.gray200,
-                  paddingVertical: 10,
-                  borderRadius: 10,
-                }}
-              >
-                <Text
-                  style={{
-                    textAlign: "center",
-                    color: COLORS.gray800,
-                    fontFamily: FONT.bold,
-                  }}
-                >
-                  Cancelar
+            {infoUser && infoUser?.phone ? (
+              <>
+                <Text style={{ fontFamily: FONT.bold, color: COLORS.gray800 }}>
+                  Al postular a un trabajo aceptas lo siguiente:
                 </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={applyJob}
-                activeOpacity={0.7}
-                style={{
-                  backgroundColor: COLORS.tertiary,
-                  paddingVertical: 10,
-                  borderRadius: 10,
-                  marginTop: 10,
-                }}
-              >
-                {isApplyingLoading ? (
-                  <ActivityIndicator color={"white"} />
-                ) : (
-                  <Text
+
+                <View>
+                  {applicationsTerms.map((e) => (
+                    <View
+                      key={e.id}
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "flex-start",
+                        alignItems: "center",
+                        marginTop: 10,
+                        columnGap: 10,
+                        paddingRight: 5,
+                      }}
+                    >
+                      <View
+                        style={{
+                          backgroundColor: COLORS.gray700,
+                          width: 5,
+                          height: 5,
+                          borderRadius: 5,
+                        }}
+                      ></View>
+                      <Text
+                        style={{
+                          fontFamily: FONT.regular,
+                          color: COLORS.gray800,
+                          fontSize: SIZES.small,
+                          textAlign: "justify",
+                        }}
+                      >
+                        {e.text}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+
+                <View style={{ marginTop: 20 }}>
+                  <TouchableOpacity
+                    onPress={() => setIsAboutToApply(false)}
+                    activeOpacity={0.7}
                     style={{
-                      textAlign: "center",
-                      color: COLORS.white,
-                      fontFamily: FONT.bold,
+                      backgroundColor: COLORS.gray200,
+                      paddingVertical: 10,
+                      borderRadius: 10,
                     }}
                   >
-                    ¡De acuerdo!
-                  </Text>
-                )}
-              </TouchableOpacity>
-            </View>
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        color: COLORS.gray800,
+                        fontFamily: FONT.bold,
+                      }}
+                    >
+                      Cancelar
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={applyJob}
+                    activeOpacity={0.7}
+                    style={{
+                      backgroundColor: COLORS.tertiary,
+                      paddingVertical: 10,
+                      borderRadius: 10,
+                      marginTop: 10,
+                    }}
+                  >
+                    {isApplyingLoading ? (
+                      <ActivityIndicator color={"white"} />
+                    ) : (
+                      <Text
+                        style={{
+                          textAlign: "center",
+                          color: COLORS.white,
+                          fontFamily: FONT.bold,
+                        }}
+                      >
+                        ¡De acuerdo!
+                      </Text>
+                    )}
+                  </TouchableOpacity>
+                </View>
+              </>
+            ) : (
+              <>
+                <Text style={{ fontFamily: FONT.bold, color: COLORS.gray800 }}>
+                  Para postular, actualizar tu información de contacto
+                </Text>
+                <View style={{ marginTop: 20 }}>
+                  <TouchableOpacity
+                    onPress={() => setIsAboutToApply(false)}
+                    activeOpacity={0.7}
+                    style={{
+                      backgroundColor: COLORS.gray200,
+                      paddingVertical: 10,
+                      borderRadius: 10,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        color: COLORS.gray800,
+                        fontFamily: FONT.bold,
+                      }}
+                    >
+                      Cancelar
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={navigateToDetails}
+                    activeOpacity={0.7}
+                    style={{
+                      backgroundColor: COLORS.tertiary,
+                      paddingVertical: 10,
+                      borderRadius: 10,
+                      marginTop: 10,
+                    }}
+                  >
+                   
+                      <Text
+                        style={{
+                          textAlign: "center",
+                          color: COLORS.white,
+                          fontFamily: FONT.bold,
+                        }}
+                      >
+                        Actualizar
+                      </Text>
+                  
+                  </TouchableOpacity>
+                </View>
+              </>
+            )}
           </View>
         </View>
       )}
@@ -242,13 +304,16 @@ const Footer = ({
               backgroundColor: COLORS.indigo100,
             }}
           >
-            {isSavingLoading ? <ActivityIndicator color={COLORS.tertiary}/> : <Icon
-              name="hearto"
-              type="antdesign"
-              color={COLORS.tertiary}
-              size={25}
-            /> }
-           
+            {isSavingLoading ? (
+              <ActivityIndicator color={COLORS.tertiary} />
+            ) : (
+              <Icon
+                name="hearto"
+                type="antdesign"
+                color={COLORS.tertiary}
+                size={25}
+              />
+            )}
 
             {/* <Image
               source={icons.heartOutline}
@@ -258,7 +323,7 @@ const Footer = ({
           </TouchableOpacity>
         )}
 
-        {isApplyButtonMounted && expired==="no" && (
+        {isApplyButtonMounted && expired === "no" && (
           <>
             {isApplied ? (
               <TouchableOpacity
@@ -298,15 +363,31 @@ const Footer = ({
           </>
         )}
 
-               {expired ==="yes" && <View style={{ flex: 1,
-                  paddingVertical: 10,
-                  flexDirection: "row",
-                  height: "100%",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  columnGap: 10,
-                  marginLeft: SIZES.medium,
-                  borderRadius: SIZES.medium,}}><Text style={{fontFamily:FONT.medium,color:COLORS.tertiary,fontSize:SIZES.medium}}>Vencido</Text></View>}
+        {expired === "yes" && (
+          <View
+            style={{
+              flex: 1,
+              paddingVertical: 10,
+              flexDirection: "row",
+              height: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+              columnGap: 10,
+              marginLeft: SIZES.medium,
+              borderRadius: SIZES.medium,
+            }}
+          >
+            <Text
+              style={{
+                fontFamily: FONT.medium,
+                color: COLORS.tertiary,
+                fontSize: SIZES.medium,
+              }}
+            >
+              Vencido
+            </Text>
+          </View>
+        )}
       </View>
     </>
   );

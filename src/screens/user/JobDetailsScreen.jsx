@@ -121,17 +121,7 @@ export const JobDetailsUserScreen = (props) => {
           return updatedTabs;
         });
       }
-      if (dataJob.responsabilites && dataJob.responsabilites.length > 0) {
-        setTabsToRender((prevState) => {
-          // Create a copy of the previous state array
-          const updatedTabs = [...prevState];
-
-          // Conditionally add more elements based on your condition
-          updatedTabs.push("Responsabilidades");
-
-          return updatedTabs;
-        });
-      }
+    
       if (dataJob.benefits && dataJob.benefits.length > 0) {
         setTabsToRender((prevState) => {
           // Create a copy of the previous state array
@@ -139,6 +129,17 @@ export const JobDetailsUserScreen = (props) => {
 
           // Conditionally add more elements based on your condition
           updatedTabs.push("Beneficios");
+
+          return updatedTabs;
+        });
+      }
+      if (dataJob.responsabilities && dataJob.responsabilities.length > 0) {
+        setTabsToRender((prevState) => {
+          // Create a copy of the previous state array
+          const updatedTabs = [...prevState];
+
+          // Conditionally add more elements based on your condition
+          updatedTabs.push("Responsabilidades");
 
           return updatedTabs;
         });
@@ -401,13 +402,9 @@ export const JobDetailsUserScreen = (props) => {
                             justifyContent: "center",
                           }}
                         >
-                          <Image
-                            style={{
-                              width: 20,
-                              height: 20,
-                              marginHorizontal: "auto",
-                            }}
-                            source={icons.locationMap}
+                          <Icon
+                          name="location"
+                          type="evilicon"
                           />
                         </View>
                         <Text
@@ -416,6 +413,7 @@ export const JobDetailsUserScreen = (props) => {
                             fontFamily: FONT.regular,
                             fontSize: 10,
                             color: COLORS.gray500,
+                            marginBottom:10
                           }}
                         >
                           Ubicación
@@ -600,6 +598,7 @@ export const JobDetailsUserScreen = (props) => {
 
             {
               <Footer
+                
                 expired={dataJob?.expired}
                 jobAuthor={dataJob.author.id}
                 idJob={params.itemId}

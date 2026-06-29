@@ -68,7 +68,7 @@ const CitySelectorCompanyForCompanies = ({
           }}
         >
           <TouchableOpacity
-            onPress={() => {
+             onPress={companyLocationForCompanies==="Pasco" ? ()=>setIsCityOpen(false):() => {
               setIsCityOpen(false);
               setData([]);
               setPage(1);
@@ -86,12 +86,12 @@ const CitySelectorCompanyForCompanies = ({
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => {
-              setIsCityOpen(false);
-              setData([]);
-              setPage(1);
-              dispatch(setCompanyLocationFormCompanies("Oxapampa"));
-            }}
+              onPress={companyLocationForCompanies==="Oxapampa" ? ()=>setIsCityOpen(false):() => {
+                setIsCityOpen(false);
+                setData([]);
+                setPage(1);
+                dispatch(setCompanyLocationFormCompanies("Oxapampa"));
+              }}
             style={{ paddingVertical: 15 }}
           >
             <Text
@@ -104,7 +104,7 @@ const CitySelectorCompanyForCompanies = ({
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => {
+            onPress={companyLocationForCompanies==="Daniel Alcides Carrión" ? ()=>setIsCityOpen(false):() => {
               setIsCityOpen(false);
               setData([]);
               setPage(1);

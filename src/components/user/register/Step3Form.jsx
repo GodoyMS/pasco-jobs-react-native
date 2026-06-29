@@ -40,13 +40,13 @@ export default function Step3Form({
   isImageError,
   setIsCvError,
   setIsImageError,
-  isLoading
+  isLoading,
 }) {
   const [cvName, setCvName] = useState("");
   const [isCvUploading, setIsCvUploading] = useState(false);
   const [isImageUploading, setIsImageUploading] = useState(false);
-
-
+  const [cvUploadError, setCvUploadError] = useState(false);
+  const [imageUploadError, setImageUploadError] = useState(false);
   //SELECT IMAGE
   const handleImagePicker = async () => {
     try {
@@ -79,6 +79,8 @@ export default function Step3Form({
   };
   const handleImageUpload = async () => {
     setIsImageUploading(true);
+    setImageUploadError(false);
+
     await axios
       .post(`${backendURL}api/profilesupload/upload`, {
         base64: `data:image/png;base64,${profileImageBase64}`,
@@ -86,7 +88,10 @@ export default function Step3Form({
       })
       .then(({ data }) => setProfileImageLink(data.url))
       .then(() => setIsImageUploading(false))
-      .catch((e) => console.log(e))
+      .catch((e) => {
+        console.log(e);
+        setImageUploadError(true);
+      })
       .finally(() => setIsImageUploading(false));
   };
 
@@ -94,6 +99,7 @@ export default function Step3Form({
 
   const handleCVUpload = async () => {
     setIsCvUploading(true);
+    setCvUploadError(false);
     await axios
       .post(`${backendURL}api/cvuploads/upload`, {
         base64: `${cvDocumentBase64}`,
@@ -101,8 +107,8 @@ export default function Step3Form({
       })
       .then(({ data }) => setCvDocumentLink(data.url))
       .then(() => setIsCvUploading(false))
-      
-      .catch((e) => console.log(e))
+
+      .catch((e) => setCvUploadError(true))
       .finally(() => setIsCvUploading(false));
   };
 
@@ -185,11 +191,25 @@ export default function Step3Form({
           />
         )}
         {profileImageBase64 && (
-          <Image
-            borderRadius={1000}
-            source={{ uri: `data:image/jpeg;base64,${profileImageBase64}` }}
-            style={{ width: 150, height: 150 }}
-          />
+          <View>
+            <View style={{ position: "absolute", top: 0, right: 0,zIndex:200 }}>
+              <Icon
+                onPress={() => {
+                  setProfileImageBase64("");
+                  setImageUploadError(false);
+                }}
+                name="closecircle"
+                type="antdesign"
+                size={20}
+                color={COLORS.tertiary}
+              />
+            </View>
+            <Image
+              borderRadius={1000}
+              source={{ uri: `data:image/jpeg;base64,${profileImageBase64}` }}
+              style={{ width: 150, height: 150 }}
+            />
+          </View>
         )}
         {/* <View style={{ flex: 1 }}>
           <View style={{ flexDirection: "column", flex: 1, rowGap: 0 }}>
@@ -239,42 +259,59 @@ export default function Step3Form({
         }}
       >
         {!profileImageLink && (
-          <TouchableOpacity
-            style={{
-              paddingVertical: 12,
-              borderRadius: 8,
-              width: "100%",
-              backgroundColor: COLORS.indigo700,
-              flexDirection: "row",
-              paddingHorizontal: 10,
-              justifyContent: "center",
-              columnGap: 10,
-              alignItems: "center",
-            }}
-            onPress={profileImageBase64 ? handleImageUpload : handleImagePicker}
-          >
-            {isImageUploading ? (
-              <ActivityIndicator color={COLORS.white} />
-            ) : (
-              <>
-                <Text
-                  style={{
-                    textAlign: "center",
-                    width: "auto",
-                    color: COLORS.white,
-                    fontFamily: FONT.medium,
-                  }}
-                >
-                  {profileImageBase64 ? "Guardar" : "Subir Imagen"}
-                </Text>
-                <Icon
-                  name={profileImageBase64 ? "save" : "upload"}
-                  type="feather"
-                  color={COLORS.white}
-                />
-              </>
+          <View style={{ flexDirection: "column", rowGap: 5, width: "100%" }}>
+            <TouchableOpacity
+              style={{
+                paddingVertical: 12,
+                borderRadius: 8,
+                width: "100%",
+                backgroundColor: COLORS.indigo700,
+                flexDirection: "row",
+                paddingHorizontal: 10,
+                justifyContent: "center",
+                columnGap: 10,
+                alignItems: "center",
+              }}
+              onPress={
+                profileImageBase64 ? handleImageUpload : handleImagePicker
+              }
+            >
+              {isImageUploading ? (
+                <ActivityIndicator color={COLORS.white} />
+              ) : (
+                <>
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      width: "auto",
+                      color: COLORS.white,
+                      fontFamily: FONT.medium,
+                    }}
+                  >
+                    {profileImageBase64 ? "Guardar" : "Subir Imagen"}
+                  </Text>
+                  <Icon
+                    size={15}
+                    name={profileImageBase64 ? "save" : "upload"}
+                    type="feather"
+                    color={COLORS.white}
+                  />
+                </>
+              )}
+            </TouchableOpacity>
+            {imageUploadError && (
+              <Text
+                style={{
+                  fontFamily: FONT.regular,
+                  fontSize: SIZES.small,
+                  color: COLORS.red800,
+                  textAlign: "center",
+                }}
+              >
+                Imágen demasiado grande, reduce tu foto e intentalo de nuevo
+              </Text>
             )}
-          </TouchableOpacity>
+          </View>
         )}
         {profileImageLink && (
           <View
@@ -345,14 +382,32 @@ export default function Step3Form({
       {cvDocumentBase64 && (
         <View
           style={{
-            marginTop: 10,
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            columnGap: 20,
             width: "100%",
-            borderRadius: 5,
-            backgroundColor: COLORS.gray50,
-            paddingVertical: 10,
           }}
         >
-          <Text style={{ textAlign: "center" }}>{cvName}</Text>
+          <View
+            style={{
+              marginTop: 10,
+              borderRadius: 5,
+              backgroundColor: COLORS.gray50,
+              paddingVertical: 10,
+              flex: 1,
+            }}
+          >
+            <Text style={{ textAlign: "center" }}>{cvName}</Text>
+          </View>
+          <Icon
+            onPress={() => {
+              setCvDocumentBase64("");
+              setCvUploadError(false);
+            }}
+            name="close"
+            type="antdesign"
+          />
         </View>
       )}
       <View
@@ -390,48 +445,67 @@ export default function Step3Form({
             >
               CV guardado
             </Text>
-            <Icon name={"checkcircle"} type="antdesign" color={COLORS.green400} />
+            <Icon
+              name={"checkcircle"}
+              type="antdesign"
+              color={COLORS.green400}
+            />
           </View>
         )}
         {!cvDocumentLink && (
-          <TouchableOpacity
-            style={{
-              paddingVertical: 12,
-              borderRadius: 8,
-              width: "100%",
-              backgroundColor: COLORS.indigo700,
-              flexDirection: "row",
-              paddingHorizontal: 10,
-              justifyContent: "center",
-              columnGap: 10,
-              alignItems: "center",
-            }}
-            onPress={cvDocumentBase64 ? handleCVUpload : handleFileSelection}
-          >
-            {isCvUploading ? (
-              <ActivityIndicator />
-            ) : (
-              <>
-                <Text
-                  style={{
-                    textAlign: "center",
-                    width: "auto",
-                    color: COLORS.white,
-                    fontFamily: FONT.medium,
-                  }}
-                >
-                  {cvDocumentBase64 ? "Guardar" : "Subir CV"}
-                </Text>
-                <Icon
-                  name={cvDocumentBase64 ? "save" : "upload"}
-                  type="feather"
-                  color={COLORS.white}
-                />
-              </>
-            )}
-          </TouchableOpacity>
+          <>
+            <TouchableOpacity
+              style={{
+                paddingVertical: 12,
+                borderRadius: 8,
+                width: "100%",
+                backgroundColor: COLORS.indigo700,
+                flexDirection: "row",
+                paddingHorizontal: 10,
+                justifyContent: "center",
+                columnGap: 10,
+                alignItems: "center",
+              }}
+              onPress={cvDocumentBase64 ? handleCVUpload : handleFileSelection}
+            >
+              {isCvUploading ? (
+                <ActivityIndicator />
+              ) : (
+                <>
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      width: "auto",
+                      color: COLORS.white,
+                      fontFamily: FONT.medium,
+                    }}
+                  >
+                    {cvDocumentBase64 ? "Guardar" : "Subir CV"}
+                  </Text>
+                  <Icon
+                    size={15}
+                    name={cvDocumentBase64 ? "save" : "upload"}
+                    type="feather"
+                    color={COLORS.white}
+                  />
+                </>
+              )}
+            </TouchableOpacity>
+          </>
         )}
       </View>
+      {cvUploadError && (
+        <Text
+          style={{
+            fontFamily: FONT.regular,
+            fontSize: SIZES.small,
+            color: COLORS.red800,
+            textAlign: "center",
+          }}
+        >
+          Imágen mayor a 1mb, reduce el tamaño de tu cv e intentalo de nuevo
+        </Text>
+      )}
 
       {/* <Button title="Upload Image" onPress={handleImageUpload} /> */}
     </View>

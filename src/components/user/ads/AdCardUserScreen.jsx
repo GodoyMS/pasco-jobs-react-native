@@ -18,306 +18,359 @@ import { backendURL } from "@config/config";
 import defaultAdUser from "@assets/userads/userdefault.png";
 import axios from "axios";
 import RenderHTML from "react-native-render-html";
- 
-const AdCardUserScreen = React.memo(({ data, refetch, dataAds, setDataAds ,setCurrentAdId,setIsReportActive}) => {
-  const [visible, setVisible] = useState(false);
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const deleteJob = async () => {
-    setIsLoading(true);
-    await axios
-      .delete(`${backendURL}api/ads/${data.id}`)
-      .then(() => setDataAds(dataAds.filter((obj) => obj.id !== data.id)))
+const AdCardUserScreen = React.memo(
+  ({
+    data,
+    setCurrentImage,
+    setProfileVisible,
+    refetch,
+    dataAds,
+    setDataAds,
+    setCurrentAdId,
+    setIsReportActive,
+  }) => {
+    const [visible, setVisible] = useState(false);
+    const showModal = () => setVisible(true);
+    const hideModal = () => setVisible(false);
+    const [isLoading, setIsLoading] = useState(false);
 
-      .catch((e) => console.log(e))
-      .finally(() => setIsLoading(false));
-  };
-  const { width } = useWindowDimensions();
+    const deleteJob = async () => {
+      setIsLoading(true);
+      await axios
+        .delete(`${backendURL}api/ads/${data.id}`)
+        .then(() => setDataAds(dataAds.filter((obj) => obj.id !== data.id)))
 
-  const maxChars = 150;
-  const [isExpanded, setIsExpanded] = useState(false);
+        .catch((e) => console.log(e))
+        .finally(() => setIsLoading(false));
+    };
+    const { width } = useWindowDimensions();
 
-  const handleSeeMore = () => {
-    setIsExpanded(true);
-  };
-  const handleSeeLess = () => {
-    setIsExpanded(false);
-  };
+    const maxChars = 150;
+    const [isExpanded, setIsExpanded] = useState(false);
 
-  const [aspectRatio, setAspectRatio] = useState(1);
+    const handleSeeMore = () => {
+      setIsExpanded(true);
+    };
+    const handleSeeLess = () => {
+      setIsExpanded(false);
+    };
 
-  const handleImageLoad = (event) => {
-    const { width, height } = event.nativeEvent.source;
-    setAspectRatio(width / height);
-  };
+    const [aspectRatio, setAspectRatio] = useState(1);
 
-  const contentToShow = isExpanded
-    ? dataAds?.description
-    : dataAds?.description.slice(0, maxChars);
+    const handleImageLoad = (event) => {
+      const { width, height } = event.nativeEvent.source;
+      setAspectRatio(width / height);
+    };
 
-  return (
-    <>
-    {dataAds?.author && dataAds?.title && (
-      <PaperProvider>
-      <Portal>
-        <Modal
-          visible={visible}
-          onDismiss={hideModal}
-          contentContainerStyle={{
-            backgroundColor: "white",
-            padding: 20,
-            marginHorizontal: 20,
-            borderRadius: 10,
-          }}
-        >
-          <Text style={{ color: COLORS.gray800 }}>
-            ¿Estas seguro de eliminar este anuncio?
-          </Text>
-          <View style={{ flexDirection: "row", columnGap: 10, marginTop: 10 }}>
-            <Button
-              mode="contained"
-              style={{
-                backgroundColor: COLORS.red700,
-                borderRadius: 6,
-                flex: 1,
-              }}
-              onPress={deleteJob}
-            >
-              {isLoading ? (
-                <Text> ...</Text>
-              ) : (
-                <Text style={{ color: COLORS.white }}>Eliminar</Text>
-              )}
-            </Button>
-            <Button
-              mode="oulined"
-              style={{
-                backgroundColor: COLORS.gray600,
-                borderRadius: 6,
-                flex: 1,
-              }}
-              onPress={hideModal}
-            >
-              <Text style={{ color: COLORS.white }}>Cancelar</Text>
-            </Button>
-          </View>
-        </Modal>
-      </Portal>
+    const contentToShow = isExpanded
+      ? dataAds?.description
+      : dataAds?.description.slice(0, maxChars);
 
-      <View
-        style={{
-          width: "100%",
-          paddingHorizontal: 20,
-          backgroundColor: COLORS.white,
-          height: "auto",
-          paddingTop: 40,
-          paddingBottom: 20,
-          marginVertical: 4,
-        }}
-      >
-        <View style={{flexDirection:"row",justifyContent:"flex-end"}}>
-          <Icon name="flag" type="feather" color={COLORS.tertiary} activeOpacity={0.7} onPress={()=>{setCurrentAdId(dataAds?.id);setIsReportActive(true)}}/>
-
-        </View>
-        <View
-          style={{ flexDirection: "row", columnGap: 10, paddingHorizontal: 20 }}
-        >
-          <View>
-            <Image
-              style={{ width: 40, height: 40, borderRadius: 20 }}
-              source={
-                dataAds?.author?.profile
-                  ? { uri: dataAds?.author?.profile }
-                  : defaultAdUser
-              }
-            />
-          </View>
-          <View
-            style={{
-              flex: 1,
-              flexDirection: "column",
-              justifyContent: "flex-start",
-            }}
-          >
-            <Text
-              style={{
-                fontFamily: FONT.medium,
-                fontSize: 12,
-                color: COLORS.gray900,
-              }}
-            >
-              {dataAds?.author?.name}
-            </Text>
-            <Text
-              style={{
-                fontFamily: FONT.regular,
-                fontSize: 9,
-                color: COLORS.gray600,
-              }}
-            >
-              <Moment element={Text} fromNow locale="es">
-                {dataAds?.createdAt}
-              </Moment>
-            </Text>
+    return (
+      <>
+        {dataAds?.author && dataAds?.title && (
+          <PaperProvider>
+            <Portal>
+              <Modal
+                visible={visible}
+                onDismiss={hideModal}
+                contentContainerStyle={{
+                  backgroundColor: "white",
+                  padding: 20,
+                  marginHorizontal: 20,
+                  borderRadius: 10,
+                }}
+              >
+                <Text style={{ color: COLORS.gray800 }}>
+                  ¿Estas seguro de eliminar este anuncio?
+                </Text>
+                <View
+                  style={{ flexDirection: "row", columnGap: 10, marginTop: 10 }}
+                >
+                  <Button
+                    mode="contained"
+                    style={{
+                      backgroundColor: COLORS.red700,
+                      borderRadius: 6,
+                      flex: 1,
+                    }}
+                    onPress={deleteJob}
+                  >
+                    {isLoading ? (
+                      <Text> ...</Text>
+                    ) : (
+                      <Text style={{ color: COLORS.white }}>Eliminar</Text>
+                    )}
+                  </Button>
+                  <Button
+                    mode="oulined"
+                    style={{
+                      backgroundColor: COLORS.gray600,
+                      borderRadius: 6,
+                      flex: 1,
+                    }}
+                    onPress={hideModal}
+                  >
+                    <Text style={{ color: COLORS.white }}>Cancelar</Text>
+                  </Button>
+                </View>
+              </Modal>
+            </Portal>
 
             <View
               style={{
-                flexDirection: "row",
-                alignItems: "center",
-                columnGap: 5,
+                width: "100%",
+                paddingHorizontal: 20,
+                backgroundColor: COLORS.white,
+                height: "auto",
+                paddingTop: 40,
+                paddingBottom: 20,
+                marginVertical: 4,
               }}
             >
-              <Icon
-                name="map-pin"
-                color={COLORS.gray700}
-                size={9}
-                type="feather"
-              />
-              <Text
-                style={{
-                  fontFamily: FONT.regular,
-                  fontSize: 9,
-                  color: COLORS.gray600,
-                }}
+              <View
+                style={{ flexDirection: "row", justifyContent: "flex-end" }}
               >
-                {dataAds?.province} - {dataAds?.district}
-              </Text>
-            </View>
-          </View>
-        </View>
-        <View style={{ marginTop: 10 }}>
-          <View style={styles.container}>
-            <Text style={{color:COLORS.gray900,fontFamily:FONT.medium,fontSize:SIZES.medium,marginBottom:7}} >{dataAds?.title}</Text>
-            <RenderHTML
-              tagsStyles={{ div: { textAlign: "justify",fontSize:SIZES.small,fontFamily:FONT.regular,color:COLORS.gray700},p:{ textAlign: "justify",fontSize:SIZES.small,fontFamily:FONT.regular,color:COLORS.gray700} }}
-              contentWidth={width}
-              
-            
-              source={{ html: contentToShow }}
-            />
-            {!isExpanded && dataAds?.description.length > maxChars && (
-              <TouchableOpacity onPress={handleSeeMore}>
-                <Text style={styles.seeMore}>Ver mas </Text>
-              </TouchableOpacity>
-            )}
-            {isExpanded && (
-              <TouchableOpacity onPress={handleSeeLess}>
-                <Text style={styles.seeMore}>Ver menos</Text>
-              </TouchableOpacity>
-            )}
-
-            {dataAds && dataAds?.image && (
+                <Icon
+                  name="flag"
+                  type="feather"
+                  color={COLORS.tertiary}
+                  activeOpacity={0.7}
+                  onPress={() => {
+                    setCurrentAdId(dataAds?.id);
+                    setIsReportActive(true);
+                  }}
+                />
+              </View>
               <View
                 style={{
                   flexDirection: "row",
-                  justifyContent: "center",
-                  marginTop: 0,
+                  columnGap: 10,
+                  paddingHorizontal: 20,
                 }}
               >
                 <View>
-                <Image
-                  borderRadius={10}
-                  resizeMode="cover"
-                  source={{
-                    uri: dataAds?.image,
-                  }}
-                  style={{
-                    width: "100%",
-                    aspectRatio,
-                    maxHeight: 300,
-                  }}
-                  onLoad={handleImageLoad}
-                />
+                 <TouchableOpacity onPress={()=>{setCurrentImage(dataAds?.author?.profile);setProfileVisible(true)}}>
+                 <Image
+                    style={{ width: 40, height: 40, borderRadius: 20 }}
+                    source={
+                      dataAds?.author?.profile
+                        ? { uri: dataAds?.author?.profile }
+                        : defaultAdUser
+                    }
+                  />
+                 </TouchableOpacity>
                 </View>
-                
+
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: "column",
+                    justifyContent: "flex-start",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontFamily: FONT.medium,
+                      fontSize: 12,
+                      color: COLORS.gray900,
+                    }}
+                  >
+                    {dataAds?.author?.name}
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: FONT.regular,
+                      fontSize: 9,
+                      color: COLORS.gray600,
+                    }}
+                  >
+                    <Moment element={Text} fromNow locale="es">
+                      {dataAds?.createdAt}
+                    </Moment>
+                  </Text>
+
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      columnGap: 5,
+                    }}
+                  >
+                    <Icon
+                      name="map-pin"
+                      color={COLORS.gray700}
+                      size={9}
+                      type="feather"
+                    />
+                    <Text
+                      style={{
+                        fontFamily: FONT.regular,
+                        fontSize: 9,
+                        color: COLORS.gray600,
+                      }}
+                    >
+                      {dataAds?.province} - {dataAds?.district}
+                    </Text>
+                  </View>
+                </View>
               </View>
-            )}
-          </View>
-        </View>
-
-        {dataAds && (dataAds?.author?.whatsapp || dataAds?.author?.phone) && (
-          <>
-            <View
-              style={{
-                borderBottomWidth: 1,
-                marginVertical: 10,
-                marginHorizontal: 10,
-                borderBottomColor: COLORS.gray300,
-              }}
-            ></View>
-            <View
-              style={{
-                flexDirection: "row",
-                paddingHorizontal: 20,
-                columnGap: 20,
-              }}
-            >
-              {dataAds?.author?.phone && (
-                <TouchableOpacity
-                  onPress={() =>
-                    Linking.openURL(`tel:${dataAds?.author?.phone}`).catch(
-                      (e) => console.log(e)
-                    )
-                  }
-                  activeOpacity={0.7}
-                  style={{ flexDirection: "column" }}
-                >
-                  <Icon
-                    name="phone"
-                    color={COLORS.gray600}
-                    size={20}
-                    type="antdesign"
-                  />
+              <View style={{ marginTop: 10 }}>
+                <View style={styles.container}>
                   <Text
                     style={{
-                      fontFamily: FONT.regular,
-                      color: COLORS.gray600,
-                      fontSize: SIZES.xSmall,
+                      color: COLORS.gray900,
+                      fontFamily: FONT.medium,
+                      fontSize: SIZES.medium,
+                      marginBottom: 7,
                     }}
                   >
-                    Llamar
+                    {dataAds?.title}
                   </Text>
-                </TouchableOpacity>
-              )}
-
-              {dataAds?.author?.whatsapp && (
-                <TouchableOpacity
-                  onPress={() =>
-                    Linking.openURL(
-                      `https://api.whatsapp.com/send?phone=${dataAds?.author?.whatsapp}`
-                    ).catch((e) => console.log(e))
-                  }
-                  activeOpacity={0.7}
-                  style={{ flexDirection: "column" }}
-                >
-                  <Icon
-                    name="whatsapp"
-                    color={COLORS.gray600}
-                    size={20}
-                    type="font-awesome"
+                  <RenderHTML
+                    tagsStyles={{
+                      div: {
+                        textAlign: "justify",
+                        fontSize: SIZES.small,
+                        fontFamily: FONT.regular,
+                        color: COLORS.gray700,
+                      },
+                      p: {
+                        textAlign: "justify",
+                        fontSize: SIZES.small,
+                        fontFamily: FONT.regular,
+                        color: COLORS.gray700,
+                      },
+                    }}
+                    contentWidth={width}
+                    source={{ html: contentToShow }}
                   />
-                  <Text
-                    style={{
-                      fontFamily: FONT.regular,
-                      color: COLORS.gray600,
-                      fontSize: SIZES.xSmall,
-                    }}
-                  >
-                    Mensaje
-                  </Text>
-                </TouchableOpacity>
-              )}
+                  {!isExpanded && dataAds?.description.length > maxChars && (
+                    <TouchableOpacity onPress={handleSeeMore}>
+                      <Text style={styles.seeMore}>Ver mas </Text>
+                    </TouchableOpacity>
+                  )}
+                  {isExpanded && (
+                    <TouchableOpacity onPress={handleSeeLess}>
+                      <Text style={styles.seeMore}>Ver menos</Text>
+                    </TouchableOpacity>
+                  )}
+
+                  {dataAds && dataAds?.image && (
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "center",
+                        marginTop: 0,
+                        paddingTop:15
+                      }}
+                    >
+                      <View>
+                        <TouchableOpacity onPress={()=>{setCurrentImage(dataAds?.image);setProfileVisible(true)}}>
+                        <Image
+                          borderRadius={10}
+                          resizeMode="cover"
+                          source={{
+                            uri: dataAds?.image,
+                          }}
+                          style={{
+                            width: "100%",
+                            aspectRatio,
+                            maxHeight: 300,
+                          }}
+                          onLoad={handleImageLoad}
+                        />
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  )}
+                </View>
+              </View>
+
+              {dataAds &&
+                (dataAds?.author?.whatsapp || dataAds?.author?.phone) && (
+                  <>
+                    <View
+                      style={{
+                        borderBottomWidth: 1,
+                        marginVertical: 10,
+                        marginHorizontal: 10,
+                        borderBottomColor: COLORS.gray300,
+                      }}
+                    ></View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        paddingHorizontal: 20,
+                        columnGap: 20,
+                      }}
+                    >
+                      {dataAds?.author?.phone && (
+                        <TouchableOpacity
+                          onPress={() =>
+                            Linking.openURL(
+                              `tel:${dataAds?.author?.phone}`
+                            ).catch((e) => console.log(e))
+                          }
+                          activeOpacity={0.7}
+                          style={{ flexDirection: "column" }}
+                        >
+                          <Icon
+                            name="phone"
+                            color={COLORS.gray600}
+                            size={20}
+                            type="antdesign"
+                          />
+                          <Text
+                            style={{
+                              fontFamily: FONT.regular,
+                              color: COLORS.gray600,
+                              fontSize: SIZES.xSmall,
+                            }}
+                          >
+                            Llamar
+                          </Text>
+                        </TouchableOpacity>
+                      )}
+
+                      {dataAds?.author?.whatsapp && (
+                        <TouchableOpacity
+                          onPress={() =>
+                            Linking.openURL(
+                              `https://api.whatsapp.com/send?phone=${dataAds?.author?.whatsapp}`
+                            ).catch((e) => console.log(e))
+                          }
+                          activeOpacity={0.7}
+                          style={{ flexDirection: "column" }}
+                        >
+                          <Icon
+                            name="whatsapp"
+                            color={COLORS.gray600}
+                            size={20}
+                            type="font-awesome"
+                          />
+                          <Text
+                            style={{
+                              fontFamily: FONT.regular,
+                              color: COLORS.gray600,
+                              fontSize: SIZES.xSmall,
+                            }}
+                          >
+                            Mensaje
+                          </Text>
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                  </>
+                )}
             </View>
-          </>
+          </PaperProvider>
         )}
-      </View>
-    </PaperProvider>
-    )}
-    </>
-  );
-});
+      </>
+    );
+  }
+);
 
 export default AdCardUserScreen;
 

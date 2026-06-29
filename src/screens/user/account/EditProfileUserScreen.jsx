@@ -21,7 +21,7 @@ import { setOnlyUserInfo } from "@features/user/userSlice";
 import FormLoader from "@components/loaders/FormLoader";
 import { Icon } from "@rneui/themed";
 import SaveButton from "@components/buttons/SaveButton";
-import Lottie from 'lottie-react-native';
+import Lottie from "lottie-react-native";
 import { StatusBar } from "expo-status-bar";
 
 const EditProfileUserScreen = () => {
@@ -34,24 +34,27 @@ const EditProfileUserScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
-
+  const [phone, setPhone] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
   useEffect(() => {
     if (userInfo.name) setName(userInfo.name);
     if (userInfo.position) setPosition(userInfo.position);
     if (userInfo.age) setAge(userInfo.age.toString());
     if (userInfo.description) setDescription(userInfo.description);
+    if (userInfo?.phone) setPhone(userInfo?.phone);
+    if (userInfo?.whatsapp) setWhatsapp(userInfo?.whatsapp);
   }, [userInfo]);
 
   const dispatchRedux = useDispatch();
 
   const handleUpdateProfile = async (e) => {
-    setIsLoading(true)
+    setIsLoading(true);
     e.preventDefault();
     try {
       // Make the PATCH request
       const response = await axios.patch(
         `${backendURL}api/applicants/${userInfo.id}`,
-        { name, position, description, age }// Use true instead of "include"
+        { name, position, description, age,phone,whatsapp } // Use true instead of "include"
       );
 
       // Update the user information in the Redux store
@@ -81,9 +84,8 @@ const EditProfileUserScreen = () => {
         justifyContent: "space-between",
       }}
     >
-      <StatusBar/>
+      <StatusBar />
       <ScrollView style={{ marginTop: 90 }}>
-
         {userInfo && (
           <View style={{ marginHorizontal: 30 }}>
             <View>
@@ -136,10 +138,43 @@ const EditProfileUserScreen = () => {
               value={age}
               onChangeText={(text) => setAge(text)}
             />
-      
-             <FormLoader isLoading={isLoading} />
 
-             <SaveButton onPress={handleUpdateProfile} isSuccess={isSuccess} messageDefault={"Actualizar perfil"} messageSuccess={"Actualizado"}/>
+            <View>
+              <Text
+                style={{
+                  color: COLORS.gray800,
+                  fontFamily: FONT.bold,
+                  fontSize: SIZES.medium,
+                  marginTop: 30,
+                }}
+              >
+                Contacto (opcional)
+              </Text>
+            </View>
+            <TextInput
+              label="Telefóno (No incluyas codigo de país)"
+              returnKeyType="next"
+              keyboardType="numeric"
+              value={phone}
+              onChangeText={(text) => setPhone(text)}
+            />
+            <TextInput
+              label="Whatsapp (No incluyas codigo de país)"
+              keyboardType="numeric"
+              returnKeyType="next"
+              value={whatsapp}
+              onChangeText={(text) => setWhatsapp(text)}
+            />
+
+
+            <FormLoader isLoading={isLoading} />
+
+            <SaveButton
+              onPress={handleUpdateProfile}
+              isSuccess={isSuccess}
+              messageDefault={"Actualizar perfil"}
+              messageSuccess={"Actualizado"}
+            />
 
             {isError && (
               <View>

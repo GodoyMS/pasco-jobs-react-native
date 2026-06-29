@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -28,10 +29,8 @@ const EditCvUserScreen = () => {
   const userInfo = useSelector((state) => state.user.infoUser);
 
   const [name, setName] = useState("");
-  const [position, setPosition] = useState("");
-  const [description, setDescription] = useState("");
 
-  const [age, setAge] = useState("");
+
 
   const [cvBase64, setCvBase64] = useState("");
   const [cvLink, setCvLink] = useState("");
@@ -39,12 +38,10 @@ const EditCvUserScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
+  const[isDownloaded,setIsDownloaded]=useState(false)
 
   useEffect(() => {
     if (userInfo.name) setName(userInfo.name);
-    if (userInfo.position) setPosition(userInfo.position);
-    if (userInfo.age) setAge(userInfo.age);
-    if (userInfo.description) setDescription(userInfo.description);
     if (userInfo.cv) setCvLink(userInfo.cv);
   }, [userInfo]);
 
@@ -62,13 +59,13 @@ const EditCvUserScreen = () => {
     try {
       await StorageAccessFramework.createFileAsync(
         permissions.directoryUri,
-        `${name}-cv.pdf`,
+        `${name? name:""}-cv.pdf`,
         "application/pdf"
       )
         .then(async (uri) => {
           await FileSystem.writeAsStringAsync(uri, base64Data, {
             encoding: FileSystem.EncodingType.Base64,
-          });
+          }).then(()=>setIsDownloaded(true)).then(()=>setTimeout(()=>setIsDownloaded(false),2000))
         })
         .catch((e) => {
           console.log(e);
@@ -102,6 +99,7 @@ const EditCvUserScreen = () => {
 
   const handleCVUpload = async () => {
     setIsLoading(true);
+    setIsError(false)
     await axios
       .post(`${backendURL}api/cvuploads/upload`, {
         base64: `${cvBase64}`,
@@ -115,7 +113,7 @@ const EditCvUserScreen = () => {
       )
       .then(({ data }) => dispatch(setOnlyUserInfo({ user: data.doc })))
       .then(() => setIsSuccess(true))
-      .catch((e) => setIsError(true))
+      .catch((e) => {setIsError(true);console.log(e)})
       .finally(() => setIsLoading(false));
   };
 
@@ -177,7 +175,6 @@ const EditCvUserScreen = () => {
     >
       <StatusBar/>
       <ScrollView style={{ marginTop: 90 }}>
-        <FormLoader isLoading={isLoading} message={"Actualizando CV"} />
         {userInfo && (
           <View style={{ marginHorizontal: 30 }}>
             <View>
@@ -199,11 +196,11 @@ const EditCvUserScreen = () => {
               style={{
                 color: COLORS.gray600,
                 fontFamily: FONT.regular,
-                fontSize: SIZES.medium,
+                fontSize: SIZES.small,
                 marginVertical: 10,
               }}
             >
-              Mantener tu cv actualizado es importante
+              Mantener tu cv actualizado es importante, sube o modifica tu cv en formato pdf.
             </Text>
 
             {/**IF CV IS UPLOADED    "CV SUBIDO" Show cv download update      |    */}
@@ -240,8 +237,7 @@ const EditCvUserScreen = () => {
                           fontSize: SIZES.medium,
                         }}
                       >
-                        {" "}
-                        Cv Subido{" "}
+                        Cv Subido
                       </Text>
                       <Icon
                         name="checkcircle"
@@ -324,6 +320,15 @@ const EditCvUserScreen = () => {
                       />
                     </TouchableOpacity>
                   </View>
+                  {isDownloaded && <View style={{marginTop:20,width:"100%",flexDirection:"row",alignItems:"center",justifyContent:"center",columnGap:10}}>
+                    <Text style={{textAlign:"center",fontFamily:FONT.regular,color:COLORS.green600,fontSize:SIZES.medium}}>Descargado!</Text>
+                    <Icon
+                        name="checkcircle"
+                        type="antdesign"
+                        color={COLORS.green600}
+                        size={20}
+                      />
+                    </View>}
                 </View>
               </>
             )}
@@ -428,19 +433,22 @@ const EditCvUserScreen = () => {
               // >
               //  {cvLink  ? "Actualizar CV" : "Guardar CV"}
               // </Button>
-              <SaveButton
+             <View>
+               <SaveButton
                 messageDefault={cvLink ? "Actualizar CV" : "Guardar CV"}
                 isSuccess={isSuccess}
                 messageSuccess={"CV Actualizado"}
                 onPress={handleCVUpload}
               />
+                              {isLoading && <ActivityIndicator style={{marginTop:20}} color={COLORS.tertiary}/>}
+
+             </View>
             )}
 
             {isError && (
               <View>
-                <Text style={{ textAlign: "center" }}>
-                  Ocurrio un error, si el error persiste contacte al soporte de
-                  ayuda
+                <Text style={{ textAlign: "center",fontFamily:FONT.regular,color:COLORS.red700,fontSize:SIZES.small,marginTop:20 }}>
+                  Imagen mayor a 1mb, reduce el tamaño de tu cv e intentalo de nuevo
                 </Text>
               </View>
             )}

@@ -11,7 +11,6 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
-import * as DocumentPicker from "expo-document-picker";
 import * as ImagePicker from "expo-image-picker";
 import Button from "@components/login/Button";
 import { emailValidator } from "@helpers/emailValidator";
@@ -26,7 +25,7 @@ import { nameValidator } from "@helpers/nameValidator";
 import useRegister from "@hooks/user/auth/register";
 import { SelectList } from "react-native-dropdown-select-list";
 import provincesDistricts from "@data/data.json";
-
+import categories from "@data/companycategories.json";
 import {
   Modal,
   Portal,
@@ -63,12 +62,15 @@ export const RegisterCompanyScreen = ({ navigation }) => {
   const [profileImageLink, setProfileImageLink] = useState("");
   const [profileImageBase64, setProfileImageBase64] = useState("");
 
+  const [phone, setPhone] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
   //SHOW PASS
   const [visiblePass, setVisiblePass] = useState(false);
 
-
-  const[isImageSavedToSubmitError,setIsImageSavedToSubmitError]=useState("")
-
+  const [isImageSavedToSubmitError, setIsImageSavedToSubmitError] =
+    useState("");
+  const [imageUpladError, setImageUploadError] = useState(false);
+  const [isImageUploadLoading, setIsImageUploadLoading] = useState(false);
   const handleImagePicker = async () => {
     try {
       const { status } =
@@ -99,13 +101,19 @@ export const RegisterCompanyScreen = ({ navigation }) => {
     }
   };
   const handleImageUpload = async () => {
+    setIsImageUploadLoading(true);
+    setImageUploadError(false);
     await axios
       .post(`${backendURL}api/profilesupload/upload`, {
         base64: `data:image/png;base64,${profileImageBase64}`,
         name: name.value,
       })
       .then(({ data }) => setProfileImageLink(data.url))
-      .catch((e) => console.log(e));
+      .catch((e) => {
+        console.log(e);
+        setImageUploadError(true);
+      })
+      .finally(() => setIsImageUploadLoading(false));
   };
 
   const hideModal = () => {
@@ -123,8 +131,8 @@ export const RegisterCompanyScreen = ({ navigation }) => {
     const headingError = heading.value ? "" : "Escribe el rubro de tu empresa";
     const provinceError = province ? "" : "Selecciona una provincia";
     const districtError = district ? "" : "Selecciona un distrito";
-    const imageSavedToSubmitError=(profileImageBase64&& !profileImageLink) ? "Guarda tu imágen"  : ""
-
+    const imageSavedToSubmitError =
+      profileImageBase64 && !profileImageLink ? "Guarda tu imágen" : "";
 
     if (
       emailError ||
@@ -143,7 +151,7 @@ export const RegisterCompanyScreen = ({ navigation }) => {
       setHeading({ ...heading, error: headingError });
       setDistrictError(districtError);
       setProvinceError(provinceError);
-      setIsImageSavedToSubmitError(imageSavedToSubmitError)
+      setIsImageSavedToSubmitError(imageSavedToSubmitError);
 
       return;
     }
@@ -154,6 +162,8 @@ export const RegisterCompanyScreen = ({ navigation }) => {
         email: email.value,
         password: password.value,
         region: "Pasco",
+        phone,
+        whatsapp:phone,
         province: province,
         district: district,
         description: description.value,
@@ -317,18 +327,29 @@ export const RegisterCompanyScreen = ({ navigation }) => {
 
             <View style={{ width: "100%", marginTop: 10 }}>
               <View style={{ width: "100%" }}>
-                <TextInput
-                  multiline={false}
-                  label="Rubro de la empresa"
-                  returnKeyType="next"
-                  placeholder="Ej (Empresa de construcción, Tienda de electrónica, etc)"
-                  value={heading.value}
-                  onChangeText={(text) =>
-                    setHeading({ value: text, error: "" })
-                  }
-                  error={!!heading.error}
-                  errorText={heading.error}
+                <SelectList
+                  setSelected={(text) => setHeading({ value: text, error: "" })}
+                  data={categories.map((e) => {
+                    return { key: e.id, value: e.name };
+                  })}
+                  placeholder="Rubro de la empresa"
+                  searchPlaceholder="Busca un rubro"
+                  search={true}
+                  notFoundText="Nose encontraron resultados"
+                  save="value"
                 />
+                {heading.error && (
+                  <Text
+                    style={{
+                      fontFamily: FONT.regular,
+                      color: COLORS.red600,
+                      marginTop: 5,
+                    }}
+                  >
+                    Selecciona un rubro
+                  </Text>
+                )}
+
                 <TextInput
                   multiline={true}
                   label="Descripción"
@@ -381,19 +402,39 @@ export const RegisterCompanyScreen = ({ navigation }) => {
                 <View
                   style={{ flexDirection: "row", justifyContent: "center" }}
                 >
-                  <Image
-                    borderRadius={150}
-                    resizeMode="cover"
-                    source={{
-                      uri: `data:image/jpeg;base64,${profileImageBase64}`,
-                    }}
+                  <View
                     style={{
-                      width: "50%",
-                      height: "auto",
-                      borderRadius: 1000,
-                      aspectRatio: "1/1",
+                      width: "100%",
+                      flexDirection: "row",
+                      justifyContent: "center",
                     }}
-                  />
+                  >
+                    {!profileImageLink && (
+                      <View style={{ position: "absolute", top: 0, right: 0 }}>
+                        <Icon
+                          onPress={() => {
+                            setProfileImageBase64("");
+                          }}
+                          name="closecircle"
+                          type="antdesign"
+                          color={COLORS.tertiary}
+                        />
+                      </View>
+                    )}
+                    <Image
+                      borderRadius={150}
+                      resizeMode="cover"
+                      source={{
+                        uri: `data:image/jpeg;base64,${profileImageBase64}`,
+                      }}
+                      style={{
+                        width: "50%",
+                        height: "auto",
+                        borderRadius: 1000,
+                        aspectRatio: "1/1",
+                      }}
+                    />
+                  </View>
                 </View>
               )}
 
@@ -409,13 +450,25 @@ export const RegisterCompanyScreen = ({ navigation }) => {
                 }}
               >
                 {!profileImageLink && (
-                  <View style={{ flexDirection: "column", rowGap: 10,width:"100%" }}>
+                  <View
+                    style={{
+                      flexDirection: "column",
+                      rowGap: 10,
+                      width: "100%",
+                    }}
+                  >
+                    {isImageUploadLoading && (
+                      <ActivityIndicator color={COLORS.tertiary} />
+                    )}
                     <TouchableOpacity
+                      disabled={isImageUploadLoading}
                       style={{
-                        paddingVertical: 10,
-                        borderRadius: 15,
+                        paddingVertical: 7,
+                        borderRadius: 7,
                         width: "100%",
-                        backgroundColor: COLORS.indigo700,
+                        backgroundColor: isImageUploadLoading
+                          ? COLORS.indigo400
+                          : COLORS.indigo700,
                         flexDirection: "row",
                         paddingHorizontal: 10,
                         justifyContent: "center",
@@ -444,6 +497,18 @@ export const RegisterCompanyScreen = ({ navigation }) => {
                         color={COLORS.white}
                       />
                     </TouchableOpacity>
+                    {imageUpladError && (
+                      <Text
+                        style={{
+                          textAlign: "center",
+                          fontFamily: FONT.regular,
+                          color: COLORS.red700,
+                          fontSize: SIZES.small,
+                        }}
+                      >
+                        Imagen muy grande
+                      </Text>
+                    )}
                     {!profileImageBase64 && (
                       <View>
                         <Text
@@ -468,7 +533,6 @@ export const RegisterCompanyScreen = ({ navigation }) => {
                       paddingVertical: 20,
                       borderRadius: 15,
                       width: 150,
-                      backgroundColor: COLORS.green400,
                       flexDirection: "row",
                       paddingHorizontal: 10,
                       justifyContent: "center",
@@ -481,7 +545,7 @@ export const RegisterCompanyScreen = ({ navigation }) => {
                       style={{
                         textAlign: "center",
                         width: "auto",
-                        color: COLORS.white,
+                        color: COLORS.green400,
                         fontFamily: FONT.medium,
                       }}
                     >
@@ -490,7 +554,7 @@ export const RegisterCompanyScreen = ({ navigation }) => {
                     <Icon
                       name={"checkcircle"}
                       type="antdesign"
-                      color={COLORS.white}
+                      color={COLORS.green400}
                     />
                   </View>
                 )}
@@ -595,6 +659,47 @@ export const RegisterCompanyScreen = ({ navigation }) => {
               width: "100%",
             }}
           >
+           
+              <Text
+                style={{
+                  textAlign: "left",
+                  fontFamily: FONT.medium,
+                  fontSize: SIZES.large,
+                  fontWeight: "bold",
+                  color: COLORS.gray800,
+                  width: "100%",
+                }}
+              >
+                Contacto <Text style={{fontSize:SIZES.medium    }}>(opcional) </Text>
+              </Text>
+           
+            <TextInput
+              label="Telefóno (No incluyas codigo de país)"
+              returnKeyType="next"
+              keyboardType="numeric"
+              value={phone}
+              onChangeText={(text) => setPhone(text)}
+            />
+            <TextInput
+              label="Whatsapp (No incluyas codigo de país)"
+              keyboardType="numeric"
+              returnKeyType="next"
+              value={whatsapp}
+              onChangeText={(text) => setWhatsapp(text)}
+            />
+          </View>
+
+          <View
+            style={{
+              flexDirection: "column",
+              maxWidth: 400,
+              justifyContent: "center",
+              padding: 20,
+              alignSelf: "center",
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
             {isLoading && <ActivityIndicator />}
             <Button
               disabled={isLoading}
@@ -605,15 +710,17 @@ export const RegisterCompanyScreen = ({ navigation }) => {
               Registrarse
             </Button>
 
-            {isImageSavedToSubmitError && <Text
+            {isImageSavedToSubmitError && (
+              <Text
                 style={{
                   marginBottom: 10,
                   fontFamily: FONT.medium,
                   color: COLORS.red600,
                 }}
               >
-               {isImageSavedToSubmitError}
-              </Text> }
+                {isImageSavedToSubmitError}
+              </Text>
+            )}
             {(email.error ||
               password.error ||
               name.error ||

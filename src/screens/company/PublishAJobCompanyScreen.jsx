@@ -280,7 +280,6 @@ const PublishAJobCompanyScreen = () => {
 
                     borderRadius: 10,
                     columnGap: 10,
-                    backgroundColor: COLORS.gray100,
                     maxWidth: 200,
                     marginTop:50,
                     justifyContent: "center",
@@ -288,7 +287,7 @@ const PublishAJobCompanyScreen = () => {
                     alignItems: "center",
                   }}
                   underlayColor={COLORS.gray100}
-                  activeOpacity={0.9}
+                  activeOpacity={0.6}
                   onPress={() => setStepForm(stepForm - 1)}
                 >
                   <Icon
@@ -360,10 +359,11 @@ const PublishAJobCompanyScreen = () => {
               )}
 
         
-              <FormLoader message={"Actualizando"} isLoading={false} />
+              <FormLoader message={"Actualizando"} isLoading={isLoading} />
 
               <TouchableOpacity
                 onPress={isSuccess ? () => void null : handleSubmitJob}
+                disabled={isLoading}
                 activeOpacity={isSuccess ? 1 :0.7}
                 style={{
                   marginTop: isSuccess ? 20 : 20,
@@ -379,7 +379,7 @@ const PublishAJobCompanyScreen = () => {
 
                   backgroundColor: isSuccess
                     ? COLORS.green100
-                    : COLORS.tertiary,
+                    : isLoading ? COLORS.indigo400 :COLORS.tertiary ,
                 }}
               >
                 <Text
@@ -389,7 +389,7 @@ const PublishAJobCompanyScreen = () => {
                     fontFamily: FONT.bold,
                   }}
                 >
-                  {isSuccess ? "Publicado exitosamente" : "Publicar"}
+                  {isSuccess ? "Publicado exitosamente" : isLoading ? "Publicando":"Publicar"}
                 </Text>
                 {isSuccess && (
                   <Icon
@@ -443,9 +443,7 @@ const PublishAJobCompanyScreen = () => {
                     maxWidth: 200,
 
                     columnGap: 10,
-                    backgroundColor: COLORS.gray100,
-                    borderWidth:1,
-                    borderColor:COLORS.gray400,
+                  
                     flex:1,
                    
                     justifyContent: "center",
@@ -453,7 +451,7 @@ const PublishAJobCompanyScreen = () => {
                     alignItems: "center",
                   }}
                   underlayColor={COLORS.gray800}
-                  activeOpacity={0.9}
+                  activeOpacity={0.6}
                   onPress={() => setStepForm(stepForm - 1)}
                 >
                   <Icon
@@ -473,9 +471,6 @@ const PublishAJobCompanyScreen = () => {
                     borderRadius: 10,
                     maxWidth: 200,
                     columnGap: 10,
-                    backgroundColor: COLORS.gray100,
-                    borderWidth:1,
-                    borderColor:COLORS.gray400,
                     flex:1,
                    
                     justifyContent: "center",
